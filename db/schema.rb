@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(:version => 20110908074457) do
 
-  create_table "kudos", :force => true do |t|
+  create_table "acks", :force => true do |t|
     t.text     "post_uid",   :null => false
     t.text     "identity",   :null => false
     t.text     "collection"

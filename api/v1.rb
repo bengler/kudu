@@ -46,8 +46,9 @@ class KuduV1 < Sinatra::Base
 
   # create or update a single Ack
   post '/ack' do
-    halt 500, "missing params" unless (params[:post] && params[:score] && params[:identity])
-    create_or_update(params[:post], params[:identity]) do |ack|
+    halt 500, "missing params" unless (params[:post] && params[:score] )
+    identity = identity_from_session
+    create_or_update(params[:post], identity) do |ack|
       ack.score = params[:score]
       ack.collection = params[:collection]
     end
@@ -55,8 +56,9 @@ class KuduV1 < Sinatra::Base
 
   # delete a single Ack
   delete '/ack' do
-    halt 400, "missing params" unless (params[:post] && params[:identity])
-    Ack.destroy(:post_uid => params[:post], :identity => params[:identity])
+    halt 400, "missing params" unless (params[:post])
+    identity = identity_from_session
+    Ack.destroy(:post_uid => params[:post], :identity => identity)
     response.status = 204
   end
 
@@ -74,5 +76,11 @@ class KuduV1 < Sinatra::Base
     result.to_json
   end
 
+  private
+
+  # TODO: implement this as it should be, using checkpoint goodness
+  def identity_from_session
+    "some.user.id"
+  end
 
 end

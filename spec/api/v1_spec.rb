@@ -10,4 +10,24 @@ describe 'API v1' do
   it "is true" do
     1.should eq(1)
   end
+
+  let(:post_uid) {'l0ngAndFiNeUId4U'}
+  let(:identity) {'some.user.id'}
+
+  context 'GET /ack' do
+
+    it 'finds a single matching ack' do
+      Ack.create!(:post_uid => post_uid, :identity => identity)
+      get "/ack?post=#{post_uid}"
+      result = JSON.parse(last_response.body)
+      result["ack"]["post_uid"].should eq(post_uid)
+    end
+
+    it 'yields a 404 on a nonexistant photo' do
+      get '/photos?post=doesnotexist'
+      last_response.status.should eq(404)
+    end
+
+  end
+
 end
