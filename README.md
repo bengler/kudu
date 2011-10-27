@@ -1,52 +1,50 @@
 # Kudu
 
-## On the mac, you can use Pow
+A feedback service that handles
+* classic kudos ("+1")
+* upvote, downvote, and neutral ("+1", "-1", and "0"),
+* possibly a set of arbitrary feedback categories, such as ["fascinating", "funny", "boring", "moving",...]
+  These could be implemented as bitmasks (e.g. "fascinating" => 0, "funny" => "1", "boring" => 2, "moving" => 4)
 
-    curl get.pow.cx | sh
-    cd ~/.pow
-    ln -s /Users/me/mycode/projectname
+## Terminology
 
+A single identity's score bestowed upon a single post is known as an *ack*.
 
-## Deployment
-When you know which servers they should be deployed to, edit
+## Scores
 
-    config/deploy/staging.rb
-    config/deploy/production.rb
-
-
-score (summen av alle stemmene)
-count (antallet stemmer totalt)
-negative (negative stemmer)
-positive (positive stemmer)
-controversiality = ratio mellom positive og negative stemmer der vi alltid deler det minste tallet på det største tallet slik at verdien ligger mellom 0 (full enighet) og 1 (total uenighet)
-rank (within a collection? realm, too?)
+- _score_ sum of all acks
+- _count_ count of all acks
+- _negative_ count of -1 acks
+- _positive_ count of +1 acks
+- _controversiality_ ratio between positive and negative acks
+- _rank_ rank within a given collection
 
 ## What it should do
 
 The realm and identity of the requestor is determined through the session, which is provided either as a parameter in the query
 
-    /kudu/v1/feedback post=mittap.progdebatt.theme1.prop3&score=+1&session=kewjwkefhwljfhbwelfjhe
+    kudu.dev/v1/ack post=mittap.progdebatt.theme1.prop3&score=+1&session=kewjwkefhwljfhbwelfjhe
 
 or in a cookie called checkpoint.session
 
 ## API
 
 * give kudos
-  POST kudu.dev/v1/feedback data="score=-1&session=abc&post=uid1"
+  POST kudu.dev/v1/ack data="score=-1&session=abc&post=uid1"
   => 201
 
 * delete kudos (make sure user requesting delete is kudos creator or a realm god)
-  DELETE kudu.dev/v1/feedback data="post=uid1&session=abc" # deletes the kudo matching post=uid, identity belonging to session
-  DELETE kudu.dev/v1/feedback data="post=uid1&identity=7&session=abc" # deletes the kudo matching post=uid, session is god identity
+  DELETE kudu.dev/v1/ack data="post=uid1&session=abc" # deletes the kudo matching post=uid, identity belonging to session
+  DELETE kudu.dev/v1/ack data="post=uid1&identity=7&session=abc" # deletes the kudo matching post=uid, session is god identity
   => 200
 
-For queries against /feedback, the response is the summary of kudos per post
+For queries against /ack, the response is the summary of kudos per post
     (score, count, negative, positive, contro) + identites,realm,post uid,collection
 
-  GET kudu.dev/v1/feedback?collection=oa:birthday
-  GET kudu.dev/v1/feedback?posts=uid1,uid2,uid3
+  GET kudu.dev/v1/ack?collection=oa:birthday
+  GET kudu.dev/v1/ack?posts=uid1,uid2,uid3
 
-* get post & score ranked withing a collection (pagination probably required)
+* get scores for posts ranked withing a collection (pagination probably required)
   GET kudu.dev/v1/scores?collection=oa:birthday
   GET kudu.dev/v1/scores?posts=uid1,uid2,uid3
 
@@ -55,8 +53,8 @@ For queries against /feedback, the response is the summary of kudos per post
   GET  kudu.dev/v1/scores?posts=uid1,uid2,uid3
 
 * all kudos given by an identity within a realm or collection
-  GET  kudu.dev/v1/feedback?identity=1 # by identity 1 within realm
-  GET  kudu.dev/v1/feedback?collection=abc&identity=1 # by identity 1 within collection abc
+  GET  kudu.dev/v1/ack?identity=1 # by identity 1 within realm
+  GET  kudu.dev/v1/ack?collection=abc&identity=1 # by identity 1 within collection abc
 
 * hente ut alle kudu én person har gitt innenfor et realm eller en collection
 
@@ -64,3 +62,16 @@ ja, så scores er alltid score, count, negative, positive, contro
 hvis jeg sier /kudu/scores og poster en lang liste med post-id'er får jeg en hash med alle disse scorene for alle postene jeg ba om
 hvis jeg ber om det får jeg med en liste med identity-id'er også
 
+## setup, notes
+
+### On the mac, you can use Pow
+
+    curl get.pow.cx | sh
+    cd ~/.pow
+    ln -s /Users/me/mycode/projectname
+
+### Deployment
+When you know which servers they should be deployed to, edit
+
+    config/deploy/staging.rb
+    config/deploy/production.rb
