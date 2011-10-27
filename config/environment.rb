@@ -11,3 +11,5 @@ environment = ENV['RACK_ENV'] || "development"
 Tire::Model::Search.index_prefix  "kudu_#{environment.to_s.downcase}"
 
 ActiveRecord::Base.establish_connection($config[environment])
+
+require './config/initializers/inflections'
