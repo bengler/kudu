@@ -9,5 +9,3 @@ $config = YAML::load(File.open("config/database.yml"))
 environment = ENV['RACK_ENV'] || "development"
 
 ActiveRecord::Base.establish_connection($config[environment])
-
-require './config/initializers/inflections'
