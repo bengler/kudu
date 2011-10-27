@@ -5,7 +5,6 @@ gem 'sinatra-activerecord'
 gem 'activerecord', :require => 'active_record'
 gem 'yajl-ruby'
 gem 'pg'
-gem 'tire', '~> 0.3.4'
 gem 'logger'
 
 group :development, :test do
