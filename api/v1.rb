@@ -70,7 +70,7 @@ class KuduV1 < Sinatra::Base
     elsif params[:post]
       result = Ack.find_by_post_uid(params[:post])
     elsif params[:posts]
-      result = Ack.find_all_by_post_uid(params[:posts])
+      result = Ack.find_all_by_post_uid(params[:posts].split(","))
     end
     response.status = 200
     result.to_json
