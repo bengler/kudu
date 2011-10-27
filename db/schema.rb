@@ -13,32 +13,11 @@
 
 ActiveRecord::Schema.define(:version => 20110908074457) do
 
-  create_table "archives", :force => true do |t|
-    t.text     "name",       :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "photos", :force => true do |t|
-    t.text     "archive"
-    t.text     "uid"
-    t.float    "lon"
-    t.float    "lat"
-    t.text     "people"
-    t.text     "location"
-    t.integer  "year"
-    t.integer  "month"
-    t.integer  "day"
-    t.text     "title"
-    t.text     "description"
-    t.text     "raw_metadata"
-    t.text     "time_of_day"
-    t.text     "time_of_year"
-    t.integer  "confidence_level"
-    t.float    "aspect_ratio"
-    t.text     "sizes"
-    t.datetime "taken_at"
-    t.datetime "deleted_at"
+  create_table "kudos", :force => true do |t|
+    t.text     "post_uid",   :null => false
+    t.text     "identity",   :null => false
+    t.text     "collection"
+    t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
