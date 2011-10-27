@@ -13,17 +13,6 @@ Pow
     ln -s /Users/me/mycode/projectname
 
 
-Elastic Search
---------------
-We're using elasticsearch for text indexing.
-Get it here:
-https://github.com/elasticsearch/elasticsearch
-
-and run with
-
-    ./path/to/bin/elasticsearch -f
-
-
 
 Deployment
 ----------
