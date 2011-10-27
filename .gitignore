@@ -1,0 +1,8 @@
+.bundle
+/tmp
+/log
+.DS_Store
+.rvmrc
+*~
+coverage/
+.idea
