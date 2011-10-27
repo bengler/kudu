@@ -1,4 +1,4 @@
-class Kudo < ActiveRecord::Base
+class Ack < ActiveRecord::Base
 
   scope :recent, lambda {|count| order("updated_at desc").limit(count)}
 

@@ -1,7 +1,7 @@
 class InitialSchema < ActiveRecord::Migration
   
   def self.up
-    create_table :kudos do |t|
+    create_table :acks do |t|
       t.text :post_uid, :null => false
       t.text :identity, :null => false
       t.text :collection
@@ -11,7 +11,7 @@ class InitialSchema < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :kudos
+    drop_table :acks
   end
 
 end
