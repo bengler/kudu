@@ -14,20 +14,21 @@
 ActiveRecord::Schema.define(:version => 20110908074457) do
 
   create_table "acks", :force => true do |t|
-    t.integer  "summary_id", :null => false
-    t.integer  "identity",   :null => false
+    t.text     "external_uid", :null => false
+    t.integer  "summary_id",   :null => false
+    t.integer  "identity",     :null => false
     t.integer  "score"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "summaries", :force => true do |t|
-    t.text     "external_uid", :null => false
+    t.text     "external_uid",                :null => false
     t.text     "collection"
-    t.integer  "count"
-    t.integer  "positive"
-    t.integer  "negative"
-    t.integer  "contro"
+    t.integer  "count",        :default => 0
+    t.integer  "positive",     :default => 0
+    t.integer  "negative",     :default => 0
+    t.integer  "contro",       :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
   end
