@@ -38,7 +38,7 @@ class KuduV1 < Sinatra::Base
     halt 412, 'Something went amiss while messing with an Ack'
   end
 
-
+  # just for kicks
   get '/ack/recent' do
     limit = params[:limit] || 10
     Ack.recent(limit).to_json
@@ -68,7 +68,7 @@ class KuduV1 < Sinatra::Base
     if params[:collection]
       result = Ack.where(:collection => params[:collection]).to_json
     elsif params[:post]
-      result = Ack.find_by_post_uid(params[:post])
+      result = Ack.find_all_by_post_uid(params[:post])
     elsif params[:posts]
       result = Ack.find_all_by_post_uid(params[:posts].split(","))
     end
@@ -80,7 +80,7 @@ class KuduV1 < Sinatra::Base
 
   # TODO: implement this as it should be, using checkpoint goodness
   def identity_from_session
-    "some.user.id"
+    1337
   end
 
 end

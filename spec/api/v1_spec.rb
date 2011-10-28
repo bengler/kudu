@@ -13,18 +13,28 @@ describe 'API v1' do
 
   let(:post_uid) {'l0ngAndFiNeUId4U'}
   let(:another_post_uid) {'l0ngAndFiNeUId4Utoo'}
-  let(:identity) {'some.user.id'}
+  let(:collection) {'lifeloop:oa:bursdag'}
+  let(:identity) { 1337 }
+  let(:another_identity) { 1338 }
 
   context 'GET /ack' do
 
-    it 'finds a single matching ack' do
+    it 'finds acks in collection' do
+      Ack.create!(:post_uid => post_uid, :identity => identity, :collection => collection)
+      Ack.create!(:post_uid => post_uid, :identity => another_identity, :collection => collection)
+      get "/ack?collection=#{collection}"
+      result = JSON.parse(last_response.body)
+      result["ack"]["post_uid"].should eq post_uid
+    end
+
+    it 'finds matching ack for post_uid' do
       Ack.create!(:post_uid => post_uid, :identity => identity)
       get "/ack?post=#{post_uid}"
       result = JSON.parse(last_response.body)
       result["ack"]["post_uid"].should eq post_uid
     end
 
-    it 'finds all matching acks' do
+    it 'finds matching acks for post_uids' do
       Ack.create!(:post_uid => post_uid, :identity => identity)
       Ack.create!(:post_uid => another_post_uid, :identity => identity)
       get "/ack?posts=#{post_uid},#{another_post_uid},nonexistinguid"

@@ -29,20 +29,30 @@ or in a cookie called checkpoint.session
 
 ## API
 
+### Implement these first...
+
 * give kudos
-  POST kudu.dev/v1/ack data="score=-1&session=abc&post=uid1"
-  => 201
+  POST kudu.dev/v1/ack/:uid data="score=-1&session=abc"
+  => 201, return Summary belonging to Ack
 
 * delete kudos (make sure user requesting delete is kudos creator or a realm god)
-  DELETE kudu.dev/v1/ack data="post=uid1&session=abc" # deletes the kudo matching post=uid, identity belonging to session
-  DELETE kudu.dev/v1/ack data="post=uid1&identity=7&session=abc" # deletes the kudo matching post=uid, session is god identity
-  => 200
+  DELETE kudu.dev/v1/ack/:uid data="session=abc" # deletes the kudo matching post=uid, identity belonging to session
+  DELETE kudu.dev/v1/ack/:uid data="identity=7&session=abc" # deletes the kudo matching post=uid, session is god identity
+  => 200, return Summary belonging to Ack
+
+
+
+### Then these...
 
 For queries against /ack, the response is the summary of kudos per post
     (score, count, negative, positive, contro) + identites,realm,post uid,collection
 
   GET kudu.dev/v1/ack?collection=oa:birthday
-  GET kudu.dev/v1/ack?posts=uid1,uid2,uid3
+  GET kudu.dev/v1/ack/:uid
+  GET kudu.dev/v1/ack/:uids
+
+
+### Then these...
 
 * get scores for posts ranked withing a collection (pagination probably required)
   GET kudu.dev/v1/scores?collection=oa:birthday
