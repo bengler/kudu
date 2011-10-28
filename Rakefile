@@ -5,6 +5,13 @@ require 'sinatra/activerecord/rake'
 
 namespace :db do
 
+  desc "bootstrap db user, recreate, run migrations"
+  task :bootstrap do
+    `createuser -sdR kudu`
+    `createdb -O kudu kudu_development`
+    Rake::Task['db:migrate'].invoke
+  end
+
   namespace :schema do
     desc "dump database schema"
     task :dump do
