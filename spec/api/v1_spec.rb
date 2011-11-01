@@ -51,40 +51,30 @@ describe 'API v1' do
       Ack.find_by_external_uid(external_uid).should eq nil
     end
 
+    it 'gets a summary of acks for a single external_uid' do
+      Ack.create!(:external_uid => external_uid, :identity => identity, :score => 1)
+      get "/summary?uid=#{external_uid}"
+      result = JSON.parse(last_response.body)
+      result["results"].first["summary"]["external_uid"].should eq external_uid
+    end
+
+    it 'gets summaries of acks for a list of external_uids' do
+      Ack.create!(:external_uid => external_uid, :identity => identity, :score => 1)
+      Ack.create!(:external_uid => another_external_uid, :identity => identity, :score => 1)
+      Ack.create!(:external_uid => "unwanted_ack", :identity => identity, :score => 1)
+      get "/summary?uids=#{external_uid},#{another_external_uid}"
+      result = JSON.parse(last_response.body)
+      result["results"].count.should eq 2
+      result["results"].first["summary"]["external_uid"].should eq external_uid
+      result["results"].second["summary"]["external_uid"].should eq another_external_uid
+    end
+
+    xit 'gets summaries in a specific collection' do
+      Ack.create!(:external_uid => external_uid, :identity => identity, :score => 1)
+      get "/summary?collection=#{collection}"
+      result = JSON.parse(last_response.body)
+    end
 
   end
-
-  # context 'GET /ack' do
-
-  #   it 'finds acks in collection' do
-  #     Ack.create!(:post_uid => post_uid, :identity => identity, :collection => collection)
-  #     Ack.create!(:post_uid => post_uid, :identity => another_identity, :collection => collection)
-  #     get "/ack?collection=#{collection}"
-  #     result = JSON.parse(last_response.body)
-  #     result["ack"]["post_uid"].should eq post_uid
-  #   end
-
-  #   it 'finds matching ack for post_uid' do
-  #     Ack.create!(:post_uid => post_uid, :identity => identity)
-  #     get "/ack?post=#{post_uid}"
-  #     result = JSON.parse(last_response.body)
-  #     result["ack"]["post_uid"].should eq post_uid
-  #   end
-
-  #   it 'finds matching acks for post_uids' do
-  #     Ack.create!(:post_uid => post_uid, :identity => identity)
-  #     Ack.create!(:post_uid => another_post_uid, :identity => identity)
-  #     get "/ack?posts=#{post_uid},#{another_post_uid},nonexistinguid"
-  #     result = JSON.parse(last_response.body)
-  #     result.count.should eq 2
-  #     #TODO: test if uids are present
-  #   end
-
-  #   it 'yields a 404 on a nonexistant photo' do
-  #     get '/photos?post=nonexistinguid'
-  #     last_response.status.should eq(404)
-  #   end
-
-  # end
 
 end

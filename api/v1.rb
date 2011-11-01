@@ -9,10 +9,14 @@ class KuduV1 < Sinatra::Base
       Log
     end
 
-    # put this in Summary and make it also handle array as input
+    # put this in Summary
     def json_from_summary(summary)
       result = {}
-      result["results"] = [summary] || []
+      if summary.is_a? Array
+        result["results"] = summary || []
+      else
+        result["results"] = [summary] || []
+      end
       result.to_json
     end
 
@@ -20,6 +24,7 @@ class KuduV1 < Sinatra::Base
 
 
   # create or update a single Ack
+  # TODO: figure out how how to transfer params[:collection] to ack.summary 
   post '/ack/:uid' do
     halt 500, "missing params" unless (params[:uid] && params[:score] )
     halt 500, "invalid score" unless Integer(params[:score])
@@ -39,21 +44,19 @@ class KuduV1 < Sinatra::Base
     json_from_summary(ack.summary)
   end
 
-
-
-  # # query for Acks, this probably needs pagination
-  # get '/ack' do
-  #   result = []
-  #   if params[:collection]
-  #     result = Ack.where(:collection => params[:collection]).to_json
-  #   elsif params[:post]
-  #     result = Ack.find_all_by_post_uid(params[:post])
-  #   elsif params[:posts]
-  #     result = Ack.find_all_by_post_uid(params[:posts].split(","))
-  #   end
-  #   response.status = 200
-  #   result.to_json
-  # end
+  # query for Acks, this probably needs pagination
+  get '/summary' do
+    result = nil
+    if params[:collection]
+      result = json_from_summary(Summary.where(:collection => params[:collection]))
+    elsif params[:uid]
+      result = json_from_summary(Summary.find_by_external_uid(params[:uid]))
+    elsif params[:uids]
+      result = json_from_summary(Summary.find_all_by_external_uid(params[:uids].split(",")))
+    end
+    response.status = 200
+    result
+  end
 
   private
 
