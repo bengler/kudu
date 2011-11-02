@@ -59,6 +59,25 @@ describe Summary do
       summary.apply_score! 1
       summary.controversiality.should == 1
      end
+
+     it "is not controversial if everybody agrees" do
+      summary = Summary.create!(:external_uid => external_uid,
+                                :total_ack_count => 100,
+                                :positive_ack_count => 100,
+                                :negative_ack_count => 0)
+      summary.apply_score! 1
+      summary.controversiality.should == 0
+     end
+
+     it "is impossible to determine controversiality if less than a certain number of people have voted" do
+      contro_limit = Summary::CONTRO_LIMIT - 2
+      summary = Summary.create!(:external_uid => external_uid,
+                                :total_ack_count => contro_limit-1,
+                                :positive_ack_count => contro_limit/2,
+                                :negative_ack_count => contro_limit/2)
+      summary.apply_score! 0
+      summary.controversiality.should == nil
+     end
    end
   end
 
