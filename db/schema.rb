@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(:version => 20110908074457) do
     t.integer  "neutral_ack_count",  :default => 0
     t.integer  "positive_score",     :default => 0
     t.integer  "negative_score",     :default => 0
-    t.integer  "controversiality",   :default => 0
+    t.integer  "controversiality"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

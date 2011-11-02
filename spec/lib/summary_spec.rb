@@ -16,66 +16,102 @@ describe Summary do
       it "gets a positive score right" do
         summary = Summary.find_by_external_uid(external_uid)
         summary.apply_score!(1)
-        summary.count.should eq 1
-        summary.positive.should eq 1
-        summary.negative.should eq 0
-        summary.contro.should eq 0
+        summary.total_ack_count.should eq 1
+        summary.positive_ack_count.should eq 1
+        summary.negative_ack_count.should eq 0
+        summary.neutral_ack_count.should eq 0
+        summary.positive_score.should eq 1
+        summary.negative_score.should eq 0
+        summary.controversiality.should eq nil
       end
 
       it "gets a negative score right" do
         summary = Summary.find_by_external_uid(external_uid)
         summary.apply_score!(-1)
-        summary.count.should eq 1
-        summary.positive.should eq 0
-        summary.negative.should eq 1
-        summary.contro.should eq 0
+        summary.total_ack_count.should eq 1
+        summary.positive_ack_count.should eq 0
+        summary.negative_ack_count.should eq 1
+        summary.neutral_ack_count.should eq 0
+        summary.positive_score.should eq 0
+        summary.negative_score.should eq 1
+        summary.controversiality.should eq nil
       end
 
       it "gets a zero score right" do
         summary = Summary.find_by_external_uid(external_uid)
         summary.apply_score!(0)
-        summary.count.should eq 1
-        summary.positive.should eq 0
-        summary.negative.should eq 0
-        summary.contro.should eq 0
+        summary.total_ack_count.should eq 1
+        summary.positive_ack_count.should eq 0
+        summary.negative_ack_count.should eq 0
+        summary.neutral_ack_count.should eq 1
+        summary.positive_score.should eq 0
+        summary.negative_score.should eq 0
+        summary.controversiality.should eq nil
       end
     end
 
-    describe "calculates controversiality" do
-      it "is controversial" do
-        summary = Summary.create!(:external_uid => external_uid, :count => 200, :positive => 100, :negative => 100)
+    # describe "calculates controversiality" do
+    #   it "is controversial" do
+    #     summary = Summary.create!(:external_uid => external_uid, :count => 200, :positive => 100, :negative => 100)
 
-      end
-    end
+    #   end
+    # end
   end
 
   describe "rollback_score!" do
 
     it "gets a positive score right" do
-      summary = Summary.create!(:external_uid => external_uid, :count => 1, :positive => 1, :negative => 0)
+      summary = Summary.create!(:external_uid => external_uid, 
+                                :total_ack_count => 1,
+                                :positive_ack_count => 1,
+                                :negative_ack_count => 0,
+                                :neutral_ack_count => 0,
+                                :positive_score => 1,
+                                :negative_score => 0)
       summary.rollback_score!(1)
-      summary.count.should eq 0
-      summary.positive.should eq 0
-      summary.negative.should eq 0
-      summary.contro.should eq 0
+      summary.total_ack_count.should eq 0
+      summary.positive_ack_count.should eq 0
+      summary.negative_ack_count.should eq 0
+      summary.neutral_ack_count.should eq 0
+      summary.positive_score.should eq 0
+      summary.negative_score.should eq 0
+      summary.controversiality.should eq nil
     end
 
     it "gets a negative score right" do
-      summary = Summary.create!(:external_uid => external_uid, :count => 1, :positive => 0, :negative => 1)
+      summary = Summary.create!(:external_uid => external_uid, 
+                                :total_ack_count => 1,
+                                :positive_ack_count => 0,
+                                :negative_ack_count => 1,
+                                :neutral_ack_count => 0,
+                                :positive_score => 0,
+                                :negative_score => 1)
       summary.rollback_score!(-1)
-      summary.count.should eq 0
-      summary.positive.should eq 0
-      summary.negative.should eq 0
-      summary.contro.should eq 0
+      summary.total_ack_count.should eq 0
+      summary.positive_ack_count.should eq 0
+      summary.negative_ack_count.should eq 0
+      summary.neutral_ack_count.should eq 0
+      summary.positive_score.should eq 0
+      summary.negative_score.should eq 0
+      summary.controversiality.should eq nil
     end
 
     it "gets a zero score right" do
-      summary = Summary.create!(:external_uid => external_uid, :count => 1, :positive => 0, :negative => 0)
+      summary = Summary.create!(:external_uid => external_uid, 
+                                :total_ack_count => 1,
+                                :positive_ack_count => 0,
+                                :negative_ack_count => 0,
+                                :neutral_ack_count => 1,
+                                :positive_score => 0,
+                                :negative_score => 0)
       summary.rollback_score!(0)
-      summary.count.should eq 0
-      summary.positive.should eq 0
-      summary.negative.should eq 0
-      summary.contro.should eq 0
+      summary.total_ack_count.should eq 0
+      summary.positive_ack_count.should eq 0
+      summary.negative_ack_count.should eq 0
+      summary.neutral_ack_count.should eq 0
+      summary.positive_score.should eq 0
+      summary.negative_score.should eq 0
+      summary.controversiality.should eq nil
     end
 
   end

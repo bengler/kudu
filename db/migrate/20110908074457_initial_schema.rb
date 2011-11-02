@@ -10,7 +10,7 @@ class InitialSchema < ActiveRecord::Migration
       t.integer :neutral_ack_count,   :default => 0
       t.integer :positive_score,      :default => 0
       t.integer :negative_score,      :default => 0
-      t.integer :controversiality,    :default => 0
+      t.integer :controversiality
       t.timestamps
     end
 

@@ -32,7 +32,7 @@ describe 'API v1' do
       ack.should_not eq nil
       ack.score.should eq 1
       ack.summary.should_not eq nil
-      ack.summary.count.should eq 1
+      ack.summary.total_ack_count.should eq 1
     end
 
     it 'updates an existing ack and recalculates the summary' do
@@ -42,7 +42,7 @@ describe 'API v1' do
       ack.should_not eq nil
       ack.score.should eq 1
       ack.summary.should_not eq nil
-      ack.summary.count.should eq 2
+      ack.summary.total_ack_count.should eq 2
     end
 
     it 'deletes an ack' do
