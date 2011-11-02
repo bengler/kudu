@@ -8,7 +8,7 @@ ENV['RACK_ENV'] ||= 'development'
 set :environment, ENV['RACK_ENV'].to_sym
 
 api = lambda do |env|
-  info = {:available_endpoints => ['/api/v1']}
+  info = {:available_endpoints => ['/api/kudu/v1']}
   return [200, {"Content-Type" => "application/json"}, [info.to_json]]
 end
 
@@ -29,6 +29,6 @@ map '/test' do
   run test
 end
 
-map "/api/v1" do
+map "/api/kudu/v1" do
   run KuduV1
 end
