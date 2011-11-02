@@ -69,12 +69,6 @@ describe 'API v1' do
       result["results"].second["summary"]["external_uid"].should eq another_external_uid
     end
 
-    xit 'gets summaries in a specific collection' do
-      Ack.create!(:external_uid => external_uid, :identity => identity, :score => 1)
-      get "/summary?collection=#{collection}"
-      result = JSON.parse(last_response.body)
-    end
-
   end
 
 end
