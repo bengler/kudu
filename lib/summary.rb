@@ -39,7 +39,7 @@ class Summary < ActiveRecord::Base
 
   def calculate_controversiality
     contro = nil
-    if self.positive_ack_count > Summary::CONTRO_LIMIT && self.negative_ack_count > Summary::CONTRO_LIMIT
+    if self.positive_ack_count + self.negative_ack_count > Summary::CONTRO_LIMIT
       values = [self.positive_ack_count.to_f, self.negative_ack_count.to_f]
       contro = values.min / values.max
     end
