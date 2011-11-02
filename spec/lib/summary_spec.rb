@@ -8,34 +8,45 @@ describe Summary do
 
   describe "apply_score!" do
 
-    before :each do
-      Summary.create!(:external_uid => external_uid)
-    end
-    
-    it "gets a positive score right" do
-      summary = Summary.find_by_external_uid(external_uid)
-      summary.apply_score!(1)
-      summary.count.should eq 1
-      summary.positive.should eq 1
-      summary.negative.should eq 0
+    describe "calculates count, positive and negative" do
+      before :each do
+        Summary.create!(:external_uid => external_uid)
+      end
+
+      it "gets a positive score right" do
+        summary = Summary.find_by_external_uid(external_uid)
+        summary.apply_score!(1)
+        summary.count.should eq 1
+        summary.positive.should eq 1
+        summary.negative.should eq 0
+        summary.contro.should eq 0
+      end
+
+      it "gets a negative score right" do
+        summary = Summary.find_by_external_uid(external_uid)
+        summary.apply_score!(-1)
+        summary.count.should eq 1
+        summary.positive.should eq 0
+        summary.negative.should eq 1
+        summary.contro.should eq 0
+      end
+
+      it "gets a zero score right" do
+        summary = Summary.find_by_external_uid(external_uid)
+        summary.apply_score!(0)
+        summary.count.should eq 1
+        summary.positive.should eq 0
+        summary.negative.should eq 0
+        summary.contro.should eq 0
+      end
     end
 
-    it "gets a negative score right" do
-      summary = Summary.find_by_external_uid(external_uid)
-      summary.apply_score!(-1)
-      summary.count.should eq 1
-      summary.positive.should eq 0
-      summary.negative.should eq 1
-    end
+    describe "calculates controversiality" do
+      it "is controversial" do
+        summary = Summary.create!(:external_uid => external_uid, :count => 200, :positive => 100, :negative => 100)
 
-    it "gets a zero score right" do
-      summary = Summary.find_by_external_uid(external_uid)
-      summary.apply_score!(0)
-      summary.count.should eq 1
-      summary.positive.should eq 0
-      summary.negative.should eq 0
+      end
     end
-
   end
 
   describe "rollback_score!" do
@@ -46,6 +57,7 @@ describe Summary do
       summary.count.should eq 0
       summary.positive.should eq 0
       summary.negative.should eq 0
+      summary.contro.should eq 0
     end
 
     it "gets a negative score right" do
@@ -54,6 +66,7 @@ describe Summary do
       summary.count.should eq 0
       summary.positive.should eq 0
       summary.negative.should eq 0
+      summary.contro.should eq 0
     end
 
     it "gets a zero score right" do
@@ -62,6 +75,7 @@ describe Summary do
       summary.count.should eq 0
       summary.positive.should eq 0
       summary.negative.should eq 0
+      summary.contro.should eq 0
     end
 
   end
