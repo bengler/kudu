@@ -4,11 +4,13 @@ class InitialSchema < ActiveRecord::Migration
 
     create_table :summaries do |t|
       t.text :external_uid, :null => false
-      t.text :collection
-      t.integer :count,     :default => 0
-      t.integer :positive,  :default => 0
-      t.integer :negative,  :default => 0
-      t.integer :contro,    :default => 0
+      t.integer :total_ack_count,     :default => 0
+      t.integer :positive_ack_count,  :default => 0
+      t.integer :negative_ack_count,  :default => 0
+      t.integer :neutral_ack_count,   :default => 0
+      t.integer :positive_score,      :default => 0
+      t.integer :negative_score,      :default => 0
+      t.integer :controversiality,    :default => 0
       t.timestamps
     end
 
@@ -25,7 +27,7 @@ class InitialSchema < ActiveRecord::Migration
   end
 
   def self.down
-    execute "alter table acks remove foreign key (summary_id)"
+    execute "alter table acks drop constraint acks_summary_id_fkey"
     drop_table :acks
     drop_table :summaries
   end
