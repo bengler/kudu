@@ -50,12 +50,16 @@ describe Summary do
       end
     end
 
-    # describe "calculates controversiality" do
-    #   it "is controversial" do
-    #     summary = Summary.create!(:external_uid => external_uid, :count => 200, :positive => 100, :negative => 100)
-
-    #   end
-    # end
+    describe "calculates controversiality" do
+     it "is controversial" do
+      summary = Summary.create!(:external_uid => external_uid,
+                                :total_ack_count => 200,
+                                :positive_ack_count => 99,
+                                :negative_ack_count => 100)
+      summary.apply_score! 1
+      summary.controversiality.should == 1
+     end
+   end
   end
 
   describe "rollback_score!" do

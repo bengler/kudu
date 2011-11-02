@@ -5,11 +5,22 @@ require 'sinatra/activerecord/rake'
 
 namespace :db do
 
-  desc "bootstrap db user, recreate, run migrations"
+  desc "bootstrap db user, create, run migrations"
   task :bootstrap do
     `createuser -sdR kudu`
     `createdb -O kudu kudu_development`
     Rake::Task['db:migrate'].invoke
+  end
+
+  desc "drop database"
+  task :nuke do
+    `dropdb kudu_development`
+  end
+
+  desc "nuke and bootstrap"
+  task :recreate do
+    Rake::Task['db:nuke'].invoke
+    Rake::Task['db:bootstrap'].invoke
   end
 
   namespace :schema do
