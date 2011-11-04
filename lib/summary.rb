@@ -7,6 +7,20 @@ class Summary < ActiveRecord::Base
 
   CONTRO_LIMIT = 4.freeze
 
+  def self.calculate
+    summaries = {}
+    Ack.all.each do |ack|
+      summary = summaries[ack.external_uid]
+      unless summary
+        summary = summaries[ack.external_uid] = Summary.new(:external_uid => ack.external_uid)
+      end
+      summary.apply_score! ack.score
+    end
+    summaries.each_pair do |external_uid, summary|
+      $redis.set external_uid, summary.to_json
+    end
+  end
+
   def apply_score!(score)
     self.total_ack_count += 1
     if score > 0

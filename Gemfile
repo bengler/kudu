@@ -4,6 +4,7 @@ gem 'sinatra'
 gem 'sinatra-activerecord'
 gem 'activerecord', :require => 'active_record'
 gem 'yajl-ruby'
+gem 'redis'
 gem 'pg'
 gem 'logger'
 
