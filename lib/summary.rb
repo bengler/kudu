@@ -1,9 +1,5 @@
-class Summary < ActiveRecord::Base
+class Summary
 
-  has_many :acks
-
-  scope :highscoring, lambda {|limit| order("count desc").limit(limit)}
-  scope :in_collection, lambda {|collection| where(:collection => collection)}
 
   CONTRO_LIMIT = 4.freeze
 
@@ -21,6 +17,7 @@ class Summary < ActiveRecord::Base
     end
   end
 
+  #TODO: make it save to redis without gradually loosing sync
   def apply_score!(score)
     self.total_ack_count += 1
     if score > 0
@@ -33,9 +30,9 @@ class Summary < ActiveRecord::Base
     self.positive_score += score if score > 0
     self.negative_score -= score if score < 0
     self.controversiality = self.calculate_controversiality
-    self.save
   end
 
+  #TODO: make it save to redis without gradually loosing sync
   def rollback_score!(score)
     self.total_ack_count -= 1
     if score > 0
@@ -48,7 +45,6 @@ class Summary < ActiveRecord::Base
     self.positive_score -= score if score > 0
     self.negative_score += score if score < 0
     self.controversiality = self.calculate_controversiality
-    self.save
   end
 
   def calculate_controversiality
@@ -58,6 +54,36 @@ class Summary < ActiveRecord::Base
       contro = values.min / values.max
     end
     contro
+  end
+
+  def acks
+    Ack.find_all_by_external_uid(self.external_uid)
+  end
+
+
+  # Redis ActiveRecord look-a-likes, maybe refactor these out later
+  def self.find_by_external_uid(external_uid)
+    redis_result = $redis.get external_uid
+    if redis_result
+      Summary.new(JSON.parse(redis_result)['summary'])
+    else
+      nil
+    end  
+  end
+
+  def self.find_or_create_by_external_uid(external_uid)
+    summary = Summary.find_by_external_uid(external_uid)
+    unless summary
+      summary = Summary.create!(:external_uid => external_uid)
+    end
+    summary
+  end
+
+  def self.create!(options)
+    return nil unless options && options["external_uid"]
+    summary = Summary.new(options)
+    $redis.set options["external_uid"], summary.to_json
+    summary
   end
 
 end
