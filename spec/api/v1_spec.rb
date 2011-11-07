@@ -32,7 +32,6 @@ describe 'API v1' do
       ack.should_not eq nil
       ack.score.should eq 1
       ack.summary.should_not eq nil
-      ack.summary.total_ack_count.should eq 1
     end
 
     it 'updates an existing ack and recalculates the summary' do
@@ -42,7 +41,6 @@ describe 'API v1' do
       ack.should_not eq nil
       ack.score.should eq 1
       ack.summary.should_not eq nil
-      ack.summary.total_ack_count.should eq 2
     end
 
     it 'deletes an ack' do
@@ -55,7 +53,7 @@ describe 'API v1' do
       Ack.create!(:external_uid => external_uid, :identity => identity, :score => 1)
       get "/summary?uid=#{external_uid}"
       result = JSON.parse(last_response.body)
-      result["results"].first["summary"]["external_uid"].should eq external_uid
+      result["results"].first["external_uid"].should eq external_uid
     end
 
     it 'gets summaries of acks for a list of external_uids' do
@@ -65,8 +63,8 @@ describe 'API v1' do
       get "/summary?uids=#{external_uid},#{another_external_uid}"
       result = JSON.parse(last_response.body)
       result["results"].count.should eq 2
-      result["results"].first["summary"]["external_uid"].should eq external_uid
-      result["results"].second["summary"]["external_uid"].should eq another_external_uid
+      result["results"].first["external_uid"].should eq external_uid
+      result["results"].second["external_uid"].should eq another_external_uid
     end
 
   end
