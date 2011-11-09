@@ -7,8 +7,8 @@ describe 'API v1' do
     KuduV1
   end
 
-  let(:external_uid) {'l0ngAndFiNeUId4U'}
-  let(:another_external_uid) {'l0ngAndFiNeUId4Utoo'}
+  let(:external_uid) {'post:#l0ngAndFiNeUId4U'}
+  let(:another_external_uid) {'post:#l0ngAndFiNeUId4Utoo'}
   let(:identity) { 1337 }
   let(:another_identity) { 1338 }
 
@@ -22,31 +22,31 @@ describe 'API v1' do
   context 'POST /ack/:uid' do
 
     it 'creates an ack and a summary' do
-      post "/ack/#{external_uid}", positive_ack_request_body_hash
+      post "/ack/#{CGI.escape(external_uid)}", positive_ack_request_body_hash
       ack = Ack.find_by_external_uid(external_uid)
       ack.should_not eq nil
       ack.score.should eq 1
       ack.summary.should_not eq nil
     end
 
-    it 'updates an existing ack and recalculates the summary' do
-      Ack.create!(:external_uid => external_uid, :identity => identity, :score => 0)
-      post "/ack/#{external_uid}", positive_ack_request_body_hash
-      ack = Ack.find_by_external_uid(external_uid)
-      ack.should_not eq nil
-      ack.score.should eq 1
-      ack.summary.should_not eq nil
+    it 'updates an existing summary and recalculates it' do
+      ack = Ack.create!(:external_uid => external_uid, :identity => identity, :score => 0)
+      post "/ack/#{CGI.escape(external_uid)}", positive_ack_request_body_hash
+      summary = Summary.find_by_external_uid(external_uid)
+      summary.should_not eq nil
+      summary.total_ack_count.should eq 1
+      summary.positive_score.should eq 1
     end
 
     it 'deletes an ack' do
       Ack.create!(:external_uid => external_uid, :identity => identity, :score => 1)
-      delete "/ack/#{external_uid}", delete_ack_request_body_hash
+      delete "/ack/#{CGI.escape(external_uid)}", delete_ack_request_body_hash
       Ack.find_by_external_uid(external_uid).should eq nil
     end
 
     it 'gets a summary of acks for a single external_uid' do
       Ack.create!(:external_uid => external_uid, :identity => identity, :score => 1)
-      get "/summary?uid=#{external_uid}"
+      get "/summary?uid=#{CGI.escape(external_uid)}"
       result = JSON.parse(last_response.body)
       result["results"].first["summary"]["external_uid"].should eq external_uid
     end
@@ -55,7 +55,7 @@ describe 'API v1' do
       Ack.create!(:external_uid => external_uid, :identity => identity, :score => 1)
       Ack.create!(:external_uid => another_external_uid, :identity => identity, :score => 1)
       Ack.create!(:external_uid => "unwanted_ack", :identity => identity, :score => 1)
-      get "/summary?uids=#{external_uid},#{another_external_uid}"
+      get "/summary?uids=#{CGI.escape(external_uid)},#{CGI.escape(another_external_uid)}"
       result = JSON.parse(last_response.body)
       result["results"].count.should eq 2
       result["results"].first["summary"]["external_uid"].should eq external_uid

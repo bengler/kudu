@@ -2,7 +2,7 @@
 require "json"
 
 class KuduV1 < Sinatra::Base
-  
+
   helpers do
 
     def logger
@@ -24,20 +24,22 @@ class KuduV1 < Sinatra::Base
 
 
   # Create or update a single Ack
-  post '/ack/:uid' do
-    halt 500, "missing params" unless (params[:uid] && params[:score] )
+  post '/ack/:uid' do |uid|
+    uid = CGI.unescape(uid) if uid
+    halt 500, "missing params" unless (uid && params[:score] )
     halt 500, "invalid score" unless Integer(params[:score])
     identity = identity_from_session
-    ack = Ack.create_or_update(params[:uid], identity, :score => params[:score])
+    ack = Ack.create_or_update(uid, identity, :score => params[:score])
     response.status = ack.new_record? ? 201 : 200
     json_from_summary(ack.summary)
   end
 
   # Delete a single Ack
-  delete '/ack/:uid' do
-    halt 400, "missing params" unless (params[:uid])
+  delete '/ack/:uid' do |uid|
+    uid = CGI.unescape(uid) if uid
+    halt 400, "missing params" unless (uid)
     identity = identity_from_session
-    ack = Ack.find_by_external_uid_and_identity(params[:uid], identity)
+    ack = Ack.find_by_external_uid_and_identity(uid, identity)
     ack.destroy
     response.status = 204
     json_from_summary(ack.summary)
@@ -47,9 +49,11 @@ class KuduV1 < Sinatra::Base
   get '/summary' do
     result = nil
     if params[:uid]
-      result = json_from_summary(Summary.find_by_external_uid(params[:uid]))
+      uid = CGI.unescape(params[:uid])
+      result = json_from_summary(Summary.find_by_external_uid(uid))
     elsif params[:uids]
-      result = json_from_summary(Summary.find_all_by_external_uid(params[:uids].split(",")))
+      uids = params[:uids].split(",").collect {|uid| CGI.unescape(uid) }
+      result = json_from_summary(Summary.find_all_by_external_uid(uids))
     end
     response.status = 200
     result
