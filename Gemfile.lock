@@ -42,7 +42,6 @@ GEM
     rack-test (0.6.1)
       rack (>= 1.0)
     raindrops (0.8.0)
-    redis (2.2.2)
     rspec (2.7.0)
       rspec-core (~> 2.7.0)
       rspec-expectations (~> 2.7.0)
@@ -79,7 +78,6 @@ DEPENDENCIES
   logger
   pg
   rack-test
-  redis
   rspec
   simplecov
   sinatra
