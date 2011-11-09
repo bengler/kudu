@@ -1,5 +1,7 @@
 class Ack < ActiveRecord::Base
 
+  belongs_to :summary
+
   validates_presence_of :score, :external_uid, :identity
 
   scope :recent, lambda {|count| order("updated_at desc").limit(count)}
@@ -8,8 +10,9 @@ class Ack < ActiveRecord::Base
   after_destroy { |record| record.summary.rollback_score!(record.score) }
 
   def create_or_update_summary
-    summary = Summary.find_or_create_by_external_uid(self.external_uid)
-    summary.apply_score!(self.score)
+    sumry = Summary.find_or_create_by_external_uid(self.external_uid)
+    sumry.apply_score!(self.score)
+    self.summary = sumry
   end
 
 
@@ -19,10 +22,6 @@ class Ack < ActiveRecord::Base
     ack.attributes = options
     ack.save!
     ack
-  end
-
-  def summary
-    Summary.find_by_external_uid(self.external_uid)
   end
 
 end

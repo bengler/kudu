@@ -6,7 +6,6 @@ gem 'activerecord', :require => 'active_record'
 gem 'yajl-ruby'
 gem 'redis'
 gem 'pg'
-gem 'redis'
 gem 'logger'
 
 group :development, :test do
