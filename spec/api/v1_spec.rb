@@ -21,6 +21,10 @@ describe 'API v1' do
 
   context 'POST /ack/:uid' do
 
+    before :each do
+      KuduV1.any_instance.stub(:identity_from_session).and_return(DeepStruct.wrap(:id=>1337))
+    end
+
     it 'creates an ack and a summary' do
       post "/ack/#{CGI.escape(external_uid)}", positive_ack_request_body_hash
       ack = Ack.find_by_external_uid(external_uid)

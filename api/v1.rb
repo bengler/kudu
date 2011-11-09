@@ -29,7 +29,7 @@ class KuduV1 < Sinatra::Base
     halt 500, "missing params" unless (uid && params[:score] )
     halt 500, "invalid score" unless Integer(params[:score])
     identity = identity_from_session
-    ack = Ack.create_or_update(uid, identity, :score => params[:score])
+    ack = Ack.create_or_update(uid, identity.id, :score => params[:score])
     response.status = ack.new_record? ? 201 : 200
     json_from_summary(ack.summary)
   end
@@ -39,7 +39,7 @@ class KuduV1 < Sinatra::Base
     uid = CGI.unescape(uid) if uid
     halt 400, "missing params" unless (uid)
     identity = identity_from_session
-    ack = Ack.find_by_external_uid_and_identity(uid, identity)
+    ack = Ack.find_by_external_uid_and_identity(uid, identity.id)
     ack.destroy
     response.status = 204
     json_from_summary(ack.summary)
@@ -66,9 +66,14 @@ class KuduV1 < Sinatra::Base
 
   private
 
-  # TODO: implement this as it should be, using checkpoint goodness
   def identity_from_session
-    1337
+    halt 403 unless request.cookies['checkpoint.session']
+    @pebbles ||= Pebbles::Connector.new(request.cookies['checkpoint.session'])
+    unless @identity
+      res = @pebbles['checkpoint'].get '/identities/me', {}, :host=> request.env['HTTP_X_FORWARDED_HOST']
+      @identity = res.identity
+    end
+    @identity
   end
 
 end
