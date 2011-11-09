@@ -59,6 +59,11 @@ class KuduV1 < Sinatra::Base
     result
   end
 
+  # route for letting the test framework do a single line of logging
+  get '/log/:this' do
+    logger.info params[:this]
+  end
+
   private
 
   # TODO: implement this as it should be, using checkpoint goodness

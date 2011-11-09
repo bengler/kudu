@@ -64,4 +64,8 @@ describe 'API v1' do
 
   end
 
+  it "logs" do
+    get "/log/something"
+  end
+
 end

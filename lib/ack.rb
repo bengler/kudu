@@ -10,7 +10,8 @@ class Ack < ActiveRecord::Base
   after_destroy { |record| record.summary.refresh_from_acks! }
 
   def create_or_update_summary
-    sumry = Summary.find_or_create_by_external_uid(self.external_uid)
+    sumry = Summary.find_by_external_uid(self.external_uid)
+    sumry ||= Summary.new(:external_uid => self.external_uid)
     if sumry.new_record?
       sumry.apply_score(self.score)
     else

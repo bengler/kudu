@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Ack do
 
-  let(:external_uid) {'l0ngAndFiNeUId4U'}
+  let(:external_uid) {'post:#l0ngAndFiNeUId4U'}
 
   describe "create_or_update_summary" do
 

@@ -5,6 +5,14 @@ describe Summary do
   let(:external_uid) {'post:#l0ngAndFiNeUId4U'}
   let(:another_external_uid) {'post:#l0ngAndFiNeUId4Utoo'}
 
+  it "calculates all summaries afresh" do
+    Ack.create!(:external_uid => external_uid, :identity => 1, :score => 1)
+    Ack.create!(:external_uid => external_uid, :identity => 2, :score => 1)
+    Ack.create!(:external_uid => another_external_uid, :identity => 1, :score => 1)
+    Summary.calculate_all
+    Summary.count.should eq 2
+    Summary.find_by_external_uid(external_uid).positive_score.should eq 2
+  end
 
   describe "apply_score" do
 
