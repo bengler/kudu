@@ -85,3 +85,13 @@ When you know which servers they should be deployed to, edit
 
     config/deploy/staging.rb
     config/deploy/production.rb
+
+
+## Then there is the matter of collections/paths/uids
+
+Here are some examples:
+
+  post:mittap.akershus.frittforum#a1b2c3
+  comment:mittap.akershus.frittforum.a1b2c3#7
+  userprofile:mittap#234234
+  realm:#mittap
