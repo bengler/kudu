@@ -81,7 +81,4 @@ describe Summary do
    end
   end
 
-  describe "rollback_score" do
-
-  end
 end
