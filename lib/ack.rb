@@ -4,13 +4,14 @@ class Ack < ActiveRecord::Base
 
   scope :recent, lambda {|count| order("updated_at desc").limit(count)}
 
-  after_save :create_or_update_summary
-  after_destroy :create_or_update_summary # using create_* to ensure redis knows about this summary
+  before_save :create_or_update_summary
+  after_destroy { |record| record.summary.rollback_score!(record.score) }
 
   def create_or_update_summary
     summary = Summary.find_or_create_by_external_uid(self.external_uid)
-    summary.recalculate!
+    summary.apply_score!(self.score)
   end
+
 
   def self.create_or_update(uid, identity, options = {})
     ack = Ack.find_by_external_uid_and_identity(uid, identity)

@@ -30,6 +30,7 @@ class KuduV1 < Sinatra::Base
     identity = identity_from_session
     ack = Ack.create_or_update(params[:uid], identity, :score => params[:score])
     response.status = ack.new_record? ? 201 : 200
+    json_from_summary(ack.summary)
   end
 
   # Delete a single Ack
@@ -39,6 +40,7 @@ class KuduV1 < Sinatra::Base
     ack = Ack.find_by_external_uid_and_identity(params[:uid], identity)
     ack.destroy
     response.status = 204
+    json_from_summary(ack.summary)
   end
 
   # Query for Acks, this probably needs pagination
@@ -47,7 +49,7 @@ class KuduV1 < Sinatra::Base
     if params[:uid]
       result = json_from_summary(Summary.find_by_external_uid(params[:uid]))
     elsif params[:uids]
-      result = json_from_summary(Summary.find_all_by_external_uids(params[:uids].split(",")))
+      result = json_from_summary(Summary.find_all_by_external_uid(params[:uids].split(",")))
     end
     response.status = 200
     result
