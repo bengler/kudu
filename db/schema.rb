@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(:version => 20110908074457) do
 
   create_table "acks", :force => true do |t|
     t.text     "external_uid", :null => false
-    t.integer  "summary_id",   :null => false
+    t.integer  "summary_id"
     t.integer  "identity",     :null => false
     t.integer  "score"
     t.datetime "created_at"

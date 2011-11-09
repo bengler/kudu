@@ -1,5 +1,5 @@
 class InitialSchema < ActiveRecord::Migration
-  
+
   def self.up
 
     create_table :summaries do |t|
@@ -16,7 +16,7 @@ class InitialSchema < ActiveRecord::Migration
 
     create_table :acks do |t|
       t.text :external_uid, :null => false
-      t.integer :summary_id, :null => false
+      t.integer :summary_id
       t.integer :identity, :null => false
       t.integer :score
       t.timestamps

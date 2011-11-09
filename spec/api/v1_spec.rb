@@ -13,11 +13,10 @@ describe 'API v1' do
 
   let(:external_uid) {'l0ngAndFiNeUId4U'}
   let(:another_external_uid) {'l0ngAndFiNeUId4Utoo'}
-  let(:collection) {'lifeloop:oa:bursdag'}
   let(:identity) { 1337 }
   let(:another_identity) { 1338 }
 
-  let(:positive_ack_request_body_hash) { 
+  let(:positive_ack_request_body_hash) {
     { "score" => "+1",
       "session" => "1234"}
   }
@@ -32,7 +31,6 @@ describe 'API v1' do
       ack.should_not eq nil
       ack.score.should eq 1
       ack.summary.should_not eq nil
-      ack.summary.total_ack_count.should eq 1
     end
 
     it 'updates an existing ack and recalculates the summary' do
@@ -42,7 +40,6 @@ describe 'API v1' do
       ack.should_not eq nil
       ack.score.should eq 1
       ack.summary.should_not eq nil
-      ack.summary.total_ack_count.should eq 2
     end
 
     it 'deletes an ack' do

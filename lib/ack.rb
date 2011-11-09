@@ -6,13 +6,21 @@ class Ack < ActiveRecord::Base
 
   scope :recent, lambda {|count| order("updated_at desc").limit(count)}
 
-  before_save :create_or_update_summary
-  after_destroy { |record| record.summary.rollback_score!(record.score) }
+  after_save :create_or_update_summary
+  after_destroy { |record| record.summary.refresh_from_acks! }
 
   def create_or_update_summary
     sumry = Summary.find_or_create_by_external_uid(self.external_uid)
-    sumry.apply_score!(self.score)
-    self.summary = sumry
+    if sumry.new_record?
+      sumry.apply_score(self.score)
+    else
+      sumry.refresh_from_acks!
+    end
+    sumry.save
+    unless self.summary
+      self.summary_id = sumry.id
+      self.save
+    end
   end
 
 
