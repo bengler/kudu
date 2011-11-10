@@ -42,7 +42,8 @@ class KuduV1 < Sinatra::Base
     identity = verified_identity
     ack = Ack.create_or_update(uid, identity.id, :score => params[:score])
     response.status = ack.new_record? ? 201 : 200
-    json_from_summary(ack.summary)
+    ack.save!
+    json_from_summary(ack)
   end
 
   # Delete a single Ack

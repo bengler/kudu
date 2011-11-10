@@ -29,7 +29,6 @@ class Ack < ActiveRecord::Base
     ack = Ack.find_by_external_uid_and_identity(uid, identity)
     ack ||= Ack.new(:external_uid => uid, :identity => identity)
     ack.attributes = options
-    ack.save!
     ack
   end
 
