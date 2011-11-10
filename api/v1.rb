@@ -1,7 +1,5 @@
 # encoding: utf-8
 require "json"
-require 'webmock/rspec'
-require 'vcr'
 
 class KuduV1 < Sinatra::Base
 
