@@ -15,6 +15,8 @@ group :development, :test do
   gem 'rack-test'
   gem 'rack-streaming-proxy', :git => 'https://github.com/origo/rack-streaming-proxy'
   gem 'pebbles', :git => 'git@github.com:origo/pebblebed.git'
+  gem 'webmock'
+  gem 'vcr'
 end
 
 group :deployment do

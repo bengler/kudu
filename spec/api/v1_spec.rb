@@ -22,7 +22,7 @@ describe 'API v1' do
   context 'POST /ack/:uid' do
 
     before :each do
-      KuduV1.any_instance.stub(:identity_from_session).and_return(DeepStruct.wrap(:id=>1337))
+      KuduV1.any_instance.stub(:verified_identity).and_return(DeepStruct.wrap(:id=>1337))
     end
 
     it 'creates an ack and a summary' do
@@ -70,6 +70,25 @@ describe 'API v1' do
 
   it "logs" do
     get "/log/something"
+  end
+
+
+  describe "verified_identity" do
+
+    before(:each) do
+      VCR.config do |c|
+        c.cassette_library_dir = 'spec/fixtures/vcr_cassettes'
+        c.stub_with :webmock
+      end
+    end
+
+    it "verifies that the request contains valid session info" do
+      VCR.use_cassette('v1.verified_identity') do
+        post "/ack/#{CGI.escape(external_uid)}", positive_ack_request_body_hash
+        result = JSON.parse(last_response.body).should_eq DeepStruct.new(:id => identity)
+      end
+    end
+
   end
 
 end
