@@ -34,7 +34,7 @@ describe 'API v1' do
     end
 
     it 'updates an existing summary and recalculates it' do
-      ack = Ack.create!(:external_uid => external_uid, :identity => identity, :score => 0)
+      Ack.create!(:external_uid => external_uid, :identity => identity, :score => 0)
       post "/ack/#{CGI.escape(external_uid)}", positive_ack_request_body_hash
       summary = Summary.find_by_external_uid(external_uid)
       summary.should_not eq nil
@@ -82,10 +82,32 @@ describe 'API v1' do
       end
     end
 
-    it "verifies that the request contains valid session info" do
-      VCR.use_cassette('v1.verified_identity') do
+    it "fails 403 forbidden unless request contains valid session info" do
+      VCR.use_cassette('fail_if_no_session') do
         post "/ack/#{CGI.escape(external_uid)}", positive_ack_request_body_hash
-        result = JSON.parse(last_response.body).should_eq DeepStruct.new(:id => identity)
+        last_response.status.should eq 403
+      end
+    end
+
+    it "fails with 403 forbidden unless it got a valid session" do
+      VCR.use_cassette('fails_if_invalid_user') do
+        env = {
+          'HTTP_X_FORWARDED_HOST' => "checkpoint.dev",
+          :cookie => 'checkpoint.session=1nv@l1d535510nk3y'
+        }
+        post "/ack/#{CGI.escape(external_uid)}", positive_ack_request_body_hash, env
+        last_response.status.should eq 403
+      end
+    end
+
+    it "is all good if session key is valid" do
+      VCR.use_cassette('returns_valid_user') do
+        env = {
+          'HTTP_X_FORWARDED_HOST' => "checkpoint.dev",
+          :cookie => 'checkpoint.session=v@l1d535510nk3y'
+        }
+        post "/ack/#{CGI.escape(external_uid)}", positive_ack_request_body_hash, env
+        last_response.status.should eq 201
       end
     end
 
