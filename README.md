@@ -33,18 +33,18 @@ or in a cookie called checkpoint.session
 
 * give kudos
   POST kudu.dev/v1/ack/:uid data="score=-1&session=abc"
-  => 201, return Summary belonging to Ack
+  => 201, return Item belonging to Ack
 
 * delete kudos (make sure user requesting delete is kudos creator or a realm god)
   DELETE kudu.dev/v1/ack/:uid data="session=abc" # deletes the kudo matching post=uid, identity belonging to session
   DELETE kudu.dev/v1/ack/:uid data="identity=7&session=abc" # deletes the kudo matching post=uid, session is god identity
-  => 200, return Summary belonging to Ack
+  => 200, return Item belonging to Ack
 
 
 
 ### Then these...
 
-For queries against /ack, the response is the summary of kudos per post
+For queries against /ack, the response is the item of kudos per post
     (score, count, negative, positive, contro) + identites,realm,post uid,collection
 
   GET kudu.dev/v1/ack?collection=oa:birthday

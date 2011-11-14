@@ -9,13 +9,13 @@ class KuduV1 < Sinatra::Base
       Log
     end
 
-    # TODO: put this in Summary
-    def json_from_summary(summary)
+    # TODO: put this in Item
+    def json_from_summary(item)
       result = {}
-      if summary.is_a? Array
-        result["results"] = summary || []
+      if item.is_a? Array
+        result["results"] = item || []
       else
-        result["results"] = [summary] || []
+        result["results"] = [item] || []
       end
       result.to_json
     end
@@ -37,13 +37,13 @@ class KuduV1 < Sinatra::Base
 
   end
 
-
   # Create or update a single Ack
   post '/ack/:uid' do |uid|
     uid = CGI.unescape(uid) if uid
     halt 500, "missing params" unless (uid && params[:score] )
     halt 500, "invalid score" unless Integer(params[:score])
-    ack = Ack.create_or_update(uid, require_identity.id, :score => params[:score])
+    item = Item.find_or_create_by_external_uid(uid)
+    ack = Ack.create_or_update(item, require_identity.id, :score => params[:score])
     response.status = ack.new_record? ? 201 : 200
     ack.save!
     json_from_summary(ack)
@@ -53,21 +53,22 @@ class KuduV1 < Sinatra::Base
   delete '/ack/:uid' do |uid|
     uid = CGI.unescape(uid) if uid
     halt 400, "missing params" unless (uid)
-    ack = Ack.find_by_external_uid_and_identity(uid, require_identity.id)
+    item = Item.find_by_external_uid(uid)
+    ack = Ack.find_by_item_id(item.id, require_identity.id)
     ack.destroy
     response.status = 204
-    json_from_summary(ack.summary)
+    json_from_summary(ack.item)
   end
 
   # Query for Acks, this probably needs pagination
-  get '/summary' do
+  get '/item' do
     result = nil
     if params[:uid]
       uid = CGI.unescape(params[:uid])
-      result = json_from_summary(Summary.find_by_external_uid(uid))
+      result = json_from_summary(Item.find_by_external_uid(uid))
     elsif params[:uids]
       uids = params[:uids].split(",").collect {|uid| CGI.unescape(uid) }
-      result = json_from_summary(Summary.find_all_by_external_uid(uids))
+      result = json_from_summary(Item.find_all_by_external_uid(uids))
     end
     response.status = 200
     result

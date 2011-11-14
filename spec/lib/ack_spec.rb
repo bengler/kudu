@@ -4,32 +4,33 @@ describe Ack do
 
   let(:external_uid) {'post:#l0ngAndFiNeUId4U'}
 
-  describe "create_or_update_summary" do
-
-    it "creates a summary if none exists" do
-      Ack.create!(:external_uid => external_uid, :identity => 123, :score => 1)
-      ack = Ack.find_by_external_uid(external_uid)
+  describe "create_or_update_item" do
+    it "creates an item if none exists" do
+      item = Item.create(:external_uid => external_uid)
+      Ack.create!(:item=>item, :identity => 123, :score => 1)
+      ack = Ack.find_by_item_id(item.id)
       ack.should_not eq nil
       ack.score.should eq 1
-      ack.summary.should_not eq nil
+      ack.item.should_not eq nil
     end
 
-    it "updates a summary if such exists" do
-      summary = Summary.create!(:external_uid => external_uid)
-      Ack.create!(:external_uid => external_uid, :identity => 123, :score => 1)
-      ack = Ack.find_by_external_uid(external_uid)
+    it "updates a item if such exists" do
+      item = Item.create!(:external_uid => external_uid)
+      Ack.create!(:item => item, :identity => 123, :score => 1)
+      ack = Ack.find_by_item_id(item.id)
       ack.should_not eq nil
       ack.score.should eq 1
-      ack.summary.should_not eq nil
-      ack.summary.should eq summary
+      ack.item.should_not eq nil
+      ack.item.should eq item
     end
 
-    it "updates a summary if an ack is destroyed" do
-      ack = Ack.create!(:external_uid => external_uid, :identity => 123, :score => 1)
-      ack.summary.positive_score.should eq 1
+    it "updates a item if an ack is destroyed" do
+      item = Item.create(:external_uid => external_uid)
+      ack = Ack.create!(:item => item, :identity => 123, :score => 1)
+      ack.item.positive_score.should eq 1
       ack.destroy
-      summary = Summary.find_by_external_uid external_uid
-      summary.positive_score.should eq 0
+      item = Item.find_by_external_uid external_uid
+      item.positive_score.should eq 0
     end
 
   end
