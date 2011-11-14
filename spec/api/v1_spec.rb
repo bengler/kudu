@@ -23,7 +23,7 @@ describe 'API v1' do
   context 'POST /ack/:uid' do
 
     before :each do
-      KuduV1.any_instance.stub(:verified_identity).and_return(DeepStruct.wrap(:id=>1337))
+      KuduV1.any_instance.stub(:require_identity).and_return(DeepStruct.wrap(:id=>1337))
     end
 
     it 'creates an ack and a summary' do

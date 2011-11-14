@@ -20,13 +20,19 @@ class KuduV1 < Sinatra::Base
       result.to_json
     end
 
-    def verified_identity
-      host = request.env['HTTP_X_FORWARDED_HOST']
-      checkpoint_session = request.cookies['checkpoint.session']
-      halt 403, "Client (#{host}) failed to provide session info" unless checkpoint_session
-      identity = CheckpointClient.identity_from_session(host, checkpoint_session)
+    def checkpoint_session
+      request.cookies['checkpoint.session']
+    end
+
+    def require_identity
+      halt 403, "Client (#{request.host}) failed to provide session info" unless checkpoint_session
+      identity = pebbles.checkpoint.me
       halt 403, "Checkpoint sez: No identity matches #{checkpoint_session}" unless identity
       identity
+    end
+
+    def pebbles
+      @pebbles = Pebbles::Connector.new(checkpoint_session, :host => request.host)
     end
 
   end
@@ -37,8 +43,7 @@ class KuduV1 < Sinatra::Base
     uid = CGI.unescape(uid) if uid
     halt 500, "missing params" unless (uid && params[:score] )
     halt 500, "invalid score" unless Integer(params[:score])
-    identity = verified_identity
-    ack = Ack.create_or_update(uid, identity.id, :score => params[:score])
+    ack = Ack.create_or_update(uid, require_identity.id, :score => params[:score])
     response.status = ack.new_record? ? 201 : 200
     ack.save!
     json_from_summary(ack)
@@ -48,8 +53,7 @@ class KuduV1 < Sinatra::Base
   delete '/ack/:uid' do |uid|
     uid = CGI.unescape(uid) if uid
     halt 400, "missing params" unless (uid)
-    identity = verified_identity
-    ack = Ack.find_by_external_uid_and_identity(uid, identity.id)
+    ack = Ack.find_by_external_uid_and_identity(uid, require_identity.id)
     ack.destroy
     response.status = 204
     json_from_summary(ack.summary)
@@ -74,15 +78,5 @@ class KuduV1 < Sinatra::Base
     logger.info params[:this]
   end
 
-
-  # def identity_from_session
-  #   host = request.env['HTTP_X_FORWARDED_HOST']
-  #   checkpoint_session = request.cookies['checkpoint.session']
-  #   halt 403, "Client (#{host}) failed to provide session info" unless checkpoint_session
-  #   pebbles = Pebbles::Connector.new(checkpoint_session, :host => host)
-  #   res = pebbles['checkpoint'].get '/identities/me', {}
-  #   halt 403, "Checkpoint sez: No identity matches #{checkpoint_session}" unless res.identity
-  #   res.identity
-  # end
 
 end

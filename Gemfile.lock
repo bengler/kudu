@@ -1,10 +1,12 @@
 GIT
   remote: git@github.com:origo/pebblebed.git
-  revision: 287141e51e7c1bf93a24e66d25d052ed7dfc62b5
+  revision: f9af595ddb8787fb38c93dbc9ad70dd37cb8bc59
   specs:
     pebbles (0.0.1)
+      activesupport
       curb
       deepstruct
+      i18n
       nokogiri
       pathbuilder
       queryparams
