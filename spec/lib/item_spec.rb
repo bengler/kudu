@@ -4,16 +4,16 @@ describe Item do
 
   let(:external_uid) {'post:#l0ngAndFiNeUId4U'}
   let(:another_external_uid) {'post:#l0ngAndFiNeUId4Utoo'}
+  let(:external_uid_with_path) {'post:this.is.a.path.to#object_id'}
 
-  it "calculates all items afresh" do
-    item1 = Item.create!(:external_uid => external_uid)
-    item2 = Item.create!(:external_uid => another_external_uid)
-    Ack.create!(:item => item1, :identity => 1, :score => 1)
-    Ack.create!(:item => item1, :identity => 2, :score => 1)
-    Ack.create!(:item => item2, :identity => 1, :score => 1)
-    Item.calculate_all
-    Item.count.should eq 2
-    Item.find_by_external_uid(external_uid).positive_score.should eq 2
+  describe "extract_path_from_uid" do
+    it "extracts path from uid before save" do
+      item1 = Item.create!(:external_uid => external_uid_with_path)
+      item1.path.should == 'this.is.a.path.to'
+    end
+    it "extracts  from uid before save" do
+      item1 = Item.create!(:external_uid => external_uid_with_path)
+    end
   end
 
   describe "apply_score" do

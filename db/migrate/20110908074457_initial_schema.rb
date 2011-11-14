@@ -4,7 +4,7 @@ class InitialSchema < ActiveRecord::Migration
 
     create_table :items do |t|
       t.text    :external_uid,      :null => false
-      t.text    :collection
+      t.text    :path
       t.integer :total_count,       :default => 0
       t.integer :positive_count,    :default => 0
       t.integer :negative_count,    :default => 0

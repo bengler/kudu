@@ -2,6 +2,8 @@ class Item < ActiveRecord::Base
 
   has_many :acks
 
+  before_save :extract_path
+
   CONTRO_LIMIT = 4.freeze
 
 
@@ -51,6 +53,10 @@ class Item < ActiveRecord::Base
       contro = counts.min / counts.max
     end
     contro
+  end
+
+  def extract_path
+    klass, self.path, oid = Pebbles::Uid.parse external_uid
   end
 
 end

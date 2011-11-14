@@ -20,14 +20,14 @@ describe 'API v1' do
   let(:delete_request_body_hash) { {"session" => "1234"} }
 
 
-  context 'POST /ack/:uid' do
+  context 'POST /acks/:uid' do
 
     before :each do
       KuduV1.any_instance.stub(:require_identity).and_return(DeepStruct.wrap(:id=>1337))
     end
 
     it 'creates an ack and a item' do
-      post "/ack/#{CGI.escape(external_uid)}", positive_request_body_hash
+      post "/acks/#{CGI.escape(external_uid)}", positive_request_body_hash
       item = Item.find_by_external_uid(external_uid)
       item.should_not eq nil
       ack = Ack.find_by_item_id(item.id)
@@ -39,7 +39,7 @@ describe 'API v1' do
     it 'updates an existing item and recalculates it' do
       item = Item.create!(:external_uid => external_uid)
       Ack.create!(:item => item, :identity => identity, :score => 0)
-      post "/ack/#{CGI.escape(external_uid)}", positive_request_body_hash
+      post "/acks/#{CGI.escape(external_uid)}", positive_request_body_hash
       item = Item.find_by_external_uid(external_uid)
       item.should_not eq nil
       item.total_count.should eq 1
@@ -49,14 +49,14 @@ describe 'API v1' do
     it 'deletes an ack' do
       item = Item.create!(:external_uid => external_uid)
       Ack.create!(:item => item, :identity => identity, :score => 1)
-      delete "/ack/#{CGI.escape(external_uid)}", delete_request_body_hash
+      delete "/acks/#{CGI.escape(external_uid)}", delete_request_body_hash
       Ack.find_by_item_id(item.id).should eq nil
     end
 
     it 'gets a item of acks for a single external_uid' do
       item = Item.create!(:external_uid => external_uid)
       Ack.create!(:item => item, :identity => identity, :score => 1)
-      get "/item?uid=#{CGI.escape(external_uid)}"
+      get "/items/#{CGI.escape(external_uid)}"
       result = JSON.parse(last_response.body)
       result["results"].first["item"]["external_uid"].should eq external_uid
     end
@@ -68,7 +68,7 @@ describe 'API v1' do
       Ack.create!(:item=>item, :identity => identity, :score => 1)
       Ack.create!(:item=>item_another, :identity => identity, :score => 1)
       Ack.create!(:item=>item_unwanted, :identity => identity, :score => 1)
-      get "/item?uids=#{CGI.escape(external_uid)},#{CGI.escape(another_external_uid)}"
+      get "/items/#{CGI.escape(external_uid)},#{CGI.escape(another_external_uid)}"
       result = JSON.parse(last_response.body)
       result["results"].count.should eq 2
       result["results"].first["item"]["external_uid"].should eq external_uid
@@ -93,7 +93,7 @@ describe 'API v1' do
 
     it "fails 403 forbidden unless request contains valid session info" do
       VCR.use_cassette('fail_if_no_session') do
-        post "/ack/#{CGI.escape(external_uid)}", positive_request_body_hash
+        post "/acks/#{CGI.escape(external_uid)}", positive_request_body_hash
         last_response.status.should eq 403
       end
     end
@@ -104,7 +104,7 @@ describe 'API v1' do
           'HTTP_X_FORWARDED_HOST' => "checkpoint.dev",
           :cookie => 'checkpoint.session=1nv@l1d535510nk3y'
         }
-        post "/ack/#{CGI.escape(external_uid)}", positive_request_body_hash, env
+        post "/acks/#{CGI.escape(external_uid)}", positive_request_body_hash, env
         last_response.status.should eq 403
       end
     end
@@ -115,7 +115,7 @@ describe 'API v1' do
           'HTTP_X_FORWARDED_HOST' => "checkpoint.dev",
           :cookie => 'checkpoint.session=v@l1d535510nk3y'
         }
-        post "/ack/#{CGI.escape(external_uid)}", positive_request_body_hash, env
+        post "/acks/#{CGI.escape(external_uid)}", positive_request_body_hash, env
         last_response.status.should eq 201
       end
     end

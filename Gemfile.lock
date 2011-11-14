@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:origo/pebblebed.git
-  revision: 37faa1a02583f2df722f8fcc818adc5cc59f2ae8
+  revision: 1abfbfc620bd6af3bfab420cf8881d2ee9c996f2
   specs:
     pebbles (0.0.1)
       activesupport

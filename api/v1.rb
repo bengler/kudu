@@ -9,17 +9,6 @@ class KuduV1 < Sinatra::Base
       Log
     end
 
-    # TODO: put this in Item
-    def json_from_summary(item)
-      result = {}
-      if item.is_a? Array
-        result["results"] = item || []
-      else
-        result["results"] = [item] || []
-      end
-      result.to_json
-    end
-
     def checkpoint_session
       request.cookies['checkpoint.session']
     end
@@ -38,7 +27,13 @@ class KuduV1 < Sinatra::Base
   end
 
   # Create or update a single Ack
-  post '/ack/:uid' do |uid|
+  get '/acks' do
+    Ack.all.to_json
+  end
+
+
+  # Create or update a single Ack
+  post '/acks/:uid' do |uid|
     uid = CGI.unescape(uid) if uid
     halt 500, "missing params" unless (uid && params[:score] )
     halt 500, "invalid score" unless Integer(params[:score])
@@ -46,32 +41,31 @@ class KuduV1 < Sinatra::Base
     ack = Ack.create_or_update(item, require_identity.id, :score => params[:score])
     response.status = ack.new_record? ? 201 : 200
     ack.save!
-    json_from_summary(ack)
+    {:results => [ack]}.to_json
   end
 
   # Delete a single Ack
-  delete '/ack/:uid' do |uid|
+  delete '/acks/:uid' do |uid|
     uid = CGI.unescape(uid) if uid
     halt 400, "missing params" unless (uid)
     item = Item.find_by_external_uid(uid)
     ack = Ack.find_by_item_id(item.id, require_identity.id)
     ack.destroy
     response.status = 204
-    json_from_summary(ack.item)
+    {:results => [ack]}.to_json
   end
 
   # Query for Acks, this probably needs pagination
-  get '/item' do
-    result = nil
-    if params[:uid]
-      uid = CGI.unescape(params[:uid])
-      result = json_from_summary(Item.find_by_external_uid(uid))
-    elsif params[:uids]
-      uids = params[:uids].split(",").collect {|uid| CGI.unescape(uid) }
-      result = json_from_summary(Item.find_all_by_external_uid(uids))
-    end
-    response.status = 200
-    result
+  get '/items/:uids' do
+    uids = params[:uids].split(",").collect {|uid| CGI.unescape(uid) }
+    {:results => Item.find_all_by_external_uid(uids)}.to_json
+  end
+
+  # Query for Acks, this probably needs pagination
+  get '/items' do
+    scope = Item.scoped.limit(params[:limit] || 10).offset(params[:offset] || 0)
+    scope = scope.where(:path => params[:path]) if params[:path]
+    {:results => scope}.to_json
   end
 
   # route for letting the test framework do a single line of logging
