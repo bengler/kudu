@@ -21,7 +21,7 @@ class KuduV1 < Sinatra::Base
     end
 
     def pebbles
-      @pebbles = Pebbles::Connector.new(checkpoint_session, :host => request.host)
+      @pebbles ||= Pebbles::Connector.new(checkpoint_session, :host => request.host)
     end
 
   end
