@@ -33,7 +33,6 @@ class KuduV1 < Sinatra::Base
 
   # Create or update a single Ack
   post '/acks/:uid' do |uid|
-    uid = CGI.unescape(uid) if uid
     halt 500, "missing params" unless (uid && params[:score] )
     halt 500, "invalid score" unless Integer(params[:score])
     item = Item.find_or_create_by_external_uid(uid)
@@ -45,7 +44,6 @@ class KuduV1 < Sinatra::Base
 
   # Delete a single Ack
   delete '/acks/:uid' do |uid|
-    uid = CGI.unescape(uid) if uid
     halt 400, "missing params" unless (uid)
     item = Item.find_by_external_uid(uid)
     ack = Ack.find_by_item_id(item.id, require_identity.id)
@@ -56,7 +54,7 @@ class KuduV1 < Sinatra::Base
 
   # Query for Acks, this probably needs pagination
   get '/items/:uids' do
-    uids = params[:uids].split(",").collect {|uid| CGI.unescape(uid) }
+    uids = params[:uids].split(",")
     {:results => Item.find_all_by_external_uid(uids)}.to_json
   end
 
