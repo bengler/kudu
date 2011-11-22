@@ -26,11 +26,10 @@ class KuduV1 < Sinatra::Base
 
   end
 
-  # Create or update a single Ack
+  # Get all acks
   get '/acks' do
     Ack.all.to_json
   end
-
 
   # Create or update a single Ack
   post '/acks/:uid' do |uid|
@@ -61,7 +60,7 @@ class KuduV1 < Sinatra::Base
     {:results => Item.find_all_by_external_uid(uids)}.to_json
   end
 
-  # Query for Acks, this probably needs pagination
+  # Query for Items, this probably needs pagination
   get '/items' do
     scope = Item.scoped.limit(params[:limit] || 10).offset(params[:offset] || 0)
     scope = scope.where(:path => params[:path]) if params[:path]
@@ -72,6 +71,5 @@ class KuduV1 < Sinatra::Base
   get '/log/:this' do
     logger.info params[:this]
   end
-
 
 end
