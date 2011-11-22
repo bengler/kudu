@@ -6,7 +6,7 @@ gem 'activerecord', :require => 'active_record'
 gem 'yajl-ruby'
 gem 'pg'
 gem 'logger'
-gem 'pebbles', :git => 'git@github.com:origo/pebblebed.git'
+gem 'pebbles', :git => 'git@github.com:benglerpebbles/pebblebed.git'
 
 
 group :development, :test do
@@ -14,7 +14,6 @@ group :development, :test do
   gem 'rspec'
   gem 'rack-test'
   gem 'rack-streaming-proxy', :git => 'https://github.com/origo/rack-streaming-proxy'
-  gem 'pebbles', :git => 'git@github.com:origo/pebblebed.git'
   gem 'webmock'
   gem 'vcr'
 end

@@ -8,8 +8,8 @@ describe 'API v1' do
     KuduV1
   end
 
-  let(:external_uid) {'post:#l0ngAndFiNeUId4U'}
-  let(:another_external_uid) {'post:#l0ngAndFiNeUId4Utoo'}
+  let(:external_uid) {'post:$l0ngAndFiNeUId4U'}
+  let(:another_external_uid) {'post:$l0ngAndFiNeUId4Utoo'}
   let(:identity) { 1337 }
   let(:another_identity) { 1338 }
 
@@ -64,7 +64,7 @@ describe 'API v1' do
     it 'gets items of acks for a list of external_uids' do
       item = Item.create!(:external_uid => external_uid)
       item_another = Item.create!(:external_uid => another_external_uid)
-      item_unwanted = Item.create!(:external_uid => "unwanted_ack")
+      item_unwanted = Item.create!(:external_uid => "post:$unwanted_ack")
       Ack.create!(:item=>item, :identity => identity, :score => 1)
       Ack.create!(:item=>item_another, :identity => identity, :score => 1)
       Ack.create!(:item=>item_unwanted, :identity => identity, :score => 1)

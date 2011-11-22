@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe Item do
 
-  let(:external_uid) {'post:#l0ngAndFiNeUId4U'}
-  let(:another_external_uid) {'post:#l0ngAndFiNeUId4Utoo'}
-  let(:external_uid_with_path) {'post:this.is.a.path.to#object_id'}
+  let(:external_uid) {'post:$l0ngAndFiNeUId4U'}
+  let(:another_external_uid) {'post:$l0ngAndFiNeUId4Utoo'}
+  let(:external_uid_with_path) {'post:this.is.a.path.to$object_id'}
 
   describe "extract_path_from_uid" do
     it "extracts path from uid before save" do
