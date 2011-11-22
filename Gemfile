@@ -7,9 +7,11 @@ gem 'yajl-ruby'
 gem 'pg'
 gem 'logger'
 gem 'pebbles', :git => 'git@github.com:benglerpebbles/pebblebed.git'
-
+gem 'rabl'
 
 group :development, :test do
+  gem 'rake'
+  gem 'bengler_test_helper',  :git => "git@github.com:origo/bengler_test_helper.git"
   gem 'simplecov'
   gem 'rspec'
   gem 'rack-test'
