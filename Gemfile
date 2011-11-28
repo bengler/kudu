@@ -1,7 +1,9 @@
 source 'http://rubygems.org'
 
 gem 'sinatra'
+gem 'sinatra-contrib'
 gem 'sinatra-activerecord'
+gem 'rack-contrib'
 gem 'activerecord', :require => 'active_record'
 gem 'yajl-ruby'
 gem 'pg'
@@ -15,7 +17,6 @@ group :development, :test do
   gem 'simplecov'
   gem 'rspec'
   gem 'rack-test'
-  gem 'rack-streaming-proxy', :git => 'https://github.com/origo/rack-streaming-proxy'
 end
 
 group :deployment do

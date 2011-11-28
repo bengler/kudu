@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:benglerpebbles/pebblebed.git
-  revision: 0bcac5b2e336ba95e424152c1a1450637425a7a7
+  revision: ba98418c47056cc106195359933d7fa60205d8aa
   specs:
     pebbles (0.0.1)
       activesupport
@@ -10,7 +10,8 @@ GIT
       nokogiri
       pathbuilder
       queryparams
-      rack-streaming-proxy
+      rack
+      servolux
       yajl-ruby
 
 GIT
@@ -18,14 +19,6 @@ GIT
   revision: b3640d1406bf00f9b4a6f84e6b778b7c7ebcc5cc
   specs:
     bengler_test_helper (0.0.1)
-
-GIT
-  remote: https://github.com/origo/rack-streaming-proxy
-  revision: 589c5a35034635f9f99a348338cd28374fdda5ae
-  specs:
-    rack-streaming-proxy (1.0.3)
-      rack (>= 1.0)
-      servolux (~> 0.8.1)
 
 GEM
   remote: http://rubygems.org/
@@ -42,6 +35,7 @@ GEM
     activesupport (3.1.1)
       multi_json (~> 1.0)
     arel (2.2.1)
+    backports (2.3.0)
     builder (3.0.0)
     capistrano (2.9.0)
       highline
@@ -54,7 +48,8 @@ GEM
     curb (0.7.16)
     deepstruct (0.0.1)
     diff-lcs (1.1.3)
-    highline (1.6.5)
+    eventmachine (0.12.10)
+    highline (1.6.8)
     i18n (0.6.0)
     kgio (2.6.0)
     logger (1.2.8)
@@ -74,6 +69,8 @@ GEM
       activesupport (>= 2.3.14)
       multi_json (~> 1.0.3)
     rack (1.3.5)
+    rack-contrib (1.1.0)
+      rack (>= 0.9.1)
     rack-protection (1.1.4)
       rack
     rack-test (0.6.1)
@@ -99,6 +96,13 @@ GEM
       tilt (~> 1.3, >= 1.3.3)
     sinatra-activerecord (0.1.3)
       sinatra (>= 0.9.4)
+    sinatra-contrib (1.3.1)
+      backports (>= 2.0)
+      eventmachine
+      rack-protection
+      rack-test
+      sinatra (~> 1.3.0)
+      tilt (~> 1.3)
     tilt (1.3.3)
     tzinfo (0.3.31)
     unicorn (4.1.1)
@@ -119,12 +123,13 @@ DEPENDENCIES
   pebbles!
   pg
   rabl
-  rack-streaming-proxy!
+  rack-contrib
   rack-test
   rake
   rspec
   simplecov
   sinatra
   sinatra-activerecord
+  sinatra-contrib
   unicorn (~> 4.1.1)
   yajl-ruby

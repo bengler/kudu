@@ -1,6 +1,7 @@
 $:.unshift(File.dirname(__FILE__))
 
 require 'config/environment'
+require 'rack/contrib'
 
 ENV['RACK_ENV'] ||= ENV['RAILS_ENV']
 ENV['RACK_ENV'] ||= 'development'
@@ -30,5 +31,7 @@ map '/test' do
 end
 
 map "/api/kudu/v1" do
+  use Rack::PostBodyContentTypeParser
+  use Rack::MethodOverride
   run KuduV1
 end
