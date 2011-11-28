@@ -30,21 +30,35 @@ class KuduV1 < Sinatra::Base
 
   end
 
-  # Get all acks
-  get '/acks' do
-    @acks = Ack.all
-    render :rabl, :acks, :format => :json
+  # Get a single Ack for current identity
+  get '/acks/:uid' do |uid|
+    require_identity
+
+    item = Item.find_by_external_uid(uid)
+    @ack = item ? Ack.find_by_item_id(item.id, current_identity.id) : {}
+    response.status = 200
+    render :rabl, :ack, :format => :json
   end
 
-  # Create or update a single Ack
+  # Create a single Ack for current identity
   post '/acks/:uid' do |uid|
     require_identity
 
-    halt 500, "missing params" unless (uid && params[:score] )
-    halt 500, "invalid score" unless Integer(params[:score])
+    halt 500, "invalid score #{params[:score].inspect}" unless params[:score] and Integer(params[:score])
     item = Item.find_or_create_by_external_uid(uid)
     @ack = Ack.create_or_update(item, current_identity.id, :score => params[:score])
-    response.status = @ack.new_record? ? 201 : 200
+    @ack.save!
+    response.status = 201
+    render :rabl, :ack, :format => :json
+  end
+
+  # Update a single Ack for current identity
+  put '/acks/:uid' do |uid|
+    require_identity
+
+    halt 500, "invalid score #{params[:score].to_s}" unless params[:score] and Integer(params[:score])
+    item = Item.find_or_create_by_external_uid(uid)
+    @ack = Ack.create_or_update(item, current_identity.id, :score => params[:score])
     @ack.save!
     render :rabl, :ack, :format => :json
   end
@@ -53,14 +67,13 @@ class KuduV1 < Sinatra::Base
   delete '/acks/:uid' do |uid|
     require_identity
 
-    halt 400, "missing params" unless (uid)
     item = Item.find_by_external_uid(uid)
     ack = Ack.find_by_item_id(item.id, current_identity.id)
     ack.destroy
     response.status = 204
   end
 
-  # Query for Acks, this probably needs pagination
+  # Query for items/summaries, this probably needs pagination
   get '/items/:uids' do
     uids = params[:uids].split(",")
     @items = Item.find_all_by_external_uid(uids)

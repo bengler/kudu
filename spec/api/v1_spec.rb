@@ -27,22 +27,45 @@ describe 'API v1' do
       Pebbles::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {:id => identity, :god => false, :realm => 'safariman'}))
     end
 
-    describe 'POST /acks/:uid' do
-      it 'creates an ack and a item' do
-        post "/acks/#{external_uid}", a_session.merge(:score => "+1")
-
-        ack = JSON.parse(last_response.body)["ack"]
-
-        Item.find_by_id(ack['item']['id']).total_count.should eq(1)
-        Ack.find_by_id(ack['id']).score.should eq(1)
+    describe 'GET /acks/:uid' do
+      it 'returns an ack for an uid given by current identity' do
+        an_ack
+        get "/acks/#{an_item.external_uid}", a_session
+        last_response.status.should eq 200
+        ack_response = JSON.parse(last_response.body)["ack"]
+        ack_response['id'].should eq an_ack.id
       end
 
       it 'updates an existing item and recalculates it' do
         an_ack
+        put "/acks/#{external_uid}", a_session.merge(:score => 0)
+        last_response.status.should eq 200
+        ack_response = JSON.parse(last_response.body)["ack"]
+        Ack.find_by_id(ack_response['id']).score.should eq(0)
+        item = Item.find_by_external_uid(external_uid)
+        item.total_count.should eq(1)
+        item.positive_score.should eq(0)
+      end
+    end
 
-        post "/acks/#{external_uid}", a_session.merge(:score => 0)
-        ack = JSON.parse(last_response.body)["ack"]
-        Item.find_by_external_uid(ack["item"]["external_uid"]).positive_score.should eq(0)
+    describe 'POST /acks/:uid' do
+      it 'creates an ack and a item' do
+        post "/acks/#{external_uid}", a_session.merge(:score => "+1")
+        last_response.status.should eq 201
+        ack_response = JSON.parse(last_response.body)["ack"]
+        Ack.find_by_id(ack_response['id']).score.should eq(1)
+        Item.find_by_external_uid(external_uid).total_count.should eq(1)
+      end
+
+      it 'updates an existing item and recalculates it' do
+        an_ack
+        put "/acks/#{external_uid}", a_session.merge(:score => 0)
+        last_response.status.should eq 200
+        ack_response = JSON.parse(last_response.body)["ack"]
+        Ack.find_by_id(ack_response['id']).score.should eq(0)
+        item = Item.find_by_external_uid(external_uid)
+        item.total_count.should eq(1)
+        item.positive_score.should eq(0)
       end
     end
 
@@ -61,17 +84,6 @@ describe 'API v1' do
   context "without an identity" do
     before :each do
       Pebbles::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {}))
-    end
-
-    describe "GET /acks" do
-      it 'gets all acks' do
-        an_ack
-        another_ack
-
-        get '/acks'
-        acks = JSON.parse(last_response.body)["acks"]
-        acks.map {|ack| ack["ack"]["item"]["external_uid"] }.should eq([external_uid, another_external_uid])
-      end
     end
 
     describe "GET /items/:uids" do

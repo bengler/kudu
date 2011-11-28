@@ -1,7 +1,3 @@
 object @ack
 
-attributes :id, :score
-
-child :item => :item do
-  attributes :id, :external_uid, :path
-end
+attributes :id, :score, :created_at, :updated_at
