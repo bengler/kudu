@@ -2,6 +2,7 @@
 require "json"
 
 class KuduV1 < Sinatra::Base
+  Rabl.register!
 
   helpers do
 
@@ -13,11 +14,14 @@ class KuduV1 < Sinatra::Base
       request.cookies['checkpoint.session']
     end
 
+    def current_identity
+      pebbles.checkpoint.me
+    end
+
     def require_identity
-      halt 403, "Client (#{request.host}) failed to provide session info" unless checkpoint_session
-      identity = pebbles.checkpoint.me
-      halt 403, "Checkpoint sez: No identity matches #{checkpoint_session}" unless identity
-      identity
+      unless current_identity.respond_to?(:id)
+        halt 403, "Checkpoint: No identity matches #{checkpoint_session}"
+      end
     end
 
     def pebbles
@@ -28,41 +32,39 @@ class KuduV1 < Sinatra::Base
 
   # Get all acks
   get '/acks' do
-    Ack.all.to_json
+    @acks = Ack.all
+    render :rabl, :acks, :format => :json
   end
 
   # Create or update a single Ack
   post '/acks/:uid' do |uid|
+    require_identity
+
     halt 500, "missing params" unless (uid && params[:score] )
     halt 500, "invalid score" unless Integer(params[:score])
     item = Item.find_or_create_by_external_uid(uid)
-    ack = Ack.create_or_update(item, require_identity.id, :score => params[:score])
-    response.status = ack.new_record? ? 201 : 200
-    ack.save!
-    {:results => [ack]}.to_json
+    @ack = Ack.create_or_update(item, current_identity.id, :score => params[:score])
+    response.status = @ack.new_record? ? 201 : 200
+    @ack.save!
+    render :rabl, :ack, :format => :json
   end
 
   # Delete a single Ack
   delete '/acks/:uid' do |uid|
+    require_identity
+
     halt 400, "missing params" unless (uid)
     item = Item.find_by_external_uid(uid)
-    ack = Ack.find_by_item_id(item.id, require_identity.id)
+    ack = Ack.find_by_item_id(item.id, current_identity.id)
     ack.destroy
     response.status = 204
-    {:results => [ack]}.to_json
   end
 
   # Query for Acks, this probably needs pagination
   get '/items/:uids' do
     uids = params[:uids].split(",")
-    {:results => Item.find_all_by_external_uid(uids)}.to_json
-  end
-
-  # Query for Items, this probably needs pagination
-  get '/items' do
-    scope = Item.scoped.limit(params[:limit] || 10).offset(params[:offset] || 0)
-    scope = scope.where(:path => params[:path]) if params[:path]
-    {:results => scope}.to_json
+    @items = Item.find_all_by_external_uid(uids)
+    render :rabl, :items, :format => :json
   end
 
   # route for letting the test framework do a single line of logging
