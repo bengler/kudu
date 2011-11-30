@@ -10,6 +10,7 @@ gem 'pg'
 gem 'logger'
 gem 'pebbles', :git => 'git@github.com:benglerpebbles/pebblebed.git'
 gem 'rabl'
+gem 'unicorn', '~> 4.1.1'
 
 group :development, :test do
   gem 'rake'
@@ -17,10 +18,6 @@ group :development, :test do
   gem 'simplecov'
   gem 'rspec'
   gem 'rack-test'
-end
-
-group :deployment do
-  gem 'unicorn', '~> 4.1.1'
 end
 
 group :development do
