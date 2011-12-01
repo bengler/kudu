@@ -38,7 +38,7 @@ describe 'API v1' do
 
       it 'updates an existing item and recalculates it' do
         an_ack
-        put "/acks/#{external_uid}", a_session.merge(:score => 0)
+        put "/acks/#{external_uid}", a_session.merge(:ack => {:score => 0})
         last_response.status.should eq 200
         ack_response = JSON.parse(last_response.body)["ack"]
         Ack.find_by_id(ack_response['id']).score.should eq(0)
@@ -50,7 +50,7 @@ describe 'API v1' do
 
     describe 'POST /acks/:uid' do
       it 'creates an ack and a item' do
-        post "/acks/#{external_uid}", a_session.merge(:score => "+1")
+        post "/acks/#{external_uid}", a_session.merge(:ack => {:score => "+1"})
         last_response.status.should eq 201
         ack_response = JSON.parse(last_response.body)["ack"]
         Ack.find_by_id(ack_response['id']).score.should eq(1)
@@ -59,7 +59,7 @@ describe 'API v1' do
 
       it 'updates an existing item and recalculates it' do
         an_ack
-        put "/acks/#{external_uid}", a_session.merge(:score => 0)
+        put "/acks/#{external_uid}", a_session.merge(:ack => {:score => 0})
         last_response.status.should eq 200
         ack_response = JSON.parse(last_response.body)["ack"]
         Ack.find_by_id(ack_response['id']).score.should eq(0)
