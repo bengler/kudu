@@ -1,6 +1,6 @@
 GIT
   remote: git@github.com:benglerpebbles/pebblebed.git
-  revision: ba98418c47056cc106195359933d7fa60205d8aa
+  revision: 4d66224178e431059ee52821aa643aa540c922c0
   specs:
     pebbles (0.0.1)
       activesupport
@@ -90,7 +90,7 @@ GEM
     rspec-expectations (2.7.0)
       diff-lcs (~> 1.1.2)
     rspec-mocks (2.7.0)
-    servolux (0.8.1)
+    servolux (0.9.6)
     simplecov (0.5.4)
       multi_json (~> 1.0.3)
       simplecov-html (~> 0.5.3)

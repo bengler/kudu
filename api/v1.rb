@@ -15,7 +15,7 @@ class KuduV1 < Sinatra::Base
     end
 
     def current_identity
-      pebbles.checkpoint.me
+      pebbles.checkpoint.me :session=>checkpoint_session
     end
 
     def require_identity
@@ -44,9 +44,11 @@ class KuduV1 < Sinatra::Base
   post '/acks/:uid' do |uid|
     require_identity
 
-    halt 500, "invalid score #{params[:score].inspect}" unless params[:score] and Integer(params[:score])
+    ack = params[:ack]
+
+    halt 500, "invalid score #{ack['score'].inspect}" unless ack['score'] and Integer(ack['score'])
     item = Item.find_or_create_by_external_uid(uid)
-    @ack = Ack.create_or_update(item, current_identity.id, :score => params[:score])
+    @ack = Ack.create_or_update(item, current_identity.id, :score => ack['score'])
     @ack.save!
     response.status = 201
     render :rabl, :ack, :format => :json
@@ -56,9 +58,11 @@ class KuduV1 < Sinatra::Base
   put '/acks/:uid' do |uid|
     require_identity
 
-    halt 500, "invalid score #{params[:score].to_s}" unless params[:score] and Integer(params[:score])
+    ack = params[:ack]
+
+    halt 500, "invalid score #{ack['score'].to_s}" unless ack['score'] and Integer(ack['score'])
     item = Item.find_or_create_by_external_uid(uid)
-    @ack = Ack.create_or_update(item, current_identity.id, :score => params[:score])
+    @ack = Ack.create_or_update(item, current_identity.id, :score => ack['score'])
     @ack.save!
     render :rabl, :ack, :format => :json
   end
