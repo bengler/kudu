@@ -15,7 +15,7 @@ class KuduV1 < Sinatra::Base
     end
 
     def current_identity
-      pebbles.checkpoint.me :session=>checkpoint_session
+      pebbles.checkpoint.me
     end
 
     def require_identity
