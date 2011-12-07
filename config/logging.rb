@@ -1,22 +1,15 @@
+require 'logger'
+
 Dir.mkdir('log') unless File.exist?('log')
 
-environment = (ENV['RACK_ENV'] || "development").to_s.downcase
+logfile = File.new("log/#{Sinatra::Application.environment}.log", 'a+')
 
-filename = "log/#{environment}.log"
-logfile = File.new(filename, 'a+')
-logfile.sync = true
-Log = Logger.new(filename)
-Log.level = environment == "production" ? Logger::WARN : Logger::DEBUG
-#Log.datetime_format = "%Y-%m-%d %H:%M:%S.%L"
-Log.formatter = lambda do |severity, datetime, progname, msg|
-  "#{severity}: #{datetime}: #{msg}\n"
-end
+Log = Logger.new(logfile)
+Log.level = Sinatra::Application.environment == :production ? Logger::WARN : Logger::DEBUG
+Log.datetime_format = "%Y-%m-%d %H:%M:%S.%L"
 
-if environment == "development"
+unless Sinatra::Application.environment == :test
   STDERR.reopen(logfile)
-  STDOUT.reopen(logfile)
 end
 
 KuduV1.use Rack::CommonLogger, logfile
-Log.info "Logging is up. Writing to #{filename}"
-
