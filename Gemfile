@@ -18,4 +18,6 @@ group :development, :test do
   gem 'simplecov'
   gem 'rspec'
   gem 'rack-test'
+  gem 'capistrano', '=2.8.0'
+  gem 'capistrano-ext', '=1.2.1'
 end
