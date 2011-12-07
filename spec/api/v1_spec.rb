@@ -24,7 +24,7 @@ describe 'API v1' do
     let(:a_session) { {:session => "1234"} }
 
     before :each do
-      Pebbles::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {:id => identity, :god => false, :realm => 'safariman'}))
+      Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {:id => identity, :god => false, :realm => 'safariman'}))
     end
 
     describe 'GET /acks/:uid' do
@@ -83,7 +83,7 @@ describe 'API v1' do
 
   context "without an identity" do
     before :each do
-      Pebbles::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {}))
+      Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {}))
     end
 
     describe "GET /items/:uids" do

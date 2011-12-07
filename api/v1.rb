@@ -1,31 +1,19 @@
 # encoding: utf-8
 require "json"
+require 'pebblebed/sinatra'
 
 class KuduV1 < Sinatra::Base
+  set :root, "#{File.dirname(__FILE__)}/v1"
+
+  register Sinatra::Pebblebed
+  i_am :kudu
+
   Rabl.register!
 
   helpers do
 
     def logger
       Log
-    end
-
-    def checkpoint_session
-      request.cookies['checkpoint.session']
-    end
-
-    def current_identity
-      pebbles.checkpoint.me
-    end
-
-    def require_identity
-      unless current_identity.respond_to?(:id)
-        halt 403, "Checkpoint: No identity matches #{checkpoint_session}"
-      end
-    end
-
-    def pebbles
-      @pebbles ||= Pebbles::Connector.new(checkpoint_session, :host => request.host)
     end
 
   end

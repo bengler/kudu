@@ -10,6 +10,6 @@ environment = ENV['RACK_ENV'] || "development"
 
 ActiveRecord::Base.establish_connection($config[environment])
 
-Pebbles.config do
+Pebblebed.config do
   service 'checkpoint'
 end

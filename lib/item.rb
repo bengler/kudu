@@ -56,7 +56,7 @@ class Item < ActiveRecord::Base
   end
 
   def extract_path
-    klass, self.path, oid = Pebbles::Uid.parse external_uid
+    klass, self.path, oid = Pebblebed::Uid.parse external_uid
   end
 
 end

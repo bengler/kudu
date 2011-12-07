@@ -8,7 +8,7 @@ gem 'activerecord', :require => 'active_record'
 gem 'yajl-ruby'
 gem 'pg'
 gem 'logger'
-gem 'pebbles', :git => 'git@github.com:benglerpebbles/pebblebed.git'
+gem 'pebblebed', :git => 'git@github.com:benglerpebbles/pebblebed.git'
 gem 'rabl'
 gem 'unicorn', '~> 4.1.1'
 
@@ -18,9 +18,4 @@ group :development, :test do
   gem 'simplecov'
   gem 'rspec'
   gem 'rack-test'
-end
-
-group :development do
-  gem 'capistrano'
-  gem 'capistrano-ext'
 end
