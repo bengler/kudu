@@ -1,0 +1,4 @@
+node :ack => ack do
+  attributes :id, :score, :created_at, :updated_at
+end
+

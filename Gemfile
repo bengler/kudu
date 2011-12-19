@@ -9,8 +9,8 @@ gem 'yajl-ruby'
 gem 'pg'
 gem 'logger'
 gem 'pebblebed', :git => 'git@github.com:benglerpebbles/pebblebed.git'
-gem 'rabl'
 gem 'unicorn', '~> 4.1.1'
+gem 'petroglyph', :git => 'git@github.com:benglerpebbles/petroglyph.git'
 
 group :development, :test do
   gem 'rake'
