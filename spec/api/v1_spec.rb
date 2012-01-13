@@ -32,8 +32,8 @@ describe 'API v1' do
         an_ack
         get "/acks/#{an_item.external_uid}", a_session
         last_response.status.should eq 200
-        ack_response = JSON.parse(last_response.body)["ack"]
-        ack_response['id'].should eq an_ack.id
+        ack_response = JSON.parse(last_response.body)["acks"]
+        ack_response[0]['ack']['id'].should eq an_ack.id
       end
 
       it 'updates an existing item and recalculates it' do
