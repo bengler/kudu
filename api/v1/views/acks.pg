@@ -1,0 +1,4 @@
+return [] if acks.nil?
+collection :acks => acks do |ack|
+  partial :ack, :ack => ack
+end

@@ -17,14 +17,14 @@ class KuduV1 < Sinatra::Base
 
   end
 
-  # Get a single Ack for current identity
-  get '/acks/:uid' do |uid|
+  # Get Acks for item(s) for  current identity
+  get '/acks/:uids' do |uids|
     require_identity
-
-    item = Item.find_by_external_uid(uid)
-    ack = item ? Ack.find_by_item_id(item.id, current_identity.id) : {}
+    uids = params[:uids].split(",")
+    items = Item.find_all_by_external_uid(uids)
+    acks = Ack.find_all_by_item_id(items, current_identity.id)
     response.status = 200
-    pg :ack, :locals => {:ack => ack}
+    pg :acks, :locals => {:acks => acks}
   end
 
   # Create a single Ack for current identity
