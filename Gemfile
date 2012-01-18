@@ -11,6 +11,7 @@ gem 'logger'
 gem 'pebblebed', :git => 'git@github.com:benglerpebbles/pebblebed.git'
 gem 'unicorn', '~> 4.1.1'
 gem 'petroglyph', :git => 'git@github.com:benglerpebbles/petroglyph.git'
+gem 'hupper', :git => 'git://github.com/origo/hupper.git'
 
 group :development, :test do
   gem 'rake'
