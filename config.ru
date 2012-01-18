@@ -15,7 +15,3 @@ map "/api/kudu/v1" do
   use Rack::MethodOverride
   run KuduV1
 end
-
-map '/ping' do
-  run lambda { |env| [200, {"Content-Type" => "application/json"}, [{name: "kudu"}.to_json]] }
-end
