@@ -1,3 +1,4 @@
+require "pp"
 class Item < ActiveRecord::Base
 
   has_many :acks
@@ -53,6 +54,50 @@ class Item < ActiveRecord::Base
       contro = counts.min / counts.max
     end
     contro
+  end
+
+  def self.pick_random(already_picked, resultset, number)
+    picked = []
+    until resultset.empty? || picked.size == number
+      item = resultset.delete_at(rand(resultset.length))
+      picked << item unless already_picked.include?(item.id)
+    end
+    picked
+  end
+
+  def self.by_field(path, segment, sample_size, identity)
+    scope = Item.scoped.where(:path => path).order("#{segment.field} #{segment.order} NULLS LAST").limit(sample_size)
+    unless identity.nil?
+      scope = scope
+      .joins("LEFT OUTER JOIN acks on acks.item_id = items.id and acks.identity=#{identity}")
+      .where("acks.id IS NULL")
+    end
+    scope
+  end
+
+  def self.combine_resultsets(path, options, identity)
+    picked = []
+    remaining = []
+    sampled = options.segments.map do |segment|
+      sample_size = segment[:sample_size] && segment.sample_size
+      unless sample_size
+        total = Item.count
+        sample_size = total * 0.01 * Float(segment.percent)
+      end
+      results = Item.by_field(path, segment, sample_size, identity)
+      share_of_total = Float(options.limit) * Float(segment.percent) * 0.01
+      sampled = Item.pick_random(picked, results, share_of_total)
+      picked |= sampled.map(&:id)
+      remaining.concat results
+      puts picked
+      sampled
+    end
+
+    diff = Integer(options.limit) - sampled.size
+    if diff > 0
+      sampled |= Item.pick_random(picked, remaining, diff)
+    end
+    sampled
   end
 
   def extract_path

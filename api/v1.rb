@@ -2,12 +2,19 @@
 require "json"
 require 'pebblebed/sinatra'
 require 'sinatra/petroglyph'
+require 'sinatra/reloader'
 
 class KuduV1 < Sinatra::Base
   set :root, "#{File.dirname(__FILE__)}/v1"
 
   register Sinatra::Pebblebed
   i_am :kudu
+
+  configure :development do
+    register Sinatra::Reloader
+    also_reload 'lib/item.rb'
+    also_reload 'lib/ack.rb'
+  end
 
   helpers do
 
@@ -33,7 +40,8 @@ class KuduV1 < Sinatra::Base
 
     ack = params[:ack]
 
-    halt 500, "invalid score #{ack['score'].inspect}" unless ack['score'] and Integer(ack['score'])
+    halt 500, "Missing ack object in post body" if ack.nil?
+    halt 500, "Invalid score #{ack['score'].inspect}" unless ack['score'] and Integer(ack['score'])
     item = Item.find_or_create_by_external_uid(uid)
     ack = Ack.create_or_update(item, current_identity.id, :score => ack['score'])
     ack.save!
@@ -47,7 +55,7 @@ class KuduV1 < Sinatra::Base
 
     ack = params[:ack]
 
-    halt 500, "invalid score #{ack['score'].to_s}" unless ack['score'] and Integer(ack['score'])
+    halt 500, "Invalid score #{ack['score'].to_s}" unless ack['score'] and Integer(ack['score'])
     item = Item.find_or_create_by_external_uid(uid)
     ack = Ack.create_or_update(item, current_identity.id, :score => ack['score'])
     ack.save!
@@ -71,10 +79,8 @@ class KuduV1 < Sinatra::Base
     pg :items, :locals => {:items => items}
   end
 
-
   get '/ping' do
     failures = []
-
     begin
       ActiveRecord::Base.verify_active_connections!
       ActiveRecord::Base.connection.execute("select 1")
@@ -89,9 +95,24 @@ class KuduV1 < Sinatra::Base
     end
   end
 
+  #example query
+  # i.e. give me a 50/50 mix of the most recent and the least controversial items
+  #  /items/mittap.dittforslag.topic_46/sample?limit=10&controversial=-0.5&new=0.5
+  # /items/mittap.dittforslag.topic_46/sample?limit=10&controversial=0.2&new=0.2&popular=0.2&positive=0.2
+
+  # We need to define boundaries for whats "controversial", "popular", etc
+  # Could this be parameterized? I.e. client specifies that
+
+  get '/items/:path/sample' do |path|
+    halt 500, "Limit is not specified" unless params[:limit]
+
+    items = Item.combine_resultsets(path, DeepStruct.wrap(params), current_identity.id).flatten
+
+    pg :items, :locals => {:items => items}
+  end
+
   # route for letting the test framework do a single line of logging
   get '/log/:this' do
     logger.info params[:this]
   end
-
 end
