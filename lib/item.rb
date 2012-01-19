@@ -97,7 +97,7 @@ class Item < ActiveRecord::Base
     if diff > 0
       sampled |= Item.pick_random(picked, remaining, diff)
     end
-    sampled
+    sampled.shuffle!
   end
 
   def extract_path
