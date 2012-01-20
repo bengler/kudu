@@ -72,6 +72,20 @@ class KuduV1 < Sinatra::Base
     response.status = 204
   end
 
+  # Create an item (to preserve creation date for items)
+  # This is idempotent
+  # todo: write tests
+  put '/items/:uid/touch' do |uid|
+    require_identity
+    item = Item.find_or_create_by_external_uid(uid)
+
+    if item.new_record?
+      item.save!
+      halt 201
+    end
+    response.status = 201
+  end
+
   # Query for items/summaries, this probably needs pagination
   get '/items/:uids' do
     uids = params[:uids].split(",")
