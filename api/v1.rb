@@ -112,7 +112,7 @@ class KuduV1 < Sinatra::Base
   get '/items/:path/sample' do |path|
     halt 500, "Limit is not specified" unless params[:limit]
 
-    items = Item.combine_resultsets(path, DeepStruct.wrap(params), current_identity.id).flatten
+    items = Item.combine_resultsets(path, DeepStruct.wrap(params), current_identity.try(:id)).flatten
 
     pg :items, :locals => {:items => items}
   end
