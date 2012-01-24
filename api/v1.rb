@@ -49,6 +49,13 @@ class KuduV1 < Sinatra::Base
     pg :ack, :locals => {:ack => ack}
   end
 
+  get '/acks/:uid/count' do |uid|
+    # TODO: Implement properly. For now just return the full count to
+    # get dittforslag.no out the door.
+    {:uid => uid, :count => Ack.count, 
+      :note => "Not fully implemented! Returns the full ack count for all realms and paths always."}.to_json
+  end    
+
   # Update a single Ack for current identity
   put '/acks/:uid' do |uid|
     require_identity
