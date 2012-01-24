@@ -80,13 +80,14 @@ class Item < ActiveRecord::Base
     remaining = []
     sampled = options.segments.map do |segment|
       total = Item.count
-      sample_size = total * 0.01 * Float(segment.percent)
+      sample_size = (total * 0.01 * Float(segment.percent)).ceil
+
       results = Item.by_field(path, segment, sample_size, identity)
       share_of_total = Float(options.limit) * Float(segment.percent) * 0.01
-      sampled = Item.pick_random(picked, results, share_of_total)
+
+      sampled = Item.pick_random(picked, results, share_of_total.ceil)
       picked |= sampled.map(&:id)
       remaining.concat results
-      puts picked
       sampled
     end
 
