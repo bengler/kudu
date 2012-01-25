@@ -82,13 +82,27 @@ class KuduV1 < Sinatra::Base
   # Create an item (to preserve creation date for items)
   # This is idempotent
   # todo: write tests
+  # todo: remove duplicate
   put '/items/:uid/touch' do |uid|
     require_identity
     item = Item.find_or_create_by_external_uid(uid)
 
     if item.new_record?
       item.save!
-      halt 201
+    end
+    response.status = 201
+  end
+
+  # Create an item (to preserve creation date for items)
+  # This is idempotent
+  # todo: write tests
+  # todo: remove duplicate
+  post '/items/:uid/touch' do |uid|
+    require_identity
+    item = Item.find_or_create_by_external_uid(uid)
+
+    if item.new_record?
+      item.save!
     end
     response.status = 201
   end
