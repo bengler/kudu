@@ -66,24 +66,29 @@ class Item < ActiveRecord::Base
   end
 
   def self.by_field(path, segment, sample_size, identity)
-    scope = Item.scoped.where(:path => path).order("#{segment.field} #{segment.order} NULLS LAST").limit(sample_size)
-    unless identity.nil?
+    scope = Item.scoped.where(:path => path).order("#{segment[:field]} #{segment[:order]} NULLS LAST").limit(sample_size)
+
+    unless identity.nil? # if identity is given, exclude every items that this identity has voted for already
       scope = scope
       .joins("LEFT OUTER JOIN acks on acks.item_id = items.id and acks.identity=#{identity}")
       .where("acks.id IS NULL")
     end
+    #raise scope.to_sql
     scope
   end
 
-  def self.combine_resultsets(path, options, identity)
+  def self.combine_resultsets(path, segments, limit, identity_id)
     picked = []
     remaining = []
-    sampled = options.segments.map do |segment|
-      total = Item.count
-      sample_size = (total * 0.01 * Float(segment.percent)).ceil
+    sampled = segments.map do |segment|
 
-      results = Item.by_field(path, segment, sample_size, identity)
-      share_of_total = Float(options.limit) * Float(segment.percent) * 0.01
+      sample_size_percent = segment[:sample_size] || segment[:percent]
+      total = Item.count
+      sample_row_num = (total * 0.01 * sample_size_percent).ceil # how many rows to pick randomly from
+      sample_row_num = limit if sample_row_num < limit # always try to return <limit> items
+
+      results = Item.by_field(path, segment, sample_row_num, identity_id)
+      share_of_total = limit * segment[:percent] * 0.01
 
       sampled = Item.pick_random(picked, results, share_of_total.ceil)
       picked |= sampled.map(&:id)
@@ -91,7 +96,7 @@ class Item < ActiveRecord::Base
       sampled
     end
 
-    diff = Integer(options.limit) - sampled.size
+    diff = (limit - sampled.size).to_i
     if diff > 0
       sampled |= Item.pick_random(picked, remaining, diff)
     end

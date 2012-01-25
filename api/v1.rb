@@ -118,8 +118,24 @@ class KuduV1 < Sinatra::Base
 
   get '/items/:path/sample' do |path|
     halt 500, "Limit is not specified" unless params[:limit]
+    halt 500, "Missing segments" unless params[:segments]
 
-    items = Item.combine_resultsets(path, DeepStruct.wrap(params), current_identity.try(:id)).flatten
+    # sanity check parameters
+    allowed_fields = Item.columns.map {|c| c.name}
+    segments = params[:segments].map do |segment|
+      halt 500, "Invalid field '#{segment['field']}'" unless allowed_fields.include? segment['field']
+      halt 500, "Invalid order '#{segment['order']}'" unless segment['order'].nil? || %w(asc desc).include?(segment['order'])
+      {
+        :field => segment['field'],
+        :order => segment['order'],
+        :percent => Float(segment['percent'] || 100).ceil,
+        :sample_size => segment['sample_size'] && Float(segment['sample_size'])
+      }
+    end
+
+    identity_id = params[:include_own] && %w(true t 1 y).include?(params[:include_own]) ? nil : current_identity.try(:id)
+
+    items = Item.combine_resultsets(path, DeepStruct.wrap(segments), Float(params[:limit]), identity_id).flatten
 
     pg :items, :locals => {:items => items}
   end
