@@ -100,22 +100,6 @@ class KuduV1 < Sinatra::Base
     pg :items, :locals => {:items => items}
   end
 
-  get '/ping' do
-    failures = []
-    begin
-      ActiveRecord::Base.verify_active_connections!
-      ActiveRecord::Base.connection.execute("select 1")
-    rescue Exception => e
-      failures << "ActiveRecord: #{e.message}"
-    end
-
-    if failures.empty?
-      halt 200, "kudu"
-    else
-      halt 503, failures.join("\n")
-    end
-  end
-
   get '/items/:path/sample' do |path|
     halt 500, "Limit is not specified" unless params[:limit]
     halt 500, "Missing segments" unless params[:segments]
@@ -138,6 +122,22 @@ class KuduV1 < Sinatra::Base
     items = Item.combine_resultsets(path, DeepStruct.wrap(segments), Float(params[:limit]), identity_id).flatten
 
     pg :items, :locals => {:items => items}
+  end
+
+  get '/ping' do
+    failures = []
+    begin
+      ActiveRecord::Base.verify_active_connections!
+      ActiveRecord::Base.connection.execute("select 1")
+    rescue Exception => e
+      failures << "ActiveRecord: #{e.message}"
+    end
+
+    if failures.empty?
+      halt 200, "kudu"
+    else
+      halt 503, failures.join("\n")
+    end
   end
 
   # route for letting the test framework do a single line of logging
