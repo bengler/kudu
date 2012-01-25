@@ -89,8 +89,9 @@ class KuduV1 < Sinatra::Base
 
     if item.new_record?
       item.save!
+      response.status = 201
     end
-    response.status = 201
+    "Ok"
   end
 
   # Create an item (to preserve creation date for items)
@@ -103,8 +104,9 @@ class KuduV1 < Sinatra::Base
 
     if item.new_record?
       item.save!
+      response.status = 201
     end
-    response.status = 201
+    "Ok"
   end
 
   # Query for items/summaries, this probably needs pagination
