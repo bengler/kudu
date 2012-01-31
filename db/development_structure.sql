@@ -134,6 +134,62 @@ ALTER TABLE ONLY items
 
 
 --
+-- Name: index_acks_on_identity; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_acks_on_identity ON acks USING btree (identity);
+
+
+--
+-- Name: index_acks_on_item_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_acks_on_item_id ON acks USING btree (item_id);
+
+
+--
+-- Name: index_acks_on_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_acks_on_score ON acks USING btree (score);
+
+
+--
+-- Name: index_items_on_controversiality; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_items_on_controversiality ON items USING btree (controversiality);
+
+
+--
+-- Name: index_items_on_external_uid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_items_on_external_uid ON items USING btree (external_uid);
+
+
+--
+-- Name: index_items_on_negative_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_items_on_negative_score ON items USING btree (negative_score);
+
+
+--
+-- Name: index_items_on_path; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_items_on_path ON items USING btree (path);
+
+
+--
+-- Name: index_items_on_positive_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_items_on_positive_score ON items USING btree (positive_score);
+
+
+--
 -- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
