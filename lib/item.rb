@@ -95,6 +95,7 @@ class Item < ActiveRecord::Base
       remaining.concat results
       sampled
     end
+    sampled.flatten!
 
     diff = (limit - sampled.size).to_i
     if diff > 0
