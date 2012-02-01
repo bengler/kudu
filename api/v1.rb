@@ -134,8 +134,16 @@ class KuduV1 < Sinatra::Base
     end
 
     identity_id = params[:include_own] && %w(true t 1 y).include?(params[:include_own]) ? nil : current_identity.try(:id)
+    shuffle = params[:shuffle].nil? || %w(true t 1 y).include?(params[:shuffle])
 
-    items = Item.combine_resultsets(path, DeepStruct.wrap(segments), Float(params[:limit]), identity_id).flatten
+    sane_params = DeepStruct.wrap ({
+      :limit => params[:limit].to_i,
+      :shuffle => shuffle,
+      :segments => segments,
+      :identity_id => identity_id
+    })
+
+    items = Item.combine_resultsets(path, sane_params).flatten
 
     pg :items, :locals => {:items => items}
   end

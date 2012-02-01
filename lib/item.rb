@@ -56,10 +56,11 @@ class Item < ActiveRecord::Base
     contro
   end
 
-  def self.pick_random(already_picked, resultset, number)
+  def self.pick(already_picked, resultset, number, random)
     picked = []
     until resultset.empty? || picked.size == number
-      item = resultset.delete_at(rand(resultset.length))
+      pos = random ? rand(resultset.length) : 0
+      item = resultset.delete_at(pos)
       picked << item unless already_picked.include?(item.id)
     end
     picked
@@ -77,31 +78,33 @@ class Item < ActiveRecord::Base
     scope
   end
 
-  def self.combine_resultsets(path, segments, limit, identity_id)
+  def self.combine_resultsets(path, params)
     picked = []
     remaining = []
-    sampled = segments.map do |segment|
+    sampled = params.segments.map do |segment|
 
       sample_size_percent = segment[:sample_size] || segment[:percent]
       total = Item.count
       sample_row_num = (total * 0.01 * sample_size_percent).ceil # how many rows to pick randomly from
-      sample_row_num = limit if sample_row_num < limit # always try to return <limit> items
+      sample_row_num = params.limit if sample_row_num < params.limit # always try to return <limit> items
 
-      results = Item.by_field(path, segment, sample_row_num, identity_id)
-      share_of_total = limit * segment[:percent] * 0.01
+      results = Item.by_field(path, segment, sample_row_num, params.identity_id)
+      share_of_total = params.limit * segment[:percent] * 0.01
 
-      sampled = Item.pick_random(picked, results, share_of_total.ceil)
+      sampled = Item.pick(picked, results, share_of_total.ceil, params.shuffle)
+
       picked |= sampled.map(&:id)
       remaining.concat results
       sampled
     end
     sampled.flatten!
 
-    diff = (limit - sampled.size).to_i
+    diff = (params.limit - sampled.size).to_i
     if diff > 0
-      sampled |= Item.pick_random(picked, remaining, diff)
+      sampled |= Item.pick(picked, remaining, diff, params.shuffle)
     end
-    sampled.shuffle!
+    sampled.shuffle! if params.shuffle
+    sampled
   end
 
   def extract_path
