@@ -141,7 +141,7 @@ DEPENDENCIES
   rack-contrib!
   rack-test
   rake
-  rspec
+  rspec (~> 2.8)
   simplecov
   sinatra
   sinatra-activerecord

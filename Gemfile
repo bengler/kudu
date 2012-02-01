@@ -17,7 +17,7 @@ gem 'bengler_test_helper',  :git => "git://github.com/origo/bengler_test_helper.
 group :development, :test do
   gem 'rake'
   gem 'simplecov'
-  gem 'rspec'
+  gem 'rspec', '~> 2.8'
   gem 'rack-test'
   gem 'capistrano', '=2.8.0'
   gem 'capistrano-ext', '=1.2.1'
