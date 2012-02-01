@@ -1,12 +1,8 @@
-require "pp"
 class Item < ActiveRecord::Base
 
   has_many :acks
 
   before_save :extract_path
-
-  CONTRO_LIMIT = 4.freeze
-
 
   def self.calculate_all
     Item.all.each do |item|
@@ -17,9 +13,8 @@ class Item < ActiveRecord::Base
   def refresh_from_acks!
     self.reset
     self.acks.all.each do |ack|
-      self.apply_score(ack.score, false)
+      self.apply_score(ack.score)
     end
-    self.controversiality = self.calculate_controversiality
     self.save!
   end
 
@@ -30,10 +25,10 @@ class Item < ActiveRecord::Base
     self.neutral_count = 0
     self.positive_score = 0
     self.negative_score = 0
-    self.controversiality = nil
+    self.controversiality = 0
   end
 
-  def apply_score(score, should_calculate_controversiality = true)
+  def apply_score(score)
     self.total_count += 1
     if score > 0
       self.positive_count += 1
@@ -44,16 +39,7 @@ class Item < ActiveRecord::Base
     end
     self.positive_score += score if score > 0
     self.negative_score -= score if score < 0
-    self.controversiality = self.calculate_controversiality if should_calculate_controversiality
-  end
-
-  def calculate_controversiality
-    contro = nil
-    if self.positive_count + self.negative_count > Item::CONTRO_LIMIT
-      counts = [self.positive_count.to_f, self.negative_count.to_f]
-      contro = counts.min / counts.max
-    end
-    contro
+    self.controversiality = [self.positive_count, self.negative_count].min
   end
 
   def self.pick(already_picked, resultset, number, random)

@@ -32,7 +32,6 @@ describe Item do
         item.neutral_count.should eq 0
         item.positive_score.should eq 1
         item.negative_score.should eq 0
-        item.controversiality.should eq nil
       end
 
       it "gets a negative score right" do
@@ -44,7 +43,6 @@ describe Item do
         item.neutral_count.should eq 0
         item.positive_score.should eq 0
         item.negative_score.should eq 1
-        item.controversiality.should eq nil
       end
 
       it "gets a zero score right" do
@@ -56,37 +54,37 @@ describe Item do
         item.neutral_count.should eq 1
         item.positive_score.should eq 0
         item.negative_score.should eq 0
-        item.controversiality.should eq nil
       end
     end
 
     describe "calculates controversiality" do
-     it "is controversial" do
+     it "define controversiality as the minimum value of positive_count or negative_count" do
       item = Item.create!(:external_uid => external_uid,
-                                :total_count => 200,
-                                :positive_count => 99,
-                                :negative_count => 100)
-      item.apply_score 1
-      item.controversiality.should == 1
-     end
+                                :positive_count => 100,
+                                :negative_count => 40)
 
-     it "is not controversial if everybody agrees" do
+      item.apply_score 1
+      item.controversiality.should eq 40
+
+      100.times { item.apply_score -1}
+
+      item.controversiality.should eq 101
+
+     end
+     it "is not controversial if everyone agrees" do
       item = Item.create!(:external_uid => external_uid,
-                                :total_count => 100,
                                 :positive_count => 100,
                                 :negative_count => 0)
       item.apply_score 1
-      item.controversiality.should == 0
+      item.controversiality.should eq 0
      end
 
-     it "is impossible to determine controversiality if less than a certain number of people have voted" do
-      contro_limit = Item::CONTRO_LIMIT - 2
+     it "is controversial if half of the voters agrees and the other half disagrees" do
       item = Item.create!(:external_uid => external_uid,
-                                :total_count => contro_limit-1,
-                                :positive_count => contro_limit/2,
-                                :negative_count => contro_limit/2)
-      item.apply_score 0
-      item.controversiality.should == nil
+                                :positive_count => 50,
+                                :negative_count => 50)
+      item.apply_score 1
+      item.controversiality.should eq 50
      end
    end
   end
