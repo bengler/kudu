@@ -19,6 +19,6 @@ group :development, :test do
   gem 'simplecov'
   gem 'rspec', '~> 2.8'
   gem 'rack-test'
-  gem 'capistrano', '=2.8.0'
-  gem 'capistrano-ext', '=1.2.1'
+  gem 'capistrano', '~> 2.9.0'
+  gem 'capistrano-bengler', :git => "git@github.com:origo/capistrano-bengler.git"
 end
