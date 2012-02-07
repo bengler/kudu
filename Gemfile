@@ -13,6 +13,7 @@ gem 'unicorn', '~> 4.1.1'
 gem 'petroglyph', :git => 'git://github.com/benglerpebbles/petroglyph.git'
 gem 'hupper', :git => 'git://github.com/origo/hupper.git'
 gem 'bengler_test_helper',  :git => "git://github.com/origo/bengler_test_helper.git"
+gem 'pingable'
 
 group :development, :test do
   gem 'rake'
