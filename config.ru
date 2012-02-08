@@ -13,7 +13,7 @@ use Rack::CommonLogger
 Pingable.active_record_checks!
 
 map "/api/kudu/v1/ping" do
-  use Pingable::Handler, "kudu"
+  run Pingable::Handler.new("kudu")
 end
 
 map "/api/kudu/v1" do
