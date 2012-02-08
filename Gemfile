@@ -14,6 +14,7 @@ gem 'petroglyph', :git => 'git://github.com/benglerpebbles/petroglyph.git'
 gem 'hupper', :git => 'git://github.com/origo/hupper.git'
 gem 'bengler_test_helper',  :git => "git://github.com/origo/bengler_test_helper.git"
 gem 'pingable'
+gem 'o5-logging', :git => "git://github.com/benglerpebbles/o5-logging.git"
 
 group :development, :test do
   gem 'rake'
