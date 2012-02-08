@@ -8,7 +8,6 @@ class KuduV1 < Sinatra::Base
   set :root, "#{File.dirname(__FILE__)}/v1"
 
   register Sinatra::Pebblebed
-  i_am :kudu
 
   configure :development do
     register Sinatra::Reloader
@@ -146,26 +145,5 @@ class KuduV1 < Sinatra::Base
     items = Item.combine_resultsets(path, sane_params).flatten
 
     pg :items, :locals => {:items => items}
-  end
-
-  get '/ping' do
-    failures = []
-    begin
-      ActiveRecord::Base.verify_active_connections!
-      ActiveRecord::Base.connection.execute("select 1")
-    rescue Exception => e
-      failures << "ActiveRecord: #{e.message}"
-    end
-
-    if failures.empty?
-      halt 200, "kudu"
-    else
-      halt 503, failures.join("\n")
-    end
-  end
-
-  # route for letting the test framework do a single line of logging
-  get '/log/:this' do
-    logger.info params[:this]
   end
 end
