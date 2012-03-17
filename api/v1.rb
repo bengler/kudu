@@ -49,10 +49,28 @@ class KuduV1 < Sinatra::Base
   end
 
   get '/acks/:uid/count' do |uid|
-    # TODO: Implement properly. For now just return the full count to
-    # get dittforslag.no out the door.
+    # TODO: Implement properly. For now just return the full count to get dittforslag.no out the door.
     {:uid => uid, :count => Ack.count, 
       :note => "Not fully implemented! Returns the full ack count for all realms and paths always."}.to_json
+  end    
+
+  get '/acks/:uid/stats' do |uid|
+    # TODO: Implement properly. For now just return the full count to get dittforslag.no Admin STATS out the door.    
+    total = Ack.count
+    positive = Ack.where("score > 0").count
+    negative = Ack.where("score < 0").count
+    unique_voters = Ack.select("distinct identity").count
+    avg_votes_per_voter = total.to_f / unique_voters.to_f
+
+    {
+      :uid => uid,
+      :positive_count => positive,
+      :negative_count => negative,
+      :total_count => total,
+      :unique_voters => unique_voters,
+      :avg_votes_per_voter => avg_votes_per_voter,
+      :note => "Not fully implemented! Returns the full ack count for all realms and paths always."
+    }.to_json
   end    
 
   # Update a single Ack for current identity
