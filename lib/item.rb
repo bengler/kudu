@@ -42,6 +42,13 @@ class Item < ActiveRecord::Base
     self.controversiality = [self.positive_count, self.negative_count].min
   end
 
+  def controversiality
+    if read_attribute(:controversiality).nil?
+      write_attribute(:controversiality, [positive_count, negative_count].min)
+    end
+    read_attribute(:controversiality)
+  end
+
   def self.pick(already_picked, resultset, number, random)
     picked = []
     until resultset.empty? || picked.size == number
