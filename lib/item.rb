@@ -3,6 +3,9 @@ class Item < ActiveRecord::Base
   has_many :acks
 
   before_save :extract_path
+  after_initialize :initialize_histogram
+
+  serialize :histogram
 
   def self.calculate_all
     Item.all.each do |item|
@@ -26,6 +29,7 @@ class Item < ActiveRecord::Base
     self.positive_score = 0
     self.negative_score = 0
     self.controversiality = 0
+    self.histogram = {}
   end
 
   def average_score
@@ -38,6 +42,8 @@ class Item < ActiveRecord::Base
   end
 
   def apply_score(score)
+    self.histogram[score] ||= 0
+    self.histogram[score] += 1
     self.total_count += 1
     if score > 0
       self.positive_count += 1
@@ -109,8 +115,12 @@ class Item < ActiveRecord::Base
     sampled
   end
 
+  private
   def extract_path
     klass, self.path, oid = Pebblebed::Uid.parse external_uid
   end
 
+  def initialize_histogram
+    self.histogram ||= {}
+  end
 end
