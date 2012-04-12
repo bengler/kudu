@@ -43,7 +43,7 @@ class Item < ActiveRecord::Base
   end
 
   def controversiality
-    if read_attribute(:controversiality).nil?
+    if read_attribute(:controversiality) == 0
       write_attribute(:controversiality, [positive_count, negative_count].min)
     end
     read_attribute(:controversiality)
