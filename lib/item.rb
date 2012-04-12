@@ -7,6 +7,12 @@ class Item < ActiveRecord::Base
 
   serialize :histogram
 
+  scope :for_path, lambda { |path| where(:path => path) }
+  scope :order_by, lambda { |field, direction| order("#{field} #{direction} NULLS LAST") }
+  scope :exclude_votes_by, lambda { |identity|
+    joins("LEFT OUTER JOIN acks on acks.item_id = items.id and acks.identity=#{identity}").where("acks.id IS NULL")
+  }
+
   class << self
     def calculate_all
       Item.all.each do |item|
@@ -24,15 +30,11 @@ class Item < ActiveRecord::Base
       picked
     end
 
-    def by_field(path, segment, sample_size, identity)
-      scope = Item.scoped.where(:path => path).order("#{segment[:field]} #{segment[:order]} NULLS LAST").limit(sample_size)
-
-      unless identity.nil? # if identity is given, exclude every items that this identity has voted for already
-        scope = scope
-        .joins("LEFT OUTER JOIN acks on acks.item_id = items.id and acks.identity=#{identity}")
-        .where("acks.id IS NULL")
+    def by_field(options = {})
+      scope = Item.scoped.for_path(options[:path]).order_by(options[:order_by], options[:direction]).limit(options[:limit])
+      if options[:identity].present?
+        scope = scope.exclude_votes_by(options[:identity])
       end
-      #raise scope.to_sql
       scope
     end
 
@@ -44,15 +46,17 @@ class Item < ActiveRecord::Base
         sample_size_percent = segment[:sample_size] || segment[:percent]
         total = Item.count
         sample_row_num = (total * 0.01 * sample_size_percent).ceil # how many rows to pick randomly from
-        sample_row_num = params.limit if sample_row_num < params.limit # always try to return <limit> items
+        limit = [sample_row_num, params.limit].max
 
-        results = Item.by_field(path, segment, sample_row_num, params.identity_id)
+        results = Item.by_field(path: path, limit: limit, identity: params.identity_id, order_by: segment[:field], direction: segment[:order])
+
         share_of_total = params.limit * segment[:percent] * 0.01
 
         sampled = Item.pick(picked, results, share_of_total.ceil, params.shuffle)
 
         picked |= sampled.map(&:id)
         remaining.concat results
+
         sampled
       end
       sampled.flatten!
