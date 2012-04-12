@@ -32,6 +32,15 @@ class Item < ActiveRecord::Base
     self.histogram = {}
   end
 
+  def average_score
+    return 0 if total_count == 0
+    total_score / total_count
+  end
+
+  def total_score
+    positive_score - negative_score / total_count
+  end
+
   def apply_score(score)
     self.histogram[score] ||= 0
     self.histogram[score] += 1
