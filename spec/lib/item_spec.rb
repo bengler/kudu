@@ -64,6 +64,22 @@ describe Item do
       its(:average_score) { should eq(0) }
     end
 
+    describe "#reset" do
+      before(:each) do
+        subject.apply_score(9)
+        subject.apply_score(-21)
+        subject.reset
+      end
+
+      its(:total_count) { should eq(0) }
+      its(:positive_count) { should eq(0) }
+      its(:neutral_count) { should eq(0) }
+      its(:negative_count) { should eq(0) }
+      its(:positive_score) { should eq(0) }
+      its(:negative_score) { should eq(0) }
+      its(:controversiality) { should eq(0) }
+    end
+
     describe "controversiality" do
       it "corresponds to the minority of haters" do
         Item.new(:positive_count => 100, :negative_count => 40).controversiality.should eq(40)
