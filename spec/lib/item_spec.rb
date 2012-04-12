@@ -19,6 +19,7 @@ describe Item do
       its(:negative_count) { should eq(0) }
       its(:positive_score) { should eq(0) }
       its(:negative_score) { should eq(0) }
+      its(:histogram) { should eq({}) }
     end
 
     describe "vote up" do
@@ -32,6 +33,7 @@ describe Item do
       its(:negative_count) { should eq(0) }
       its(:positive_score) { should eq(7) }
       its(:negative_score) { should eq(0) }
+      its(:histogram) { should eq({7 => 1}) }
     end
 
     describe "vote down" do
@@ -45,6 +47,7 @@ describe Item do
       its(:negative_count) { should eq(1) }
       its(:positive_score) { should eq(0) }
       its(:negative_score) { should eq(13) }
+      its(:histogram) { should eq({-13 => 1}) }
     end
 
     describe "vote meh" do
@@ -58,6 +61,7 @@ describe Item do
       its(:negative_count) { should eq(0) }
       its(:positive_score) { should eq(0) }
       its(:negative_score) { should eq(0) }
+      its(:histogram) { should eq({0 => 1}) }
     end
 
     describe "#reset" do
@@ -74,6 +78,7 @@ describe Item do
       its(:positive_score) { should eq(0) }
       its(:negative_score) { should eq(0) }
       its(:controversiality) { should eq(0) }
+      its(:histogram) { should eq({}) }
     end
 
     describe "controversiality" do
