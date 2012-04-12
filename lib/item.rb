@@ -41,10 +41,10 @@ class Item < ActiveRecord::Base
     def combine_resultsets(path, params)
       picked = []
       remaining = []
+      total = Item.for_path(path).count
       sampled = params.segments.map do |segment|
 
         sample_size_percent = segment[:sample_size] || segment[:percent]
-        total = Item.count
         sample_row_num = (total * 0.01 * sample_size_percent).ceil # how many rows to pick randomly from
         limit = [sample_row_num, params.limit].max
 
