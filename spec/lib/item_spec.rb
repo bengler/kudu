@@ -19,6 +19,7 @@ describe Item do
       its(:negative_count) { should eq(0) }
       its(:positive_score) { should eq(0) }
       its(:negative_score) { should eq(0) }
+      its(:average_score) { should eq(0) }
     end
 
     describe "vote up" do
@@ -32,6 +33,7 @@ describe Item do
       its(:negative_count) { should eq(0) }
       its(:positive_score) { should eq(7) }
       its(:negative_score) { should eq(0) }
+      its(:average_score) { should eq(7) }
     end
 
     describe "vote down" do
@@ -45,6 +47,7 @@ describe Item do
       its(:negative_count) { should eq(1) }
       its(:positive_score) { should eq(0) }
       its(:negative_score) { should eq(13) }
+      its(:average_score) { should eq(-13) }
     end
 
     describe "vote meh" do
@@ -58,6 +61,7 @@ describe Item do
       its(:negative_count) { should eq(0) }
       its(:positive_score) { should eq(0) }
       its(:negative_score) { should eq(0) }
+      its(:average_score) { should eq(0) }
     end
 
     describe "controversiality" do

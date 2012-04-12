@@ -1,5 +1,5 @@
 collection :items => items do |item|
   node :item => item do
-    attributes :id, :external_uid, :path, :total_count, :positive_count, :negative_count, :neutral_count, :positive_score, :negative_score, :controversiality, :updated_at
+    attributes :id, :external_uid, :path, :total_count, :positive_count, :negative_count, :neutral_count, :positive_score, :negative_score, :average_score, :controversiality, :updated_at
   end
 end

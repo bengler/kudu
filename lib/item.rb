@@ -28,6 +28,15 @@ class Item < ActiveRecord::Base
     self.controversiality = 0
   end
 
+  def average_score
+    return 0 if total_count == 0
+    total_score / total_count
+  end
+
+  def total_score
+    positive_score - negative_score / total_count
+  end
+
   def apply_score(score)
     self.total_count += 1
     if score > 0
