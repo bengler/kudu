@@ -14,8 +14,8 @@ class Segment
     @path = options[:path]
     @randomize = options[:randomize]
     @order_by = options[:field]
-    @percent_of_source = options[:sample_size] || options[:percent] || default_percentage
-    @percent_of_results = options[:percent] || default_percentage
+    @percent_of_source = Float(options[:sample_size] || options[:percent] || default_percentage)
+    @percent_of_results = Float(options[:percent] || default_percentage)
     @exclude_votes_by = options[:exclude_votes_by]
     @valid_filters = options[:valid_filters] || []
   end

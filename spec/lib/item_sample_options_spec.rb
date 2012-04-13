@@ -18,6 +18,10 @@ describe ItemSampleOptions do
     its(:attributes) { should eq(limit: 10, records: 100, path: 'a.b.c', randomize: true, exclude_votes_by: 42, valid_filters: ['valid_filter']) }
   end
 
+  it "handles a string for limit" do
+    ItemSampleOptions.new(default_options.merge(:limit => '13')).limit.should eq(13)
+  end
+
   it "deprecates :shuffle in favor of randomize" do
     segment = ItemSampleOptions.new(default_options.merge(:shuffle => true, :randomize => false))
     segment.randomize.should be_false

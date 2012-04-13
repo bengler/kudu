@@ -124,4 +124,11 @@ describe Segment do
       its(:share_of_results) { should eq(2) }
     end
   end
+
+  context "with strings" do
+    subject { Segment.new(default_options.merge(:percent => '28.1', :sample_size => '81.2')) }
+
+    its(:percent_of_source) { should eq(81.2) }
+    its(:percent_of_results) { should eq(28.1) }
+  end
 end

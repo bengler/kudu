@@ -10,7 +10,7 @@ class ItemSampleOptions
     @records = options[:records]
     @path = options[:path]
     @randomize = truth? options.fetch(:randomize) { options[:shuffle] }
-    @limit = options[:limit]
+    @limit = options[:limit].to_i
     @exclude_votes_by = options.fetch(:exclude_votes_by) { options[:identity_id] unless truth?(options[:include_own]) }
     @raw_segments = options[:segments] || []
     @segments = raw_segments.map do |options|
