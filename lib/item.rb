@@ -38,21 +38,30 @@ class Item < ActiveRecord::Base
       scope
     end
 
+    def valid_filters
+      columns.map(&:name)
+    end
+
     def combine_resultsets(path, params)
+
+      hash_params = params.dup.to_hash
+      total = Item.for_path(path).count
+      options = hash_params.merge(:records => total, :path => path, :valid_filters => valid_filters)
+      segments = ItemSampleOptions.new(options).segments
+
       picked = []
       remaining = []
-      total = Item.for_path(path).count
-      sampled = params.segments.map do |segment|
+      sampled = segments.map do |segment|
 
-        sample_size_percent = segment[:sample_size] || segment[:percent]
-        sample_row_num = (total * 0.01 * sample_size_percent).ceil # how many rows to pick randomly from
-        limit = [sample_row_num, params.limit].max
-
-        results = Item.by_field(path: path, limit: limit, identity: params.identity_id, order_by: segment[:field], direction: segment[:order])
-
-        share_of_total = params.limit * segment[:percent] * 0.01
-
-        sampled = Item.pick(picked, results, share_of_total.ceil, params.shuffle)
+        options = {
+          path: segment.path,
+          limit: segment.limit,
+          exclude_votes_by: segment.exclude_votes_by,
+          order_by: segment.order_by,
+          direction: segment.direction
+        }
+        results = Item.by_field(options)
+        sampled = Item.pick(picked, results, segment.share_of_results, segment.randomize)
 
         picked |= sampled.map(&:id)
         remaining.concat results
@@ -68,7 +77,6 @@ class Item < ActiveRecord::Base
       sampled.shuffle! if params.shuffle
       sampled
     end
-
   end
 
   def refresh_from_acks!
