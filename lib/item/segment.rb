@@ -3,16 +3,25 @@ class Segment
   attr_reader :order_by, :direction, :path, :final_limit, :records, :randomize, :valid_filters,
     :percent_of_source, :share_of_source, :percent_of_results, :share_of_results, :exclude_votes_by
   def initialize(options = {})
+    @direction = options[:direction] || options[:order] || 'desc'
+
+    unless valid_direction?
+      raise ArgumentError.new("Invalid direction: #{direction}. Acceptable options are: #{valid_directions.inspect}")
+    end
+
     @final_limit = options[:limit]
     @records = options[:records]
     @path = options[:path]
     @randomize = options[:randomize]
     @order_by = options[:field]
-    @direction = options[:order] || 'desc'
     @percent_of_source = options[:sample_size] || options[:percent] || default_percentage
     @percent_of_results = options[:percent] || default_percentage
     @exclude_votes_by = options[:exclude_votes_by]
     @valid_filters = options[:valid_filters] || []
+  end
+
+  def query_parameters
+    {path: path, limit: limit, order_by: order_by, direction: direction, exclude_votes_by: nil}
   end
 
   def valid?
@@ -34,5 +43,13 @@ class Segment
   private
   def default_percentage
     100
+  end
+
+  def valid_direction?
+    valid_directions.include?(direction)
+  end
+
+  def valid_directions
+    %w(asc desc)
   end
 end

@@ -42,25 +42,15 @@ class Item < ActiveRecord::Base
       columns.map(&:name)
     end
 
-    def combine_resultsets(path, params)
-
-      hash_params = params.dup.to_hash
-      total = Item.for_path(path).count
-      options = hash_params.merge(:records => total, :path => path, :valid_filters => valid_filters)
-      segments = ItemSampleOptions.new(options).segments
+    def combine_resultsets(params)
+      records = Item.for_path(params[:path]).count
+      segments = ItemSampleOptions.new(params.merge(:records => records, :valid_filters => valid_filters)).segments
 
       picked = []
       remaining = []
       sampled = segments.map do |segment|
 
-        options = {
-          path: segment.path,
-          limit: segment.limit,
-          exclude_votes_by: segment.exclude_votes_by,
-          order_by: segment.order_by,
-          direction: segment.direction
-        }
-        results = Item.by_field(options)
+        results = Item.by_field(segment.query_parameters)
         sampled = Item.pick(picked, results, segment.share_of_results, segment.randomize)
 
         picked |= sampled.map(&:id)
@@ -70,11 +60,11 @@ class Item < ActiveRecord::Base
       end
       sampled.flatten!
 
-      diff = (params.limit - sampled.size).to_i
+      diff = (params[:limit] - sampled.size).to_i
       if diff > 0
-        sampled |= Item.pick(picked, remaining, diff, params.shuffle)
+        sampled |= Item.pick(picked, remaining, diff, params[:shuffle])
       end
-      sampled.shuffle! if params.shuffle
+      sampled.shuffle! if params[:shuffle]
       sampled
     end
   end

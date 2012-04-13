@@ -134,34 +134,8 @@ class KuduV1 < Sinatra::Base
   end
 
   get '/items/:path/sample' do |path|
-    halt 500, "Limit is not specified" unless params[:limit]
-    halt 500, "Missing segments" unless params[:segments]
-
-    # sanity check parameters
-    allowed_fields = Item.columns.map {|c| c.name}
-    segments = params[:segments].map do |segment|
-      halt 500, "Invalid field '#{segment['field']}'" unless allowed_fields.include? segment['field']
-      halt 500, "Invalid order '#{segment['order']}'" unless segment['order'].nil? || %w(asc desc).include?(segment['order'])
-      {
-        :field => segment['field'],
-        :order => segment['order'],
-        :percent => Float(segment['percent'] || 100).ceil,
-        :sample_size => segment['sample_size'] && Float(segment['sample_size'])
-      }
-    end
-
-    identity_id = params[:include_own] && %w(true t 1 y).include?(params[:include_own]) ? nil : current_identity.try(:id)
-    shuffle = params[:shuffle].nil? || %w(true t 1 y).include?(params[:shuffle])
-
-    sane_params = DeepStruct.wrap ({
-      :limit => params[:limit].to_i,
-      :shuffle => shuffle,
-      :segments => segments,
-      :identity_id => identity_id
-    })
-
-    items = Item.combine_resultsets(path, sane_params).flatten
-
+    identity_id = current_identity.id if current_identity
+    items = Item.combine_resultsets(params.merge(:path => path, :identity_id => identity_id)).flatten
     pg :items, :locals => {:items => items}
   end
 end

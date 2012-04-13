@@ -28,12 +28,31 @@ describe Segment do
     its(:limit) { should eq(1000) }
     its(:exclude_votes_by) { should be_nil }
     its(:valid?) { should be_true }
+
+    its(:query_parameters) { should eq(path: 'a.b.c', limit: 1000, order_by: 'valid_filter', direction: 'desc', exclude_votes_by: nil) }
   end
 
   context "when invalid" do
     subject { Segment.new(default_options.merge(:field => 'invalid_filter')) }
 
     its(:valid?) { should be_false }
+  end
+
+  describe "invalid parameters" do
+    ['asc', 'desc'].each do |direction|
+      it "accepts #{direction} as direction" do
+        ->{ Segment.new(:order => direction) }.should_not raise_error(ArgumentError)
+      end
+    end
+
+    it "complains about invalid direction" do
+      ->{ Segment.new(:order => 'up') }.should raise_error(ArgumentError)
+    end
+  end
+
+  it "deprecates :order in favor of :direction" do
+    segment = Segment.new(default_options.merge(:direction => 'asc'))
+    segment.direction.should eq('asc')
   end
 
   describe "#limit" do

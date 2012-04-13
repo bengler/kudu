@@ -9,10 +9,10 @@ class ItemSampleOptions
     @valid_filters = options[:valid_filters] || []
     @records = options[:records]
     @path = options[:path]
-    @randomize = options[:shuffle]
+    @randomize = truth? options.fetch(:randomize) { options[:shuffle] }
     @limit = options[:limit]
-    @exclude_votes_by = options.fetch(:exclude_votes_by) { options[:identity_id] unless options[:include_own] }
-    @raw_segments = options[:segments]
+    @exclude_votes_by = options.fetch(:exclude_votes_by) { options[:identity_id] unless truth?(options[:include_own]) }
+    @raw_segments = options[:segments] || []
     @segments = raw_segments.map do |options|
       Segment.new(attributes.merge(options))
     end.select { |segment| segment.valid? }
@@ -27,5 +27,9 @@ class ItemSampleOptions
       collection[attribute] = send(attribute)
       collection
     end
+  end
+
+  def truth?(value)
+    ['y', 't', '1', 'true', true, 1].include?(value)
   end
 end
