@@ -31,10 +31,11 @@ describe Item do
           percent: 50
         }
       ],
-      :identity_id => nil
+      :identity_id => nil,
+      :path => 'b.c'
     }
-    results = Item.combine_resultsets('b.c', DeepStruct.wrap(params)).map(&:external_uid)
-    results.should eq(["a:b.c$1", "a:b.c$2", "a:b.c$3", "a:b.c$4", "a:b.c$5", "a:b.c$6", "a:b.c$7", "a:b.c$8"])
+    expected = ["a:b.c$1", "a:b.c$2", "a:b.c$3", "a:b.c$4", "a:b.c$5", "a:b.c$6", "a:b.c$7", "a:b.c$8"]
+    Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
   it "selects controversial results" do
@@ -49,10 +50,11 @@ describe Item do
           percent: 100
         }
       ],
-      :identity_id => nil
+      :identity_id => nil,
+      :path => 'b.c'
     }
     expected = ["a:b.c$1", "a:b.c$5", "a:b.c$9", "a:b.c$8", "a:b.c$7", "a:b.c$6", "a:b.c$3", "a:b.c$4"]
-    Item.combine_resultsets('b.c', DeepStruct.wrap(params)).map(&:external_uid).should eq(expected)
+    Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
   it "selects half-half" do
@@ -72,11 +74,11 @@ describe Item do
           percent: 50
         }
       ],
-      :identity_id => nil
+      :identity_id => nil,
+      :path => 'b.c'
     }
     expected = ["a:b.c$1", "a:b.c$2", "a:b.c$3", "a:b.c$4", "a:b.c$5", "a:b.c$9", "a:b.c$8", "a:b.c$7"]
-    results = Item.combine_resultsets('b.c', DeepStruct.wrap(params)).map(&:external_uid)
-    results.should eq(expected)
+    Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
   it "selects what it can (half-half)" do
@@ -98,10 +100,11 @@ describe Item do
           sample_size: 20
         }
       ],
-      :identity_id => nil
+      :identity_id => nil,
+      :path => 'b.c'
     }
     expected = ["a:b.c$1", "a:b.c$2", "a:b.c$5", "a:b.c$9"]
-    Item.combine_resultsets('b.c', DeepStruct.wrap(params)).map(&:external_uid).sort.should eq(expected)
+    Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
   it "selects what it can" do
@@ -121,11 +124,11 @@ describe Item do
           percent: 50
         }
       ],
-      :identity_id => nil
+      :identity_id => nil,
+      :path => 'b.c'
     }
     expected = ["a:b.c$1", "a:b.c$2", "a:b.c$3", "a:b.c$4", "a:b.c$5", "a:b.c$6", "a:b.c$7", "a:b.c$8", "a:b.c$9", "a:b.c$10"]
-    results = Item.combine_resultsets('b.c', DeepStruct.wrap(params)).map(&:external_uid)
-    results.should eq(expected)
+    Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
 end
