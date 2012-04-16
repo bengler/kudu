@@ -60,7 +60,7 @@ class Item < ActiveRecord::Base
       end
       sampled.flatten!
 
-      diff = (params[:limit] - sampled.size).to_i
+      diff = (params[:limit].to_i - sampled.size).to_i
       if diff > 0
         sampled |= Item.pick(picked, remaining, diff, params[:shuffle])
       end
