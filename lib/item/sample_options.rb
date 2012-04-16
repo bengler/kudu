@@ -7,7 +7,7 @@ class ItemSampleOptions
     raise ArgumentError.new('Please specify `limit`') unless options[:limit]
 
     @valid_filters = options[:valid_filters] || []
-    @records = options[:records]
+    @records = options[:records].to_i
     @path = options[:path]
     @randomize = truth? options.fetch(:randomize) { options[:shuffle] }
     @limit = options[:limit].to_i

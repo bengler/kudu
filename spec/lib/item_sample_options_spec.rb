@@ -3,7 +3,7 @@ require 'item/sample_options'
 describe ItemSampleOptions do
 
   let(:valid_segment) { {:field => 'valid_filter'} }
-  let(:default_options) { {limit: 10, records: 100, path: 'a.b.c', shuffle: true, segments: [valid_segment], valid_filters: ['valid_filter']} }
+  let(:default_options) { {limit: "10", records: "100", path: 'a.b.c', shuffle: true, segments: [valid_segment], valid_filters: ['valid_filter']} }
 
   describe "defaults" do
     subject { ItemSampleOptions.new(default_options.merge(:exclude_votes_by => 42)) }
