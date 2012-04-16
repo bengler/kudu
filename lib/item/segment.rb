@@ -1,8 +1,10 @@
+require 'active_support/core_ext/hash/indifferent_access'
 class Segment
 
   attr_reader :order_by, :direction, :path, :final_limit, :records, :randomize, :valid_filters,
     :percent_of_source, :share_of_source, :percent_of_results, :share_of_results, :exclude_votes_by
   def initialize(options = {})
+    options = options.with_indifferent_access
     @direction = options[:direction] || options[:order] || 'desc'
 
     unless valid_direction?

@@ -32,6 +32,10 @@ describe Segment do
     its(:query_parameters) { should eq(path: 'a.b.c', limit: 1000, order_by: 'valid_filter', direction: 'desc', exclude_votes_by: nil) }
   end
 
+  it "accepts strings instead of symbols as keys" do
+    Segment.new("field" => 'the field').order_by.should eq('the field')
+  end
+
   context "when invalid" do
     subject { Segment.new(default_options.merge(:field => 'invalid_filter')) }
 
