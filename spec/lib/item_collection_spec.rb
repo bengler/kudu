@@ -131,4 +131,34 @@ describe Item do
     Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
+  it "shuffles selections" do
+    params = {
+      :limit => 4,
+      "shuffle" => true,
+      :include_own => false,
+      :segments => [
+        {
+          field: 'total_count',
+          order: 'desc',
+          percent: 50
+        },
+        {
+          field: 'controversiality',
+          order: 'desc',
+          percent: 50
+        }
+      ],
+      :identity_id => nil,
+      :path => 'b.c'
+    }
+
+    results = []
+    5.times do
+      results << Item.combine_resultsets(params).map(&:external_uid)
+    end
+
+    results.uniq.size.should eq(5)
+  end
+
+
 end

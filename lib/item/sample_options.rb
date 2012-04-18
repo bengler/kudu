@@ -5,6 +5,7 @@ class ItemSampleOptions
   attr_reader :exclude_votes_by, :records, :limit, :path, :randomize, :valid_filters, :raw_segments, :segments
   def initialize(options = {})
     raise ArgumentError.new('Please specify `limit`') unless options[:limit]
+    options = options.with_indifferent_access
 
     @valid_filters = options[:valid_filters] || []
     @records = options[:records].to_i
