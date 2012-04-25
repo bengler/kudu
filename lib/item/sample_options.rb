@@ -10,7 +10,7 @@ class ItemSampleOptions
     @valid_filters = options[:valid_filters] || []
     @records = options[:records].to_i
     @path = options[:path]
-    @randomize = truth? options.fetch(:randomize) { options[:shuffle] }
+    @randomize = options[:shuffle].nil? || truth?(options.fetch(:randomize) { options[:shuffle] })
     @limit = options[:limit].to_i
     @exclude_votes_by = options.fetch(:exclude_votes_by) { options[:identity_id] unless truth?(options[:include_own]) }
     @raw_segments = options[:segments] || []
