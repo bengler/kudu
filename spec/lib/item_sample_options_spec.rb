@@ -64,7 +64,19 @@ describe ItemSampleOptions do
       end
     end
 
-    [false, nil, :whatever].each do |untruth|
+    it "randomizes with nil as true" do
+      options = default_options.merge(:shuffle => nil, :identity_id => 12)
+      subject = ItemSampleOptions.new(options)
+      subject.randomize.should be_true
+    end
+
+    it "excludes votes with nil as false" do
+      options = default_options.merge(:include_own => nil, :identity_id => 12)
+      subject = ItemSampleOptions.new(options)
+      subject.exclude_votes_by.should eq(12)
+    end
+
+    [false, :whatever].each do |untruth|
 
       it "randomizes with #{untruth.inspect} as false" do
         options = default_options.merge(:shuffle => untruth, :include_own => untruth, :identity_id => 12)
@@ -72,11 +84,6 @@ describe ItemSampleOptions do
         subject.randomize.should be_false
       end
 
-      it "excludes votes with #{untruth.inspect} as false" do
-        options = default_options.merge(:shuffle => untruth, :include_own => untruth, :identity_id => 12)
-        subject = ItemSampleOptions.new(options)
-        subject.exclude_votes_by.should eq(12)
-      end
     end
   end
 
