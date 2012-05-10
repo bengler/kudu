@@ -27,10 +27,10 @@ describe Ack do
     it "updates a score if an ack is destroyed" do
       score = Score.create(:external_uid => external_uid)
       ack = Ack.create!(:score => score, :identity => 123, :value => 1)
-      ack.score.positive_score.should eq 1
+      ack.score.total_positive.should eq 1
       ack.destroy
       score = Score.find_by_external_uid external_uid
-      score.positive_score.should eq 0
+      score.total_positive.should eq 0
     end
 
   end

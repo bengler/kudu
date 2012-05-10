@@ -73,8 +73,8 @@ CREATE TABLE scores (
     positive_count integer DEFAULT 0,
     negative_count integer DEFAULT 0,
     neutral_count integer DEFAULT 0,
-    positive_score integer DEFAULT 0,
-    negative_score integer DEFAULT 0,
+    total_positive integer DEFAULT 0,
+    total_negative integer DEFAULT 0,
     controversiality integer DEFAULT 0,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
@@ -179,7 +179,7 @@ CREATE INDEX index_items_on_external_uid ON scores USING btree (external_uid);
 -- Name: index_items_on_negative_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_items_on_negative_score ON scores USING btree (negative_score);
+CREATE INDEX index_items_on_negative_score ON scores USING btree (total_negative);
 
 
 --
@@ -193,7 +193,7 @@ CREATE INDEX index_items_on_path ON scores USING btree (path);
 -- Name: index_items_on_positive_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_items_on_positive_score ON scores USING btree (positive_score);
+CREATE INDEX index_items_on_positive_score ON scores USING btree (total_positive);
 
 
 --

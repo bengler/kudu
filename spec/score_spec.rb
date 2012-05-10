@@ -17,9 +17,9 @@ describe Score do
       its(:positive_count) { should eq(0) }
       its(:neutral_count) { should eq(0) }
       its(:negative_count) { should eq(0) }
-      its(:positive_score) { should eq(0) }
-      its(:negative_score) { should eq(0) }
-      its(:average_score) { should eq(0) }
+      its(:total_positive) { should eq(0) }
+      its(:total_negative) { should eq(0) }
+      its(:average) { should eq(0) }
       its(:histogram) { should eq({}) }
     end
 
@@ -32,9 +32,9 @@ describe Score do
       its(:positive_count) { should eq(1) }
       its(:neutral_count) { should eq(0) }
       its(:negative_count) { should eq(0) }
-      its(:positive_score) { should eq(7) }
-      its(:negative_score) { should eq(0) }
-      its(:average_score) { should eq(7) }
+      its(:total_positive) { should eq(7) }
+      its(:total_negative) { should eq(0) }
+      its(:average) { should eq(7) }
       its(:histogram) { should eq({7 => 1}) }
     end
 
@@ -47,9 +47,9 @@ describe Score do
       its(:positive_count) { should eq(0) }
       its(:neutral_count) { should eq(0) }
       its(:negative_count) { should eq(1) }
-      its(:positive_score) { should eq(0) }
-      its(:negative_score) { should eq(13) }
-      its(:average_score) { should eq(-13) }
+      its(:total_positive) { should eq(0) }
+      its(:total_negative) { should eq(13) }
+      its(:average) { should eq(-13) }
       its(:histogram) { should eq({-13 => 1}) }
     end
 
@@ -62,9 +62,9 @@ describe Score do
       its(:positive_count) { should eq(0) }
       its(:neutral_count) { should eq(1) }
       its(:negative_count) { should eq(0) }
-      its(:positive_score) { should eq(0) }
-      its(:negative_score) { should eq(0) }
-      its(:average_score) { should eq(0) }
+      its(:total_positive) { should eq(0) }
+      its(:total_negative) { should eq(0) }
+      its(:average) { should eq(0) }
       its(:histogram) { should eq({0 => 1}) }
     end
 
@@ -79,8 +79,8 @@ describe Score do
       its(:positive_count) { should eq(0) }
       its(:neutral_count) { should eq(0) }
       its(:negative_count) { should eq(0) }
-      its(:positive_score) { should eq(0) }
-      its(:negative_score) { should eq(0) }
+      its(:total_positive) { should eq(0) }
+      its(:total_negative) { should eq(0) }
       its(:controversiality) { should eq(0) }
       its(:histogram) { should eq({}) }
     end
