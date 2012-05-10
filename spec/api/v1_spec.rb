@@ -10,8 +10,8 @@ describe 'API v1' do
   let(:identity) { 1337 }
 
   let(:external_uid) {'post:$l0ngAndFiNeUId4U'}
-  let(:an_score) { Score.create!(:external_uid => external_uid) }
-  let(:an_ack) { Ack.create!(:score => an_score, :identity => identity, :value => 1) }
+  let(:a_score) { Score.create!(:external_uid => external_uid) }
+  let(:an_ack) { Ack.create!(:score => a_score, :identity => identity, :value => 1) }
 
   let(:another_external_uid) {'post:$l0ngAndFiNeUId4Utoo'}
   let(:another_score) { Score.create!(:external_uid => another_external_uid) }
@@ -30,7 +30,7 @@ describe 'API v1' do
     describe 'GET /acks/:uid' do
       it 'returns an ack for an uid given by current identity' do
         an_ack
-        get "/acks/#{an_score.external_uid}", a_session
+        get "/acks/#{a_score.external_uid}", a_session
         last_response.status.should eq 200
         ack_response = JSON.parse(last_response.body)["acks"]
         ack_response[0]['ack']['id'].should eq an_ack.id
