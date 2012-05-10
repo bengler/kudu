@@ -10,15 +10,15 @@ describe 'API v1' do
   let(:identity) { 1337 }
 
   let(:external_uid) {'post:$l0ngAndFiNeUId4U'}
-  let(:an_item) { Item.create!(:external_uid => external_uid) }
-  let(:an_ack) { Ack.create!(:item => an_item, :identity => identity, :score => 1) }
+  let(:a_score) { Score.create!(:external_uid => external_uid) }
+  let(:an_ack) { Ack.create!(:score => a_score, :identity => identity, :value => 1) }
 
   let(:another_external_uid) {'post:$l0ngAndFiNeUId4Utoo'}
-  let(:another_item) { Item.create!(:external_uid => another_external_uid) }
-  let(:another_ack) { Ack.create!(:item => another_item, :identity => identity, :score => 1) }
+  let(:another_score) { Score.create!(:external_uid => another_external_uid) }
+  let(:another_ack) { Ack.create!(:score => another_score, :identity => identity, :value => 1) }
 
-  let(:unwanted_item) { Item.create!(:external_uid => "post:$unwanted_ack") }
-  let(:unwanted_ack) { Ack.create!(:item => unwanted_item, :identity => identity, :score => 1) }
+  let(:unwanted_score) { Score.create!(:external_uid => "post:$unwanted_ack") }
+  let(:unwanted_ack) { Ack.create!(:score => unwanted_score, :identity => identity, :value => 1) }
 
   context "with an identity" do
     let(:a_session) { {:session => "1234"} }
@@ -30,42 +30,42 @@ describe 'API v1' do
     describe 'GET /acks/:uid' do
       it 'returns an ack for an uid given by current identity' do
         an_ack
-        get "/acks/#{an_item.external_uid}", a_session
+        get "/acks/#{a_score.external_uid}", a_session
         last_response.status.should eq 200
         ack_response = JSON.parse(last_response.body)["acks"]
         ack_response[0]['ack']['id'].should eq an_ack.id
       end
 
-      it 'updates an existing item and recalculates it' do
+      it 'updates an existing score and recalculates it' do
         an_ack
-        put "/acks/#{external_uid}", a_session.merge(:ack => {:score => 0})
+        put "/acks/#{external_uid}", a_session.merge(:ack => {:value => 0})
         last_response.status.should eq 200
         ack_response = JSON.parse(last_response.body)["ack"]
-        Ack.find_by_id(ack_response['id']).score.should eq(0)
-        item = Item.find_by_external_uid(external_uid)
-        item.total_count.should eq(1)
-        item.positive_score.should eq(0)
+        Ack.find_by_id(ack_response['id']).value.should eq(0)
+        score = Score.find_by_external_uid(external_uid)
+        score.total_count.should eq(1)
+        score.positive.should eq(0)
       end
     end
 
     describe 'POST /acks/:uid' do
-      it 'creates an ack and a item' do
-        post "/acks/#{external_uid}", a_session.merge(:ack => {:score => "+1"})
+      it 'creates an ack and a score' do
+        post "/acks/#{external_uid}", a_session.merge(:ack => {:value => "+1"})
         last_response.status.should eq 201
         ack_response = JSON.parse(last_response.body)["ack"]
-        Ack.find_by_id(ack_response['id']).score.should eq(1)
-        Item.find_by_external_uid(external_uid).total_count.should eq(1)
+        Ack.find_by_id(ack_response['id']).value.should eq(1)
+        Score.find_by_external_uid(external_uid).total_count.should eq(1)
       end
 
-      it 'updates an existing item and recalculates it' do
+      it 'updates an existing score and recalculates it' do
         an_ack
-        put "/acks/#{external_uid}", a_session.merge(:ack => {:score => 0})
+        put "/acks/#{external_uid}", a_session.merge(:ack => {:value => 0})
         last_response.status.should eq 200
         ack_response = JSON.parse(last_response.body)["ack"]
-        Ack.find_by_id(ack_response['id']).score.should eq(0)
-        item = Item.find_by_external_uid(external_uid)
-        item.total_count.should eq(1)
-        item.positive_score.should eq(0)
+        Ack.find_by_id(ack_response['id']).value.should eq(0)
+        score = Score.find_by_external_uid(external_uid)
+        score.total_count.should eq(1)
+        score.positive.should eq(0)
       end
     end
 
@@ -86,25 +86,25 @@ describe 'API v1' do
       Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {}))
     end
 
-    describe "GET /items/:uids" do
-      it 'gets a item of acks for a single external_uid' do
+    describe "GET /scores/:uids" do
+      it 'gets a score of acks for a single external_uid' do
         an_ack
 
-        get "/items/#{external_uid}"
-        items = JSON.parse(last_response.body)["items"]
-        items.first["item"]["external_uid"].should eq(external_uid)
+        get "/scores/#{external_uid}"
+        scores = JSON.parse(last_response.body)["scores"]
+        scores.first["score"]["external_uid"].should eq(external_uid)
       end
 
-      it 'gets items of acks for a list of external_uids' do
+      it 'gets scores of acks for a list of external_uids' do
         an_ack
         another_ack
         unwanted_ack
 
-        get "/items/#{external_uid},#{another_external_uid}"
-        items = JSON.parse(last_response.body)["items"]
-        items.size.should eq(2)
-        items.first["item"]["external_uid"].should eq(external_uid)
-        items.last["item"]["external_uid"].should eq(another_external_uid)
+        get "/scores/#{external_uid},#{another_external_uid}"
+        scores = JSON.parse(last_response.body)["scores"]
+        scores.size.should eq(2)
+        scores.first["score"]["external_uid"].should eq(external_uid)
+        scores.last["score"]["external_uid"].should eq(another_external_uid)
       end
     end
 

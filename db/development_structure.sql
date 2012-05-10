@@ -34,11 +34,11 @@ SET default_with_oids = false;
 
 CREATE TABLE acks (
     id integer NOT NULL,
-    item_id integer,
+    score_id integer,
     identity integer NOT NULL,
-    score integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    value integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -62,10 +62,10 @@ ALTER SEQUENCE acks_id_seq OWNED BY acks.id;
 
 
 --
--- Name: items; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: scores; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE items (
+CREATE TABLE scores (
     id integer NOT NULL,
     external_uid text NOT NULL,
     path text,
@@ -73,11 +73,11 @@ CREATE TABLE items (
     positive_count integer DEFAULT 0,
     negative_count integer DEFAULT 0,
     neutral_count integer DEFAULT 0,
-    positive_score integer DEFAULT 0,
-    negative_score integer DEFAULT 0,
+    positive integer DEFAULT 0,
+    negative integer DEFAULT 0,
     controversiality integer DEFAULT 0,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
     histogram text
 );
 
@@ -98,7 +98,7 @@ CREATE SEQUENCE items_id_seq
 -- Name: items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE items_id_seq OWNED BY items.id;
+ALTER SEQUENCE items_id_seq OWNED BY scores.id;
 
 
 --
@@ -121,7 +121,7 @@ ALTER TABLE acks ALTER COLUMN id SET DEFAULT nextval('acks_id_seq'::regclass);
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE items ALTER COLUMN id SET DEFAULT nextval('items_id_seq'::regclass);
+ALTER TABLE scores ALTER COLUMN id SET DEFAULT nextval('items_id_seq'::regclass);
 
 
 --
@@ -136,7 +136,7 @@ ALTER TABLE ONLY acks
 -- Name: items_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY items
+ALTER TABLE ONLY scores
     ADD CONSTRAINT items_pkey PRIMARY KEY (id);
 
 
@@ -151,49 +151,49 @@ CREATE INDEX index_acks_on_identity ON acks USING btree (identity);
 -- Name: index_acks_on_item_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_acks_on_item_id ON acks USING btree (item_id);
+CREATE INDEX index_acks_on_item_id ON acks USING btree (score_id);
 
 
 --
 -- Name: index_acks_on_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_acks_on_score ON acks USING btree (score);
+CREATE INDEX index_acks_on_score ON acks USING btree (value);
 
 
 --
 -- Name: index_items_on_controversiality; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_items_on_controversiality ON items USING btree (controversiality);
+CREATE INDEX index_items_on_controversiality ON scores USING btree (controversiality);
 
 
 --
 -- Name: index_items_on_external_uid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_items_on_external_uid ON items USING btree (external_uid);
+CREATE INDEX index_items_on_external_uid ON scores USING btree (external_uid);
 
 
 --
 -- Name: index_items_on_negative_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_items_on_negative_score ON items USING btree (negative_score);
+CREATE INDEX index_items_on_negative_score ON scores USING btree (negative);
 
 
 --
 -- Name: index_items_on_path; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_items_on_path ON items USING btree (path);
+CREATE INDEX index_items_on_path ON scores USING btree (path);
 
 
 --
 -- Name: index_items_on_positive_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE INDEX index_items_on_positive_score ON items USING btree (positive_score);
+CREATE INDEX index_items_on_positive_score ON scores USING btree (positive);
 
 
 --
@@ -208,7 +208,7 @@ CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (v
 --
 
 ALTER TABLE ONLY acks
-    ADD CONSTRAINT acks_item_id_fkey FOREIGN KEY (item_id) REFERENCES items(id);
+    ADD CONSTRAINT acks_item_id_fkey FOREIGN KEY (score_id) REFERENCES scores(id);
 
 
 --

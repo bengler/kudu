@@ -1,6 +1,6 @@
-require 'item/segment'
+require 'score/segment'
 
-class ItemSampleOptions
+class ScoreSampleOptions
 
   attr_reader :exclude_votes_by, :records, :limit, :path, :randomize, :valid_filters, :raw_segments, :segments
   def initialize(options = {})
@@ -10,7 +10,7 @@ class ItemSampleOptions
     @valid_filters = options[:valid_filters] || []
     @records = options[:records].to_i
     @path = options[:path]
-    @randomize = options[:shuffle].nil? || truth?(options.fetch(:randomize) { options[:shuffle] })
+    @randomize = truth?(options.fetch(:randomize) { options[:shuffle] })
     @limit = options[:limit].to_i
     @exclude_votes_by = options.fetch(:exclude_votes_by) { options[:identity_id] unless truth?(options[:include_own]) }
     @raw_segments = options[:segments] || []
