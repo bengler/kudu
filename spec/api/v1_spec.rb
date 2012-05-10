@@ -44,7 +44,7 @@ describe 'API v1' do
         Ack.find_by_id(ack_response['id']).value.should eq(0)
         score = Score.find_by_external_uid(external_uid)
         score.total_count.should eq(1)
-        score.total_positive.should eq(0)
+        score.positive.should eq(0)
       end
     end
 
@@ -65,7 +65,7 @@ describe 'API v1' do
         Ack.find_by_id(ack_response['id']).value.should eq(0)
         score = Score.find_by_external_uid(external_uid)
         score.total_count.should eq(1)
-        score.total_positive.should eq(0)
+        score.positive.should eq(0)
       end
     end
 

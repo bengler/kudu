@@ -82,19 +82,15 @@ class Score < ActiveRecord::Base
     self.positive_count = 0
     self.negative_count = 0
     self.neutral_count = 0
-    self.total_positive = 0
-    self.total_negative = 0
+    self.positive = 0
+    self.negative = 0
     self.controversiality = 0
     self.histogram = {}
   end
 
   def average
     return 0 if total_count == 0
-    total_score / total_count
-  end
-
-  def total_score
-    total_positive - total_negative / total_count
+    (positive - negative) / total_count
   end
 
   def apply_score(score)
@@ -108,8 +104,8 @@ class Score < ActiveRecord::Base
     else
       self.neutral_count += 1
     end
-    self.total_positive += score if score > 0
-    self.total_negative -= score if score < 0
+    self.positive += score if score > 0
+    self.negative -= score if score < 0
     self.controversiality = [self.positive_count, self.negative_count].min
   end
 
