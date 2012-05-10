@@ -85,11 +85,7 @@ class KuduV1 < Sinatra::Base
     require_identity
     score = Score.find_or_create_by_external_uid(uid)
 
-    if score.new_record?
-      score.save!
-      response.status = 201
-    end
-    "Ok"
+    halt 204
   end
 
   # TODO: Implement pagination
