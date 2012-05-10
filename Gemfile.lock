@@ -47,9 +47,9 @@ GIT
 
 GIT
   remote: git@github.com:origo/capistrano-bengler.git
-  revision: 8e3bb27d90e779b75af1dca83d71b8ad33a69c3e
+  revision: a128d77b9d8e2c362d0f598b5b7c230b4d898701
   specs:
-    capistrano-bengler (0.0.11)
+    capistrano-bengler (0.0.12)
       capistrano (>= 2.9)
       capistrano-ext (>= 1.2.1)
 
@@ -83,7 +83,7 @@ GEM
     diff-lcs (1.1.3)
     eventmachine (0.12.10)
     futurevalue (0.0.2)
-    highline (1.6.11)
+    highline (1.6.12)
     i18n (0.6.0)
     kgio (2.7.3)
     logger (1.2.8)

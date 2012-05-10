@@ -64,7 +64,7 @@ describe ScoreSampleOptions do
       end
     end
 
-    [false, nil, :whatever].each do |untruth|
+    [nil, false, :whatever].each do |untruth|
 
       it "randomizes with #{untruth.inspect} as false" do
         options = default_options.merge(:shuffle => untruth, :include_own => untruth, :identity_id => 12)
@@ -72,11 +72,6 @@ describe ScoreSampleOptions do
         subject.randomize.should be_false
       end
 
-      it "excludes votes with #{untruth.inspect} as false" do
-        options = default_options.merge(:shuffle => untruth, :include_own => untruth, :identity_id => 12)
-        subject = ScoreSampleOptions.new(options)
-        subject.exclude_votes_by.should eq(12)
-      end
     end
   end
 
