@@ -5,7 +5,7 @@ describe Ack do
   let(:external_uid) {'post:$l0ngAndFiNeUId4U'}
 
   describe "create_or_update_score" do
-    it "creates an score if none exists" do
+    it "creates a score if none exists" do
       score = Score.create(:external_uid => external_uid)
       Ack.create!(:score=>score, :identity => 123, :value => 1)
       ack = Ack.find_by_score_id(score.id)
