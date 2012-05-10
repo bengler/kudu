@@ -38,7 +38,8 @@ CREATE TABLE acks (
     identity integer NOT NULL,
     value integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    kind text
 );
 
 
