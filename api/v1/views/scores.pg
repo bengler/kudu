@@ -1,5 +1,10 @@
 collection :scores => scores do |score|
   node :score => score do
     attributes :id, :external_uid, :path, :total_count, :positive_count, :negative_count, :neutral_count, :total_positive, :total_negative, :average, :controversiality, :histogram, :updated_at
+
+    # deprecated
+    node :positive_score => score.total_positive
+    node :negative_score => score.total_negative
+    node :average_score => score.average
   end
 end

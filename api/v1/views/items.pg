@@ -1,0 +1,10 @@
+# deprecated
+collection :items => items do |item|
+  node :item => item do
+    attributes :id, :external_uid, :path, :total_count, :positive_count, :negative_count, :neutral_count, :controversiality, :histogram, :updated_at
+
+    node :positive_score => item.total_positive
+    node :negative_score => item.total_negative
+    node :average_score => item.average
+  end
+end

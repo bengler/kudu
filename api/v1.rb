@@ -104,4 +104,49 @@ class KuduV1 < Sinatra::Base
     scores = Score.combine_resultsets(params.merge(:path => path, :identity_id => identity_id)).flatten
     pg :scores, :locals => {:scores => scores}
   end
+
+  # DEPRECATED. Delete when DittForslag is done.
+  get '/acks/:uid/stats' do |uid|
+    total = Ack.count
+    positive = Ack.where("value > 0").count
+    negative = Ack.where("value < 0").count
+    unique_voters = Ack.select("distinct identity").count
+    avg_votes_per_voter = total.to_f / unique_voters.to_f
+    {
+      :uid => uid,
+      :positive_count => positive,
+      :negative_count => negative,
+      :total_count => total,
+      :unique_voters => unique_voters,
+      :avg_votes_per_voter => avg_votes_per_voter,
+      :note => "Not fully implemented! Returns the full ack count for all realms and paths always."
+    }.to_json
+  end
+
+  # DEPRECATED. Delete when DittForslag is done.
+  put '/items/:uid/touch' do |uid|
+    require_identity
+    score = Score.find_or_create_by_external_uid(uid)
+
+    if score.new_record?
+      score.save!
+      response.status = 201
+    end
+    "Ok"
+  end
+
+  # DEPRECATED. Delete when DittForslag is done.
+  get '/items/:uids' do
+    uids = params[:uids].split(",")
+    scores = Score.find_all_by_external_uid(uids)
+    pg :items, :locals => {:items => scores}
+  end
+
+  # DEPRECATED. Delete when DittForslag is done.
+  get '/items/:path/sample' do |path|
+    identity_id = current_identity.id if current_identity
+    scores = Score.combine_resultsets(params.merge(:path => path, :identity_id => identity_id)).flatten
+    pg :items, :locals => {:items => scores}
+  end
+
 end

@@ -3,4 +3,6 @@ return {} if ack.nil?
 node :ack => ack do
   attributes :id, :value, :created_at, :updated_at
   node :external_uid =>  ack.score.external_uid
+  # deprecated
+  node :score => ack.value
 end
