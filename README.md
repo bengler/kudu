@@ -1,97 +1,77 @@
 # Kudu
 
-A feedback service that handles
+Feedback service.
+
+
+## Ack
+
+A single piece of feedback is known as an `ack`.
+
+Kudu supports flexible feedback strategies (`kind`), e.g.
 * classic kudos ("+1")
-* upvote, downvote, and neutral ("+1", "-1", and "0"),
-* possibly a set of arbitrary feedback categories, such as ["fascinating", "funny", "boring", "moving",...]
-  These could be implemented as bitmasks (e.g. "fascinating" => 0, "funny" => "1", "boring" => 2, "moving" => 4)
+* votes: upvote, downvote, and neutral ("+1", "-1", and "0"),
+* ratings: e.g. 1 through 5 stars ("+1", "+2", "+3", "+4", "+5")
+* arbitrary scores, e.g. -17, +32, +100
 
-## Terminology
+An Ack is provided by an `identity` for some object, as identified by a `uid`.
+It also must specify a `kind`, which is essentially a feedback strategy defined in the application, and a `value`.
 
-A single identity's score bestowed upon a single post is known as an *ack*.
+For example:
+
+    Ack.new(:identity => 7, :external_uid => 'post:a.b.c$34', :kind => 'rating', :value => 4)
+
+### Endpoints
+
+Get acks for the current identity. `:uids` can be a comma delimited list of uids, or a single uid.
+
+    GET /acks/:uids
+
+Post feedback for an item:
+
+    POST /acks/:uid
+
+`:kind` is required, and must be a valid label. `:value` is required and must be an integer. `:identity` is required and is retrieved from checkpoint using the session key. `:external_uid` is also required.
 
 ## Scores
 
-- _score_ sum of all acks
-- _count_ count of all acks
-- _negative_ count of -1 acks
-- _positive_ count of +1 acks
-- _controversiality_ ratio between positive and negative acks
-- _rank_ rank within a given collection
+The aggregate scores for each :uid are available through the `/scores` endpoints.
 
-## What it should do
+* `total_count` - how many identities have provided feedback
+* `positive_count` - number of ack values that are greater than zero
+* `negative_count` - number of ack values that are less than zero
+* `neutral_count` - number of ack values that are exactly zero
+* `positive` - the sum of positive scores
+* `negative` - sum of negative scores
+* `average` - average score (total score / total count)
+* `controversiality` - a calculation of how much people disagree
+* `histogram` - a list of counts per ack value
 
-The realm and identity of the requestor is determined through the session, which is provided either as a parameter in the query
+### Endpoints
 
-    kudu.dev/v1/ack post=mittap.progdebatt.theme1.prop3&score=+1&session=kewjwkefhwljfhbwelfjhe
+All scores for an object, grouped by :kind
 
-or in a cookie called checkpoint.session
+    GET /scores/:uid
 
-## API
+All scores of a given kind:
 
-### Implement these first...
-
-* give kudos
-  POST kudu.dev/v1/ack/:uid data="score=-1&session=abc"
-  => 201, return Item belonging to Ack
-
-* delete kudos (make sure user requesting delete is kudos creator or a realm god)
-  DELETE kudu.dev/v1/ack/:uid data="session=abc" # deletes the kudo matching post=uid, identity belonging to session
-  DELETE kudu.dev/v1/ack/:uid data="identity=7&session=abc" # deletes the kudo matching post=uid, session is god identity
-  => 200, return Item belonging to Ack
+    GET /scores/:uid/:kind
 
 
+Fetch ranked lists. These need to be ranked by an attribute on score.
 
-### Then these...
-
-For queries against /ack, the response is the item of kudos per post
-    (score, count, negative, positive, contro) + identites,realm,post uid,collection
-
-  GET kudu.dev/v1/ack?collection=oa:birthday
-  GET kudu.dev/v1/ack/:uid
-  GET kudu.dev/v1/ack/:uids
+    GET /scores/:uid/rank/:by
 
 
-### Then these...
+Fetch mixes of ranked, randomized scores, segmented by different groups. Go look at the code. Seriously.
 
-* get scores for posts ranked withing a collection (pagination probably required)
-  GET kudu.dev/v1/scores?collection=oa:birthday
-  GET kudu.dev/v1/scores?posts=uid1,uid2,uid3
+    GET /scores/:uid/sample
 
-* check kudos score for one or several posts
-  GET  kudu.dev/v1/scores?post=uid1
-  GET  kudu.dev/v1/scores?posts=uid1,uid2,uid3
+## Stats
 
-* all kudos given by an identity within a realm or collection
-  GET  kudu.dev/v1/ack?identity=1 # by identity 1 within realm
-  GET  kudu.dev/v1/ack?collection=abc&identity=1 # by identity 1 within collection abc
+TODO: implement endpoints at `/stats/:path/:more_stuff`.
 
-* hente ut alle kudu én person har gitt innenfor et realm eller en collection
+These aggregate data about `:scores` and `:kind` (can't aggregate scores of different kinds. Apples and Oranges).
 
-ja, så scores er alltid score, count, negative, positive, contro
-hvis jeg sier /kudu/scores og poster en lang liste med post-id'er får jeg en hash med alle disse scorene for alle postene jeg ba om
-hvis jeg ber om det får jeg med en liste med identity-id'er også
+This will deliver stats for paths (i.e. an app, or a region). Currently this is sort of implemented with some hacks, for dittforslag (how many contributors, top contributors, ranked lists of various things -- most controversial, most popular, etc.
 
-## setup, notes
-
-### On the mac, you can use Pow
-
-    curl get.pow.cx | sh
-    cd ~/.pow
-    ln -s /Users/me/mycode/projectname
-
-### Deployment
-When you know which servers they should be deployed to, edit
-
-    config/deploy/staging.rb
-    config/deploy/production.rb
-
-
-## Then there is the matter of collections/paths/uids
-
-Here are some examples:
-
-  post:mittap.akershus.frittforum#a1b2c3
-  comment:mittap.akershus.frittforum.a1b2c3#7
-  userprofile:mittap#234234
-  realm:#mittap
+This requires support for wildcard paths, which is on the block for the next few days.
