@@ -1,6 +1,6 @@
-require 'item/segment'
+require 'score/segment'
 
-class ItemSampleOptions
+class ScoreSampleOptions
 
   attr_reader :exclude_votes_by, :records, :limit, :path, :randomize, :valid_filters, :raw_segments, :segments
   def initialize(options = {})

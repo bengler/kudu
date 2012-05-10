@@ -1,6 +1,6 @@
 return {} if ack.nil?
 
 node :ack => ack do
-  attributes :id, :score, :created_at, :updated_at
-  node :external_uid =>  ack.item.external_uid
+  attributes :id, :value, :created_at, :updated_at
+  node :external_uid =>  ack.score.external_uid
 end

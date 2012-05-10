@@ -1,4 +1,4 @@
-class Item < ActiveRecord::Base
+class Score < ActiveRecord::Base
 
   has_many :acks
 
@@ -10,13 +10,13 @@ class Item < ActiveRecord::Base
   scope :for_path, lambda { |path| where(:path => path) }
   scope :order_by, lambda { |field, direction| order("#{field} #{direction} NULLS LAST") }
   scope :exclude_votes_by, lambda { |identity|
-    joins("LEFT OUTER JOIN acks on acks.item_id = items.id and acks.identity=#{identity}").where("acks.id IS NULL")
+    joins("LEFT OUTER JOIN acks on acks.score_id = scores.id and acks.identity=#{identity}").where("acks.id IS NULL")
   }
 
   class << self
     def calculate_all
-      Item.all.each do |item|
-        item.refresh_from_acks!
+      Score.all.each do |score|
+        score.refresh_from_acks!
       end
     end
 
@@ -24,14 +24,14 @@ class Item < ActiveRecord::Base
       picked = []
       until resultset.empty? || picked.size == number
         pos = random ? rand(resultset.length) : 0
-        item = resultset.delete_at(pos)
-        picked << item unless already_picked.include?(item.id)
+        score = resultset.delete_at(pos)
+        picked << score unless already_picked.include?(score.id)
       end
       picked
     end
 
     def by_field(options = {})
-      scope = Item.scoped.for_path(options[:path]).order_by(options[:order_by], options[:direction]).limit(options[:limit])
+      scope = Score.scoped.for_path(options[:path]).order_by(options[:order_by], options[:direction]).limit(options[:limit])
       if options[:identity].present?
         scope = scope.exclude_votes_by(options[:identity])
       end
@@ -43,15 +43,15 @@ class Item < ActiveRecord::Base
     end
 
     def combine_resultsets(params)
-      records = Item.for_path(params[:path]).count
-      segments = ItemSampleOptions.new(params.merge(:records => records, :valid_filters => valid_filters)).segments
+      records = Score.for_path(params[:path]).count
+      segments = ScoreSampleOptions.new(params.merge(:records => records, :valid_filters => valid_filters)).segments
 
       picked = []
       remaining = []
       sampled = segments.map do |segment|
 
-        results = Item.by_field(segment.query_parameters)
-        sampled = Item.pick(picked, results, segment.share_of_results, segment.randomize)
+        results = Score.by_field(segment.query_parameters)
+        sampled = Score.pick(picked, results, segment.share_of_results, segment.randomize)
 
         picked |= sampled.map(&:id)
         remaining.concat results
@@ -62,7 +62,7 @@ class Item < ActiveRecord::Base
 
       diff = (params[:limit].to_i - sampled.size).to_i
       if diff > 0
-        sampled |= Item.pick(picked, remaining, diff, params[:shuffle])
+        sampled |= Score.pick(picked, remaining, diff, params[:shuffle])
       end
       sampled.shuffle! if params[:shuffle]
       sampled
@@ -72,7 +72,7 @@ class Item < ActiveRecord::Base
   def refresh_from_acks!
     self.reset
     self.acks.all.each do |ack|
-      self.apply_score(ack.score)
+      self.apply_score(ack.value)
     end
     self.save!
   end

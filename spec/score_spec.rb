@@ -1,16 +1,16 @@
 require 'spec_helper'
 
-describe Item do
+describe Score do
 
   let(:external_uid) {'post:this.is.a.path.to$object_id'}
 
   it "extracts path from uid before save" do
-    Item.create!(:external_uid => external_uid).path.should eq('this.is.a.path.to')
+    Score.create!(:external_uid => external_uid).path.should eq('this.is.a.path.to')
   end
 
   describe "scores" do
 
-    subject { Item.new }
+    subject { Score.new }
 
     describe "defaults" do
       its(:total_count) { should eq(0) }
@@ -87,19 +87,19 @@ describe Item do
 
     describe "controversiality" do
       it "corresponds to the minority of haters" do
-        Item.new(:positive_count => 100, :negative_count => 40).controversiality.should eq(40)
+        Score.new(:positive_count => 100, :negative_count => 40).controversiality.should eq(40)
       end
 
       it "corresponds to a minority of fans" do
-        Item.new(:positive_count => 10, :negative_count => 40).controversiality.should eq(10)
+        Score.new(:positive_count => 10, :negative_count => 40).controversiality.should eq(10)
       end
 
       it "isn't controversial if everyone agrees" do
-        Item.new(:positive_count => 100, :negative_count => 0).controversiality.should eq(0)
+        Score.new(:positive_count => 100, :negative_count => 0).controversiality.should eq(0)
       end
 
       it "is controversial if the split is even" do
-        Item.new(:positive_count => 30, :negative_count => 30).controversiality.should eq(30)
+        Score.new(:positive_count => 30, :negative_count => 30).controversiality.should eq(30)
       end
     end
   end

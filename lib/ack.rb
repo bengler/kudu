@@ -1,22 +1,22 @@
 class Ack < ActiveRecord::Base
 
-  belongs_to :item
+  belongs_to :score
 
-  validates_presence_of :score, :identity
+  validates_presence_of :value, :identity
 
   scope :recent, lambda {|count| order("updated_at desc").limit(count)}
 
-  after_save :create_or_update_item
-  after_destroy { |ack| ack.item.refresh_from_acks! }
+  after_save :create_or_update_score
+  after_destroy { |ack| ack.score.refresh_from_acks! }
 
-  def create_or_update_item
-    item.refresh_from_acks!
+  def create_or_update_score
+    score.refresh_from_acks!
   end
 
 
-  def self.create_or_update(item, identity, options = {})
-    ack = Ack.find_by_item_id_and_identity(item.id, identity)
-    ack ||= Ack.new(:item_id => item.id, :identity => identity)
+  def self.create_or_update(score, identity, options = {})
+    ack = Ack.find_by_score_id_and_identity(score.id, identity)
+    ack ||= Ack.new(:score_id => score.id, :identity => identity)
     ack.attributes = options
     ack
   end

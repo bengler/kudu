@@ -1,4 +1,4 @@
-require 'item/segment'
+require 'score/segment'
 
 describe Segment do
   let(:default_options) do

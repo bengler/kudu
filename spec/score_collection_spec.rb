@@ -1,25 +1,25 @@
 require 'spec_helper'
 
-def create_items
-  Item.create!(external_uid: 'a:b.c$1', total_count: 10, controversiality: 8)
-  Item.create!(external_uid: 'a:b.c$2', total_count: 9)
-  Item.create!(external_uid: 'a:b.c$5', total_count: 6, controversiality: 7)
-  Item.create!(external_uid: 'a:b.c$9', total_count: 2, controversiality: 6)
+def create_scores
+  Score.create!(external_uid: 'a:b.c$1', total_count: 10, controversiality: 8)
+  Score.create!(external_uid: 'a:b.c$2', total_count: 9)
+  Score.create!(external_uid: 'a:b.c$5', total_count: 6, controversiality: 7)
+  Score.create!(external_uid: 'a:b.c$9', total_count: 2, controversiality: 6)
 
-  Item.create!(external_uid: 'a:b.c$3', total_count: 8, controversiality: 2)
-  Item.create!(external_uid: 'a:b.c$4', total_count: 7, controversiality: 1)
-  Item.create!(external_uid: 'a:b.c$8', total_count: 3, controversiality: 5)
-  Item.create!(external_uid: 'a:b.c$7', total_count: 4, controversiality: 4)
-  Item.create!(external_uid: 'a:b.c$6', total_count: 5, controversiality: 3)
-  Item.create!(external_uid: 'a:b.c$10', total_count: 1)
+  Score.create!(external_uid: 'a:b.c$3', total_count: 8, controversiality: 2)
+  Score.create!(external_uid: 'a:b.c$4', total_count: 7, controversiality: 1)
+  Score.create!(external_uid: 'a:b.c$8', total_count: 3, controversiality: 5)
+  Score.create!(external_uid: 'a:b.c$7', total_count: 4, controversiality: 4)
+  Score.create!(external_uid: 'a:b.c$6', total_count: 5, controversiality: 3)
+  Score.create!(external_uid: 'a:b.c$10', total_count: 1)
 end
 
-describe Item do
+describe Score do
   before(:each) do
-    create_items
+    create_scores
   end
 
-  it "selects active items" do
+  it "selects active scores" do
     params = {
       :limit => 8,
       :shuffle => false,
@@ -35,7 +35,7 @@ describe Item do
       :path => 'b.c'
     }
     expected = ["a:b.c$1", "a:b.c$2", "a:b.c$3", "a:b.c$4", "a:b.c$5", "a:b.c$6", "a:b.c$7", "a:b.c$8"]
-    Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
+    Score.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
   it "selects controversial results" do
@@ -54,7 +54,7 @@ describe Item do
       :path => 'b.c'
     }
     expected = ["a:b.c$1", "a:b.c$5", "a:b.c$9", "a:b.c$8", "a:b.c$7", "a:b.c$6", "a:b.c$3", "a:b.c$4"]
-    Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
+    Score.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
   it "selects half-half" do
@@ -78,7 +78,7 @@ describe Item do
       :path => 'b.c'
     }
     expected = ["a:b.c$1", "a:b.c$2", "a:b.c$3", "a:b.c$4", "a:b.c$5", "a:b.c$9", "a:b.c$8", "a:b.c$7"]
-    Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
+    Score.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
   it "selects what it can (half-half)" do
@@ -104,7 +104,7 @@ describe Item do
       :path => 'b.c'
     }
     expected = ["a:b.c$1", "a:b.c$2", "a:b.c$5", "a:b.c$9"]
-    Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
+    Score.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
   it "selects what it can" do
@@ -128,7 +128,7 @@ describe Item do
       :path => 'b.c'
     }
     expected = ["a:b.c$1", "a:b.c$2", "a:b.c$3", "a:b.c$4", "a:b.c$5", "a:b.c$6", "a:b.c$7", "a:b.c$8", "a:b.c$9", "a:b.c$10"]
-    Item.combine_resultsets(params).map(&:external_uid).should eq(expected)
+    Score.combine_resultsets(params).map(&:external_uid).should eq(expected)
   end
 
   it "shuffles selections" do
@@ -154,7 +154,7 @@ describe Item do
 
     results = []
     5.times do
-      results << Item.combine_resultsets(params).map(&:external_uid)
+      results << Score.combine_resultsets(params).map(&:external_uid)
     end
 
     results.uniq.size.should eq(5)
