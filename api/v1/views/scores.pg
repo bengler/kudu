@@ -1,10 +1,4 @@
+return [] if scores.nil?
 collection :scores => scores do |score|
-  node :score => score do
-    attributes :id, :external_uid, :path, :total_count, :positive_count, :negative_count, :neutral_count, :positive, :negative, :average, :controversiality, :histogram, :updated_at
-
-    # deprecated
-    node :positive_score => score.positive
-    node :negative_score => score.negative
-    node :average_score => score.average
-  end
+  partial :score, :score => score
 end

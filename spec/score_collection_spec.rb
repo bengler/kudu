@@ -1,17 +1,17 @@
 require 'spec_helper'
 
 def create_scores
-  Score.create!(external_uid: 'a:b.c$1', total_count: 10, controversiality: 8)
-  Score.create!(external_uid: 'a:b.c$2', total_count: 9)
-  Score.create!(external_uid: 'a:b.c$5', total_count: 6, controversiality: 7)
-  Score.create!(external_uid: 'a:b.c$9', total_count: 2, controversiality: 6)
+  Score.create!(external_uid: 'a:b.c$1', :kind => 'kudos', total_count: 10, controversiality: 8)
+  Score.create!(external_uid: 'a:b.c$2', :kind => 'kudos', total_count: 9)
+  Score.create!(external_uid: 'a:b.c$5', :kind => 'kudos', total_count: 6, controversiality: 7)
+  Score.create!(external_uid: 'a:b.c$9', :kind => 'kudos', total_count: 2, controversiality: 6)
 
-  Score.create!(external_uid: 'a:b.c$3', total_count: 8, controversiality: 2)
-  Score.create!(external_uid: 'a:b.c$4', total_count: 7, controversiality: 1)
-  Score.create!(external_uid: 'a:b.c$8', total_count: 3, controversiality: 5)
-  Score.create!(external_uid: 'a:b.c$7', total_count: 4, controversiality: 4)
-  Score.create!(external_uid: 'a:b.c$6', total_count: 5, controversiality: 3)
-  Score.create!(external_uid: 'a:b.c$10', total_count: 1)
+  Score.create!(external_uid: 'a:b.c$3', :kind => 'kudos', total_count: 8, controversiality: 2)
+  Score.create!(external_uid: 'a:b.c$4', :kind => 'kudos', total_count: 7, controversiality: 1)
+  Score.create!(external_uid: 'a:b.c$8', :kind => 'kudos', total_count: 3, controversiality: 5)
+  Score.create!(external_uid: 'a:b.c$7', :kind => 'kudos', total_count: 4, controversiality: 4)
+  Score.create!(external_uid: 'a:b.c$6', :kind => 'kudos', total_count: 5, controversiality: 3)
+  Score.create!(external_uid: 'a:b.c$10', :kind => 'kudos', total_count: 1)
 end
 
 describe Score do
