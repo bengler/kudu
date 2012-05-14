@@ -11,21 +11,6 @@ GIT
     o5-logging (0.0.1)
 
 GIT
-  remote: git://github.com/benglerpebbles/pebblebed.git
-  revision: 04665b007e5646d90bad288b0f28eb6ba521cebd
-  specs:
-    pebblebed (0.0.16)
-      activesupport
-      curb (~> 0.8.0)
-      deepstruct
-      futurevalue
-      i18n
-      nokogiri
-      pathbuilder
-      queryparams
-      yajl-ruby
-
-GIT
   remote: git://github.com/benglerpebbles/petroglyph.git
   revision: 325f1fcd806ef18916a6b2aa156909d164d6a321
   specs:
@@ -52,6 +37,20 @@ GIT
     capistrano-bengler (0.0.13)
       capistrano (>= 2.9)
       capistrano-ext (>= 1.2.1)
+
+PATH
+  remote: /Users/katrina/code/pebblebed
+  specs:
+    pebblebed (0.0.16)
+      activesupport
+      curb (~> 0.8.0)
+      deepstruct
+      futurevalue
+      i18n
+      nokogiri
+      pathbuilder
+      queryparams
+      yajl-ruby
 
 GEM
   remote: http://rubygems.org/

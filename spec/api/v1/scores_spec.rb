@@ -26,6 +26,18 @@ describe 'API v1 scores' do
       score["external_uid"].should eq(uid)
     end
 
+    it 'gets scores for a collection of uids using wildcard path' do
+      uids = %w(post:realm.some.path$1 post:realm.some.otherpath$2 post:otherrealm.some.path$3)
+      Score.create!(:external_uid => uids[0], :kind => 'kudos')
+      Score.create!(:external_uid => uids[1], :kind => 'stars') # should not include wrong kinds
+      Score.create!(:external_uid => uids[2], :kind => 'kudos') # should not include wrong paths
+
+      get "/scores/post:realm.some.*/kudos"
+      scores = JSON.parse(last_response.body)["scores"]
+      scores.size.should eq(1)
+      scores.map {|entry| entry["score"]["external_uid"] }.should eq(["post:realm.some.path$1"])
+    end
+
     it 'gets scores of acks for a list of external_uids, in the order they are asked for' do
 
       uids = %w(post:realm.some.path$1 post:realm.some.path$2 post:realm.some.path$3)
