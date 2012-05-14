@@ -39,8 +39,10 @@ class KuduV1 < Sinatra::Base
     pg :score, :locals => {:score => score}
   end
 
-  # Todo
-  get '/scores/:path/rank/:by' do |path, rank_by|
+  get '/scores/:uid/:kind/rank/:by' do |uid, kind, rank_by|
+    klass, path, oid = Pebblebed::Uid.parse(uid)
+    scores = Score.rank(:kind => kind, :by => rank_by, :path => path, :limit => params[:limit], :direction => params[:direction])
+    pg :scores, :locals => {:scores => scores}
   end
 
   get '/scores/:path/:kind/sample' do |path, kind|

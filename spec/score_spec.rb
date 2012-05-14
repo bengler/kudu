@@ -8,6 +8,46 @@ describe Score do
     Score.create!(:external_uid => external_uid, :kind => 'kudos').path.to_s.should eq('this.is.a.path.to')
   end
 
+  describe "#rank" do
+    let(:base_uid) { "xyz:a.b.c." }
+    before(:each) do
+      11.times do |i|
+        Score.create!(:external_uid => "#{base_uid}#{i}", :kind => 'points', :total_count => (10-i), :positive => i)
+      end
+      Score.create!(:external_uid => "#{base_uid}12", :kind => 'stars', :total_count => 40, :positive => 1000)
+    end
+
+    it "fetches the top 10 by default" do
+      results = Score.rank(:kind => 'points', :by => 'positive', :path => 'a.b.c.*')
+      results.size.should eq(10)
+      points = results.map(&:positive)
+      points.should eq(points.sort.reverse)
+    end
+
+    it "can fetch off a different column" do
+      results = Score.rank(:kind => 'points', :by => 'total_count', :path => 'a.b.c.*')
+      results.size.should eq(10)
+      points = results.map(&:total_count)
+      points.should eq(points.sort.reverse)
+    end
+
+    it "takes an arbitrary limit" do
+      results = Score.rank(:kind => 'points', :by => 'total_count', :path => 'a.b.c.*', :limit => 3)
+      results.size.should eq(3)
+      points = results.map(&:total_count)
+      points.should eq(points.sort.reverse)
+    end
+
+    it "can change the direction" do
+      results = Score.rank(:kind => 'points', :by => 'total_count', :path => 'a.b.c.*', :direction => 'asc')
+      results.size.should eq(10)
+      points = results.map(&:total_count)
+      points.should eq(points.sort)
+    end
+
+    it "paginates, too"
+  end
+
   describe "scores" do
 
     subject { Score.new }

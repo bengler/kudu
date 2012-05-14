@@ -73,4 +73,19 @@ describe 'API v1 scores' do
       score["external_uid"].should eq(an_uid)
     end
   end
+
+  describe "GET /scores/:path/:kind/rank/:by" do
+
+    it "fetches the top 10 by default" do
+      base_uid = "xyz:a.b.c."
+      3.times do |i|
+        Score.create!(:external_uid => "#{base_uid}#{i}", :kind => 'points', :total_count => (10-i), :positive => i)
+      end
+      get "/scores/#{base_uid}*/points/rank/positive", :direction => 'asc', :limit => 2
+      scores = JSON.parse(last_response.body)["scores"]
+      scores.size.should eq(2)
+      scores.map {|entry| entry["score"]["positive"] }.should eq([0, 1])
+    end
+
+  end
 end

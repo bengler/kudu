@@ -15,6 +15,12 @@ class Score < ActiveRecord::Base
   scope :exclude_votes_by, lambda { |identity|
     joins("LEFT OUTER JOIN acks on acks.score_id = scores.id and acks.identity=#{identity}").where("acks.id IS NULL")
   }
+  scope :rank, lambda { |options|
+    field = columns.map(&:name).include?(options[:by].to_s) ? options[:by] : 'total_count'
+    direction = options[:direction].to_s.downcase
+    direction = 'desc' unless ['asc', 'desc'].include?(direction)
+    where(:kind => options[:kind]).order("#{field} #{direction}").limit(options[:limit] || 10)
+  }
 
   class << self
     def calculate_all
