@@ -1,15 +1,15 @@
 class Score < ActiveRecord::Base
+  include PebblePath
 
   has_many :acks
 
   validates_presence_of :kind, :external_uid
   
-  before_save :extract_path
   after_initialize :initialize_histogram
 
   serialize :histogram
 
-  scope :for_path, lambda { |path| where(:path => path) }
+  scope :for_path, lambda { |path| by_path(path) }
   scope :order_by, lambda { |field, direction| order("#{field} #{direction} NULLS LAST") }
   scope :by_uid_and_kind, lambda { |uid, kind| where(:external_uid => uid, :kind => kind) }
   scope :exclude_votes_by, lambda { |identity|
@@ -119,11 +119,12 @@ class Score < ActiveRecord::Base
     read_attribute(:controversiality)
   end
 
-  private
-  def extract_path
+  def external_uid=(uid)
+    write_attribute(:external_uid, uid)
     klass, self.path, oid = Pebblebed::Uid.parse external_uid
   end
 
+  private
   def initialize_histogram
     self.histogram ||= {}
   end

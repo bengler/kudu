@@ -15,6 +15,7 @@ gem 'hupper', :git => 'git://github.com/bengler/hupper.git'
 gem 'bengler_test_helper',  :git => "git://github.com/origo/bengler_test_helper.git"
 gem 'pingable'
 gem 'o5-logging', :git => "git://github.com/benglerpebbles/o5-logging.git"
+gem 'pebble_path'
 
 group :development, :test do
   gem 'rake'

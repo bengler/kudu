@@ -5,7 +5,7 @@ describe Score do
   let(:external_uid) {'post:this.is.a.path.to$object_id'}
 
   it "extracts path from uid before save" do
-    Score.create!(:external_uid => external_uid, :kind => 'kudos').path.should eq('this.is.a.path.to')
+    Score.create!(:external_uid => external_uid, :kind => 'kudos').path.to_s.should eq('this.is.a.path.to')
   end
 
   describe "scores" do
