@@ -8,13 +8,14 @@ gem 'activerecord', :require => 'active_record'
 gem 'yajl-ruby'
 gem 'pg'
 gem 'logger'
-gem 'pebblebed', :git => 'git://github.com/benglerpebbles/pebblebed.git'
+gem 'pebblebed', :git => 'git://github.com/benglerpebbles/pebblebed.git', :branch => 'multi-uid-parser'
 gem 'unicorn', '~> 4.1.1'
 gem 'petroglyph', :git => 'git://github.com/benglerpebbles/petroglyph.git'
 gem 'hupper', :git => 'git://github.com/bengler/hupper.git'
 gem 'bengler_test_helper',  :git => "git://github.com/origo/bengler_test_helper.git"
 gem 'pingable'
 gem 'o5-logging', :git => "git://github.com/benglerpebbles/o5-logging.git"
+gem 'pebble_path'
 
 group :development, :test do
   gem 'rake'

@@ -57,9 +57,9 @@ All scores of a given kind:
     GET /scores/:uid/:kind
 
 
-Fetch ranked lists. These need to be ranked by an attribute on score.
+Fetch ranked lists. These need to be ranked by an attribute on score. uid includes a wildcard path.
 
-    GET /scores/:uid/rank/:by
+    GET /scores/:uid/:kind/rank/:by
 
 
 Fetch mixes of ranked, randomized scores, segmented by different groups. Go look at the code. Seriously.

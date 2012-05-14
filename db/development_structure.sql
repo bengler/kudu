@@ -68,7 +68,6 @@ ALTER SEQUENCE acks_id_seq OWNED BY acks.id;
 CREATE TABLE scores (
     id integer NOT NULL,
     external_uid text NOT NULL,
-    path text,
     total_count integer DEFAULT 0,
     positive_count integer DEFAULT 0,
     negative_count integer DEFAULT 0,
@@ -79,7 +78,17 @@ CREATE TABLE scores (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     histogram text,
-    kind text NOT NULL
+    kind text NOT NULL,
+    label_0 text,
+    label_1 text,
+    label_2 text,
+    label_3 text,
+    label_4 text,
+    label_5 text,
+    label_6 text,
+    label_7 text,
+    label_8 text,
+    label_9 text
 );
 
 
@@ -115,14 +124,14 @@ CREATE TABLE schema_migrations (
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY acks ALTER COLUMN id SET DEFAULT nextval('acks_id_seq'::regclass);
+ALTER TABLE acks ALTER COLUMN id SET DEFAULT nextval('acks_id_seq'::regclass);
 
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY scores ALTER COLUMN id SET DEFAULT nextval('items_id_seq'::regclass);
+ALTER TABLE scores ALTER COLUMN id SET DEFAULT nextval('items_id_seq'::regclass);
 
 
 --
@@ -184,13 +193,6 @@ CREATE INDEX index_items_on_negative_score ON scores USING btree (negative);
 
 
 --
--- Name: index_items_on_path; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_items_on_path ON scores USING btree (path);
-
-
---
 -- Name: index_items_on_positive_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -209,6 +211,13 @@ CREATE UNIQUE INDEX index_scores_on_external_uid_and_kind ON scores USING btree 
 --
 
 CREATE INDEX index_scores_on_kind ON scores USING btree (kind);
+
+
+--
+-- Name: index_scores_on_labels; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_scores_on_labels ON scores USING btree (label_0, label_1, label_2, label_3, label_4, label_5, label_6, label_7, label_8, label_9);
 
 
 --

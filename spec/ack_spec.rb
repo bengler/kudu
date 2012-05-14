@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Ack do
 
-  let(:external_uid) {'post:$l0ngAndFiNeUId4U'}
+  let(:external_uid) {'post:a.b.c$l0ngAndFiNeUId4U'}
   let(:kind) {'kudos'}
 
   describe "create_or_update_score" do
