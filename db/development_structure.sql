@@ -37,8 +37,8 @@ CREATE TABLE acks (
     score_id integer,
     identity integer NOT NULL,
     value integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -76,9 +76,10 @@ CREATE TABLE scores (
     positive integer DEFAULT 0,
     negative integer DEFAULT 0,
     controversiality integer DEFAULT 0,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    histogram text
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    histogram text,
+    kind text NOT NULL
 );
 
 
@@ -114,14 +115,14 @@ CREATE TABLE schema_migrations (
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE acks ALTER COLUMN id SET DEFAULT nextval('acks_id_seq'::regclass);
+ALTER TABLE ONLY acks ALTER COLUMN id SET DEFAULT nextval('acks_id_seq'::regclass);
 
 
 --
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE scores ALTER COLUMN id SET DEFAULT nextval('items_id_seq'::regclass);
+ALTER TABLE ONLY scores ALTER COLUMN id SET DEFAULT nextval('items_id_seq'::regclass);
 
 
 --
@@ -194,6 +195,20 @@ CREATE INDEX index_items_on_path ON scores USING btree (path);
 --
 
 CREATE INDEX index_items_on_positive_score ON scores USING btree (positive);
+
+
+--
+-- Name: index_scores_on_external_uid_and_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE UNIQUE INDEX index_scores_on_external_uid_and_kind ON scores USING btree (external_uid, kind);
+
+
+--
+-- Name: index_scores_on_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_scores_on_kind ON scores USING btree (kind);
 
 
 --

@@ -2,6 +2,8 @@ class Score < ActiveRecord::Base
 
   has_many :acks
 
+  validates_presence_of :kind, :external_uid
+  
   before_save :extract_path
   after_initialize :initialize_histogram
 
@@ -9,6 +11,7 @@ class Score < ActiveRecord::Base
 
   scope :for_path, lambda { |path| where(:path => path) }
   scope :order_by, lambda { |field, direction| order("#{field} #{direction} NULLS LAST") }
+  scope :by_uid_and_kind, lambda { |uid, kind| where(:external_uid => uid, :kind => kind) }
   scope :exclude_votes_by, lambda { |identity|
     joins("LEFT OUTER JOIN acks on acks.score_id = scores.id and acks.identity=#{identity}").where("acks.id IS NULL")
   }

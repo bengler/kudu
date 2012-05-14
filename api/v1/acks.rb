@@ -1,3 +1,7 @@
+#
+# Note: acks returned from endpoints are by default scoped to the current identity.
+# I.e. there are currently no way to get someone else's ack for an uid
+#
 class KuduV1 < Sinatra::Base
 
   configure :development do
@@ -5,77 +9,62 @@ class KuduV1 < Sinatra::Base
     also_reload 'lib/ack.rb'
   end
   
-  # Get Acks for score(s) for  current identity
-  get '/acks/:uids' do |uids|
+  # Get current identity's ack for an uid/kind
+  get '/acks/:uid/:kind' do |uid, kind|
     require_identity
-    uids = params[:uids].split(",")
-    scores = Score.find_all_by_external_uid(uids)
-    acks = Ack.find_all_by_score_id(scores, current_identity.id)
-    response.status = 200
-    pg :acks, :locals => {:acks => acks}
-  end
-
-  # Create a single Ack for current identity
-  post '/acks/:uid' do |uid|
-    require_identity
-
-    ack = params[:ack]
-
-    halt 500, "Missing ack object in post body" if ack.nil?
-    halt 500, "Invalid value #{ack['value'].inspect}" unless ack['value'] and Integer(ack['value'])
-    score = Score.find_or_create_by_external_uid(uid)
-    ack = Ack.create_or_update(score, current_identity.id, :value => ack['value'])
-    ack.save!
-    response.status = 201
+    ack = Ack.by_uid_and_kind(uid, kind).where(:identity => current_identity.id).first
+    halt 404, "Not found" unless ack
     pg :ack, :locals => {:ack => ack}
   end
 
-  # FIXME: Hack for dittforslag.
-  # It (incorrectly) returns the count of all acks in the system, not just for dittforslag.
-  get '/acks/:uid/count' do |uid|
-    {:uid => uid, :count => Ack.count,
-      :note => "Not fully implemented! Returns the full ack count for all realms and paths always."}.to_json
+  # Create a single ack for current identity
+  # Responds with status code 201 and the saved ack if ack is successfully updated
+  # Responds with status code 200 if the ack already existed and got updated
+  post '/acks/:uid/:kind' do |uid, kind|
+    save_ack(uid, kind)
   end
 
-  # Update a single Ack for the current identity
-  put '/acks/:uid' do |uid|
+  # Update a single ack for the current identity
+  # It will create a vote record for the ack if it doesnt already exist
+  # Responds with status code 404 if vote or ack is not found
+  # Responds with status code 200 and the updated ack if ack is successfully updated
+  put '/acks/:uid/:kind' do |uid, kind|
+    save_ack(uid, kind, :only_updates => true)
+  end
+
+  def save_ack(uid, kind, opts={})
     require_identity
 
-    ack = params[:ack]
+    param_ack = params[:ack]
+    value = param_ack['value']
 
-    halt 500, "Invalid value #{ack['value'].to_s}" unless ack['value'] and Integer(ack['value'])
-    score = Score.find_or_create_by_external_uid(uid)
-    ack = Ack.create_or_update(score, current_identity.id, :value => ack['value'])
+    halt 500, "Missing ack object in post body." if param_ack.nil?
+    halt 500, "Invalid value #{value.inspect}." unless value and Integer(value)
+
+    score = Score.by_uid_and_kind(uid, kind).first
+    score ||= Score.create!(:external_uid => uid, :kind => kind) unless opts[:only_updates]
+
+    halt 404, "Score with uid \"#{uid}\" of kind \"#{kind}\"not found." unless score
+
+    ack = Ack.find_by_score_id(score.id)
+    ack ||= Ack.new(:score_id => score.id, :identity => current_identity.id) unless opts[:only_updates]
+
+    halt 404, "Ack for \"#{uid}\" with kind \"#{kind}\" by identity ##{current_identity.id} not found." unless ack
+
+    response.status = 201 if ack.new_record?
+    ack.value = value
     ack.save!
     pg :ack, :locals => {:ack => ack}
   end
 
-  # Delete a single Ack
-  delete '/acks/:uid' do |uid|
+  # Delete a single ack for current identity
+  delete '/acks/:uid/:kind' do |uid, kind|
     require_identity
+    ack = Ack.by_uid_and_kind(uid, kind).where(:identity => current_identity.id).first
+    halt 404, "Not found" unless ack
 
-    score = Score.find_by_external_uid(uid)
-    ack = Ack.find_by_score_id(score.id, current_identity.id)
     ack.destroy
-    response.status = 204
+    pg :ack, :locals => {:ack => ack}
   end
 
-  # DEPRECATED. Delete when DittForslag is done.
-  get '/acks/:uid/stats' do |uid|
-    total = Ack.count
-    positive = Ack.where("value > 0").count
-    negative = Ack.where("value < 0").count
-    unique_voters = Ack.select("distinct identity").count
-    avg_votes_per_voter = total.to_f / unique_voters.to_f
-    {
-      :uid => uid,
-      :positive_count => positive,
-      :negative_count => negative,
-      :total_count => total,
-      :unique_voters => unique_voters,
-      :avg_votes_per_voter => avg_votes_per_voter,
-      :note => "Not fully implemented! Returns the full ack count for all realms and paths always."
-    }.to_json
-  end
-  
 end

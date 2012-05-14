@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'API v1' do
+describe 'API v1 acks' do
   include Rack::Test::Methods
 
   def app
@@ -9,16 +9,9 @@ describe 'API v1' do
 
   let(:identity) { 1337 }
 
-  let(:external_uid) {'post:$l0ngAndFiNeUId4U'}
-  let(:a_score) { Score.create!(:external_uid => external_uid) }
+  let(:external_uid) { 'post:realm.some.fine.realm$l0ngAndFiNeUId4U' }
+  let(:a_score) { Score.create!(:external_uid => external_uid, :kind => 'kudos') }
   let(:an_ack) { Ack.create!(:score => a_score, :identity => identity, :value => 1) }
-
-  let(:another_external_uid) {'post:$l0ngAndFiNeUId4Utoo'}
-  let(:another_score) { Score.create!(:external_uid => another_external_uid) }
-  let(:another_ack) { Ack.create!(:score => another_score, :identity => identity, :value => 1) }
-
-  let(:unwanted_score) { Score.create!(:external_uid => "post:$unwanted_ack") }
-  let(:unwanted_ack) { Ack.create!(:score => unwanted_score, :identity => identity, :value => 1) }
 
   context "with an identity" do
     let(:a_session) { {:session => "1234"} }
@@ -27,18 +20,20 @@ describe 'API v1' do
       Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {:id => identity, :god => false, :realm => 'safariman'}))
     end
 
-    describe 'GET /acks/:uid' do
-      it 'returns an ack for an uid given by current identity' do
+    describe 'GET /acks/:uid:/kind' do
+      it 'returns an ack for an :uid of :kind given by current identity' do
         an_ack
-        get "/acks/#{a_score.external_uid}", a_session
+        get "/acks/#{a_score.external_uid}/kudos", a_session
         last_response.status.should eq 200
-        ack_response = JSON.parse(last_response.body)["acks"]
-        ack_response[0]['ack']['id'].should eq an_ack.id
+        ack_response = JSON.parse(last_response.body)
+        ack_response['ack']['id'].should eq an_ack.id
       end
+    end
 
+    describe 'PUT /acks/:uid/:kind' do
       it 'updates an existing score and recalculates it' do
         an_ack
-        put "/acks/#{external_uid}", a_session.merge(:ack => {:value => 0})
+        put "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 0})
         last_response.status.should eq 200
         ack_response = JSON.parse(last_response.body)["ack"]
         Ack.find_by_id(ack_response['id']).value.should eq(0)
@@ -48,18 +43,20 @@ describe 'API v1' do
       end
     end
 
-    describe 'POST /acks/:uid' do
+    describe 'POST /acks/:uid/:kind' do
       it 'creates an ack and a score' do
-        post "/acks/#{external_uid}", a_session.merge(:ack => {:value => "+1"})
+        post "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => "+1"})
         last_response.status.should eq 201
         ack_response = JSON.parse(last_response.body)["ack"]
         Ack.find_by_id(ack_response['id']).value.should eq(1)
         Score.find_by_external_uid(external_uid).total_count.should eq(1)
       end
+    end
 
+    describe 'PUT /acks/:uid/:kind' do
       it 'updates an existing score and recalculates it' do
         an_ack
-        put "/acks/#{external_uid}", a_session.merge(:ack => {:value => 0})
+        put "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 0})
         last_response.status.should eq 200
         ack_response = JSON.parse(last_response.body)["ack"]
         Ack.find_by_id(ack_response['id']).value.should eq(0)
@@ -69,12 +66,12 @@ describe 'API v1' do
       end
     end
 
-    describe 'DELETE /acks/:uid' do
+    describe 'DELETE /acks/:uid/:kind' do
       it 'deletes an ack' do
         an_ack
 
-        delete "/acks/#{external_uid}", a_session
-        last_response.status.should eq(204)
+        delete "/acks/#{external_uid}/kudos", a_session
+        last_response.status.should eq(200)
 
         Ack.find_by_id(an_ack.id).should be_nil
       end
@@ -86,32 +83,10 @@ describe 'API v1' do
       Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {}))
     end
 
-    describe "GET /scores/:uids" do
-      it 'gets a score of acks for a single external_uid' do
-        an_ack
-
-        get "/scores/#{external_uid}"
-        scores = JSON.parse(last_response.body)["scores"]
-        scores.first["score"]["external_uid"].should eq(external_uid)
-      end
-
-      it 'gets scores of acks for a list of external_uids' do
-        an_ack
-        another_ack
-        unwanted_ack
-
-        get "/scores/#{external_uid},#{another_external_uid}"
-        scores = JSON.parse(last_response.body)["scores"]
-        scores.size.should eq(2)
-        scores.first["score"]["external_uid"].should eq(external_uid)
-        scores.last["score"]["external_uid"].should eq(another_external_uid)
-      end
-    end
-
     describe "has no access to protected endpoints" do
       protected_endpoints = [
-        {:method => :post, :endpoint => "/acks/a$uid"},
-        {:method => :delete, :endpoint => "/acks/a$uid"},
+        {:method => :post, :endpoint => "/acks/:kind/a$uid"},
+        {:method => :delete, :endpoint => "/acks/:kind/a$uid"},
       ]
 
       protected_endpoints.each do |forbidden|
@@ -122,9 +97,4 @@ describe 'API v1' do
       end
     end
   end
-
-  it "logs" do
-    get "/log/something"
-  end
-
 end
