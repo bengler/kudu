@@ -37,8 +37,8 @@ CREATE TABLE acks (
     score_id integer,
     identity integer NOT NULL,
     value integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -75,8 +75,8 @@ CREATE TABLE scores (
     positive integer DEFAULT 0,
     negative integer DEFAULT 0,
     controversiality integer DEFAULT 0,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
     histogram text,
     kind text NOT NULL,
     label_0 text,
