@@ -21,7 +21,8 @@ class AddKindToScores < ActiveRecord::Migration
       execute("delete from scores where id IN (#{dups.join(",")})")
     end
 
-    Score.calculate_all # recalculate all scores
+    # recalculate all scores
+    Score.calculate_all if Score and Score.respond_to?(:calculate_all)
 
     change_column :scores, :kind, :text, :null => false
     add_index :scores, :kind
