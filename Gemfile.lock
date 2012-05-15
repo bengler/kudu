@@ -12,7 +12,7 @@ GIT
 
 GIT
   remote: git://github.com/benglerpebbles/pebblebed.git
-  revision: 3b4d3ed838ca4747ea66b40ce7bfda13119aa821
+  revision: adfe250ef889145be8ee553014adcf5cf703da54
   branch: multi-uid-parser
   specs:
     pebblebed (0.0.16)
