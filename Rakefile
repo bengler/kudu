@@ -1,5 +1,8 @@
 $:.unshift(File.dirname(__FILE__))
 
+require "bundler"
+Bundler.require
+
 require 'sinatra/activerecord/rake'
 require 'bengler_test_helper/tasks'
 
