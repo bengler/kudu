@@ -22,7 +22,7 @@ class KuduV1 < Sinatra::Base
       pg :scores, :locals => {:scores => scores}
     else
       score = Score.by_uid_and_kind(uid, kind).first
-      halt 404, "No score for uid \"#{uid}\" and kind \"#{kind}\"." unless score
+      score ||= Score.new
       pg :score, :locals => {:score => score}
     end
   end
@@ -51,5 +51,4 @@ class KuduV1 < Sinatra::Base
     scores = Score.combine_resultsets(params.merge(:path => path, :identity_id => identity_id)).flatten
     pg :scores, :locals => {:scores => scores}
   end
-  
 end

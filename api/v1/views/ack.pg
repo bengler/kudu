@@ -1,4 +1,4 @@
-return {:ack => nil} if ack.nil?
+return {:ack => nil} unless ack
 
 node :ack => ack do
   attributes :id, :value, :kind, :created_at, :updated_at

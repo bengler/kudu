@@ -1,4 +1,4 @@
-return nil unless score
+return {:score => nil} unless score
 
 node :score => score do
   attributes :id,
