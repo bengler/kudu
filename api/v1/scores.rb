@@ -7,7 +7,7 @@ class KuduV1 < Sinatra::Base
 
   # TODO: Implement pagination
   get '/scores/:uids/:kind' do |uid, kind|
-    strategy = Pebblebed::MultiUID.new(uid)
+    strategy = Pebblebed::UIDQuery.new(uid)
     if strategy.list?
       uids = uid.split(",")
 
