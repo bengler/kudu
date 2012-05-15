@@ -13,7 +13,6 @@ class KuduV1 < Sinatra::Base
   get '/acks/:uid/:kind' do |uid, kind|
     require_identity
     ack = Ack.by_uid_and_kind(uid, kind).where(:identity => current_identity.id).first
-    halt 404, "Not found" unless ack
     pg :ack, :locals => {:ack => ack}
   end
 
