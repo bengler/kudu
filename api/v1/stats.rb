@@ -22,10 +22,9 @@ class KuduV1 < Sinatra::Base
     }.to_json
   end
   
-  # FIXME: Hack for dittforslag.
-  # It (incorrectly) returns the count of all acks for given kind in the system, not just for dittforslag.
   get '/acks/:uid/:kind/count' do |uid, kind|
-    {:uid => uid, :count => Ack.joins(:score).where(:scores => {:kind => kind}).count,
-      :note => "Not fully implemented! Returns the full ack count for all realms and paths always."}.to_json
+    { :uid => uid,
+      :count => Score.by_path(Pebblebed::Uid.new(uid).path).where(:kind => kind).sum(:total_count)
+    }.to_json
   end
 end
