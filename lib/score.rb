@@ -18,7 +18,7 @@ class Score < ActiveRecord::Base
   scope :rank, lambda { |options|
     field = "total_count"
     if options[:by] == 'average'
-      field = "((scores.positive - scores.negative)/scores.total_count)"
+      field = "case scores.total_count when 0 then 0 else ((scores.positive - scores.negative)/scores.total_count) end"
     elsif columns.map(&:name).include?(options[:by].to_s)
       field =  options[:by]
     end
