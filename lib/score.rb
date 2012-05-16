@@ -99,7 +99,7 @@ class Score < ActiveRecord::Base
 
   def average
     return 0 if total_count == 0
-    (positive - negative) / total_count
+    (positive - negative).to_f / total_count
   end
 
   def apply_score(score)
