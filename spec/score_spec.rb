@@ -12,7 +12,7 @@ describe Score do
     let(:base_uid) { "xyz:a.b.c." }
     before(:each) do
       11.times do |i|
-        Score.create!(:external_uid => "#{base_uid}#{i}", :kind => 'points', :total_count => (10-i), :positive => i, :negative => i+1)
+        Score.create!(:external_uid => "#{base_uid}#{i}", :kind => 'points', :total_count => (10-i), :positive => i, :negative => -i*i)
       end
       Score.create!(:external_uid => "#{base_uid}12", :kind => 'stars', :total_count => 40, :positive => 1000)
     end
@@ -46,11 +46,12 @@ describe Score do
     end
 
     it "can rank by 'average'" do
-      results = Score.rank(:kind => 'points', :by => 'average', :path => 'a.b.c.*', :direction => 'asc')
-      results.size.should eq(10)
+      results = Score.rank(:kind => 'points', :by => 'average', :path => 'a.b.c.*', :direction => 'desc', :limit => 12)
       points = results.map(&:average)
-      points.first.should eq(-1.0)
-      points.last.should eq(0)
+      points.first.should eq 90.0
+      points.last.should eq 0.0
+      points.should eq points.sort.reverse
+      
     end
 
     it "paginates, too"
