@@ -38,6 +38,8 @@ describe 'API v1 scores' do
       scores.map {|entry| entry["score"]["external_uid"] }.should eq(["post:realm.some.path$1"])
     end
 
+    it 'ranks the scores when the :rank parameter is provided'
+
     it 'gets scores of acks for a list of external_uids, in the order they are asked for' do
 
       uids = %w(post:realm.some.path$1 post:realm.some.path$2 post:realm.some.path$3)

@@ -46,6 +46,8 @@ describe Score do
     end
 
     it "paginates, too"
+
+    it "can rank by 'average'"
   end
 
   describe "scores" do

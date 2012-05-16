@@ -2,3 +2,13 @@ return [] if scores.nil?
 collection :scores => scores do |score|
   partial :score, :score => score
 end
+
+begin
+  if pagination
+    node :pagination => pagination do
+      attributes :limit, :offset, :last_page
+    end
+  end
+rescue NameError
+  # Ok. No pagination provided
+end

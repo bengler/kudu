@@ -16,10 +16,15 @@ class Score < ActiveRecord::Base
     joins("LEFT OUTER JOIN acks on acks.score_id = scores.id and acks.identity=#{identity}").where("acks.id IS NULL")
   }
   scope :rank, lambda { |options|
-    field = columns.map(&:name).include?(options[:by].to_s) ? options[:by] : 'total_count'
-    direction = options[:direction].to_s.downcase
+    field = "total_count"
+    if options[:by] == 'average'
+      field = "((scores.positive - scores.negative)/scores.total_count)"
+    elsif columns.map(&:name).include?(options[:by].to_s)
+      field =  options[:by]
+    end
+    direction = (options[:direction] || 'desc').to_s.downcase
     direction = 'desc' unless ['asc', 'desc'].include?(direction)
-    where(:kind => options[:kind]).order("#{field} #{direction}").limit(options[:limit] || 10)
+    order("#{field} #{direction}").limit(options[:limit] || 10)
   }
 
   class << self
