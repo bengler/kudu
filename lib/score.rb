@@ -19,6 +19,7 @@ class Score < ActiveRecord::Base
     field = "total_count"
     if options[:by] == 'average'
       field = "case scores.total_count when 0 then 0 else ((scores.positive - scores.negative)/(scores.total_count*1.0)) end"
+      where("scores.total_count > 10")
     elsif columns.map(&:name).include?(options[:by].to_s)
       field =  options[:by]
     end
