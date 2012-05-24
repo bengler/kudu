@@ -45,11 +45,16 @@ describe Score do
       points.should eq(points.sort)
     end
 
-    it "can rank by 'average'" do
-      results = Score.rank(:kind => 'points', :by => 'average', :path => 'a.b.c.*', :direction => 'desc', :limit => 12)
+    it "can rank by 'average' but skips scores with less than 10 votes" do
+      Score.create!(:external_uid => "post:lets.test.average$1", :kind => 'stars', :total_count => 9, :positive => 18)
+      Score.create!(:external_uid => "post:lets.test.average$2", :kind => 'stars', :total_count => 10, :positive => 100)
+      Score.create!(:external_uid => "post:lets.test.average$3", :kind => 'stars', :total_count => 20, :positive => 100)
+
+      results = Score.rank(:kind => 'points', :by => 'average', :path => 'lets.test.average$*', :direction => 'desc', :limit => 3)
       points = results.map(&:average)
-      points.first.should eq 90.0
-      points.last.should eq 0.0
+      points.length.should eq 2
+      points.first.should eq 25.0
+      points.last.should eq 5.0
       points.should eq points.sort.reverse
       
     end
