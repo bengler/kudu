@@ -48,7 +48,9 @@ describe 'API v1 acks' do
         post "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => "+1"})
         last_response.status.should eq 201
         ack_response = JSON.parse(last_response.body)["ack"]
-        Ack.find_by_id(ack_response['id']).value.should eq(1)
+        ack = Ack.find_by_id(ack_response['id'])
+        ack.value.should eq(1)
+        ack.ip.should eq('127.0.0.1')
         Score.find_by_external_uid(external_uid).total_count.should eq(1)
       end
     end
