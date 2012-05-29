@@ -10,12 +10,6 @@ set :environment, ENV['RACK_ENV'].to_sym
 
 use Rack::CommonLogger
 
-Pingable.active_record_checks!
-
-map "/api/kudu/v1/ping" do
-  run Pingable::Handler.new("kudu")
-end
-
 map "/api/kudu/v1" do
   use Rack::PostBodyContentTypeParser
   use Rack::MethodOverride
