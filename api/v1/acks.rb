@@ -48,7 +48,7 @@ class KuduV1 < Sinatra::Base
     ack = Ack.find_by_score_id_and_identity(score.id, current_identity.id)
     ack ||= Ack.new(:score_id => score.id, :identity => current_identity.id) unless opts[:only_updates]
 
-    ip = request.env['HTTP_X_FORWARDED_FOR'] || request.remote_ip
+    ip = request.env['HTTP_X_FORWARDED_FOR'] || request.ip
     ip = ip.sub("::ffff:", "") # strip away ipv6 compatible formatting
     ack.ip = ip.split(/,\s*/).uniq.first  # HTTP_X_FORWARDED_FOR may contain multiple comma separated ips
 
