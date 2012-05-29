@@ -47,6 +47,7 @@ class KuduV1 < Sinatra::Base
 
     ack = Ack.find_by_score_id_and_identity(score.id, current_identity.id)
     ack ||= Ack.new(:score_id => score.id, :identity => current_identity.id) unless opts[:only_updates]
+    ack.ip = request.ip
 
     halt 404, "Ack for \"#{uid}\" with kind \"#{kind}\" by identity ##{current_identity.id} not found." unless ack
 
