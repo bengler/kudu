@@ -13,6 +13,7 @@ gem 'unicorn', '~> 4.1.1'
 gem 'petroglyph', :git => 'git://github.com/kytrinyx/petroglyph.git'
 gem 'bengler_test_helper',  :git => "git://github.com/origo/bengler_test_helper.git"
 gem 'pebble_path'
+gem 'thor', :require => false
 
 group :development, :test do
   gem 'rake'
