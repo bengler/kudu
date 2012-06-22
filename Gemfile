@@ -8,9 +8,9 @@ gem 'activerecord', :require => 'active_record'
 gem 'yajl-ruby'
 gem 'pg'
 gem 'logger'
-gem 'pebblebed', :git => 'git://github.com/benglerpebbles/pebblebed.git', :branch => 'multi-uid-parser'
+gem 'pebblebed'
 gem 'unicorn', '~> 4.1.1'
-gem 'petroglyph', :git => 'git://github.com/kytrinyx/petroglyph.git'
+gem 'petroglyph'
 gem 'bengler_test_helper',  :git => "git://github.com/origo/bengler_test_helper.git"
 gem 'pebble_path'
 gem 'thor', :require => false
