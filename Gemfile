@@ -9,6 +9,7 @@ gem 'yajl-ruby'
 gem 'pg'
 gem 'logger'
 gem 'pebblebed'
+gem 'pebbles-cors', :git => "git@github.com:bengler/pebbles-cors"
 gem 'unicorn', '~> 4.1.1'
 gem 'petroglyph'
 gem 'bengler_test_helper',  :git => "git://github.com/origo/bengler_test_helper.git"
