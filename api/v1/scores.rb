@@ -19,7 +19,7 @@ class KuduV1 < Sinatra::Base
     elsif strategy.wildcard?
       klass, path, oid = Pebblebed::Uid.parse(uid)
       scores = Score.where(:kind => kind).by_path(path)      
-      scores = scores.rank(:by => params[:rank]) if params[:rank]
+      scores = scores.rank(:by => params[:rank], :direction => params[:direction]) if params[:rank]
       scores, pagination = limit_offset_collection(scores, :limit => params['limit'], :offset => params['offset'])
       pg :scores, :locals => {:scores => scores, :pagination => pagination}
     else
