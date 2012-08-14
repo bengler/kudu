@@ -12,7 +12,7 @@ gem 'pebblebed'
 gem 'pebbles-cors', :git => "git@github.com:bengler/pebbles-cors"
 gem 'unicorn', '~> 4.1.1'
 gem 'petroglyph'
-gem 'bengler_test_helper',  :git => "git://github.com/origo/bengler_test_helper.git"
+gem 'bengler_test_helper',  :git => "git://github.com/bengler/bengler_test_helper.git"
 gem 'pebble_path'
 gem 'thor', :require => false
 
