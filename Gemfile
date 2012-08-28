@@ -21,6 +21,4 @@ group :development, :test do
   gem 'simplecov'
   gem 'rspec', '~> 2.8'
   gem 'rack-test'
-  gem 'capistrano', '~> 2.9.0', :require => false
-  gem 'capistrano-bengler', :git => "git@github.com:bengler/capistrano-bengler.git", :require => false
 end
