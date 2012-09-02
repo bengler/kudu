@@ -1,0 +1,23 @@
+---
+common: &common
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  pool: 5
+  username: kudu
+
+production:
+  database: kudu_production
+  password: 
+  <<: *common
+
+development:
+  database: kudu_development
+  password: 
+  <<: *common
+
+test:
+  database: kudu_test
+  password: 
+  min_messages: WARNING
+  <<: *common
