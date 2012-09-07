@@ -8,13 +8,11 @@ describe 'API v1 scores' do
     KuduV1
   end
 
-  let(:identity) { {:id => 1337} }
-  
   before :each do
-    Pebblebed::Connector.any_instance
-      .stub(:checkpoint)
-      .and_return(DeepStruct.wrap(:me => {:id => identity, :god => false, :realm => 'safariman'}))
+    Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(stub(:get => the_identity))
   end
+
+  let(:the_identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => false, :realm => 'safariman'}) }
 
   describe "GET /scores/:uid(s)/:kind" do
 

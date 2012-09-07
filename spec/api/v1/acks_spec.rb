@@ -13,12 +13,14 @@ describe 'API v1 acks' do
   let(:a_score) { Score.create!(:external_uid => external_uid, :kind => 'kudos') }
   let(:an_ack) { Ack.create!(:score => a_score, :identity => identity, :value => 1) }
 
+  before :each do
+    Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(stub(:get => alice))
+  end
+
+  let(:alice) { DeepStruct.wrap(:identity => {:id => identity, :god => false, :realm => 'safariman'}) }
+
   context "with an identity" do
     let(:a_session) { {:session => "1234"} }
-
-    before :each do
-      Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {:id => identity, :god => false, :realm => 'safariman'}))
-    end
 
     describe 'GET /acks/:uid:/kind' do
       it 'returns an ack for an :uid of :kind given by current identity' do
@@ -81,9 +83,7 @@ describe 'API v1 acks' do
   end
 
   context "without an identity" do
-    before :each do
-      Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(DeepStruct.wrap(:me => {}))
-    end
+    let(:alice) { DeepStruct.wrap(:identity => {}) }
 
     describe "has no access to protected endpoints" do
       protected_endpoints = [
