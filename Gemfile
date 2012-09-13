@@ -15,6 +15,7 @@ gem 'petroglyph'
 gem 'bengler_test_helper',  :git => "git://github.com/bengler/bengler_test_helper.git"
 gem 'pebble_path'
 gem 'thor', :require => false
+gem 'airbrake', '~> 3.1.4', :require => false
 
 group :development, :test do
   gem 'rake'
