@@ -41,6 +41,14 @@ class KuduV1 < Sinatra::Base
     pg :score, :locals => {:score => score}
   end
 
+  post '/scores/calculate' do
+    require_god
+    fork do
+      Score.calculate_all
+    end
+    [204]
+  end
+
   # Deprecated. Use :rank option to '/scores/:uids/:kind'
   get '/scores/:uid/:kind/rank/:by' do |uid, kind, rank_by|
     klass, path, oid = Pebblebed::Uid.parse(uid)
