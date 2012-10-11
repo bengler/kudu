@@ -1,4 +1,4 @@
-require 'score/sample_options'
+require 'kudu/score/sample_options'
 
 describe ScoreSampleOptions do
 
