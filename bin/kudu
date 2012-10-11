@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require_relative '../lib/cli'
+
+Kudu::CLI.start
+
