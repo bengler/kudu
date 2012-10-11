@@ -1,4 +1,4 @@
-require 'score/segment'
+require 'kudu/score/segment'
 
 class ScoreSampleOptions
 

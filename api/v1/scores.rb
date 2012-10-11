@@ -2,7 +2,7 @@ class KuduV1 < Sinatra::Base
 
   configure :development do
     register Sinatra::Reloader
-    also_reload 'lib/score.rb'
+    also_reload 'lib/kudu/score.rb'
   end
 
   # TODO: Implement pagination

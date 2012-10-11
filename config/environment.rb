@@ -9,7 +9,7 @@ set :root, File.dirname(File.dirname(__FILE__))
 
 $:.unshift('./lib')
 
-Dir.glob('./lib/**/*.rb').each{ |lib| require lib }
+Dir.glob('./lib/kudu/**/*.rb').each{ |lib| require lib }
 
 $config = YAML::load(File.open("config/database.yml"))
 environment = ENV['RACK_ENV'] || "development"
