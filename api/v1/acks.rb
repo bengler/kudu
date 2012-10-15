@@ -8,7 +8,7 @@ class KuduV1 < Sinatra::Base
     register Sinatra::Reloader
     also_reload 'lib/kudu/ack.rb'
   end
-  
+
   # Get current identity's ack for an uid/kind
   get '/acks/:uid/:kind' do |uid, kind|
     require_identity

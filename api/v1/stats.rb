@@ -21,7 +21,7 @@ class KuduV1 < Sinatra::Base
       :note => "Not fully implemented! Returns the full ack count for all realms and paths always."
     }.to_json
   end
-  
+
   get '/acks/:uid/:kind/count' do |uid, kind|
     { :uid => uid,
       :count => Score.by_path(Pebblebed::Uid.new(uid).path).where(:kind => kind).sum(:total_count)
