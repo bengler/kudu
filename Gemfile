@@ -14,6 +14,7 @@ gem 'unicorn', '~> 4.1.1'
 gem 'petroglyph'
 gem 'bengler_test_helper',  :git => "git://github.com/bengler/bengler_test_helper.git"
 gem 'pebble_path'
+gem 'pebbles-uid'
 gem 'thor', :require => false
 gem 'airbrake', '~> 3.1.4', :require => false
 
