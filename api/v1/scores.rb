@@ -9,7 +9,7 @@ class KuduV1 < Sinatra::Base
   get '/scores/:uids/:kind' do |uid, kind|
     query =  Pebbles::Uid.query(uid)
     if query.list?
-      uids = query.terms
+      uids = query.list
       scores = Score.where(:kind => kind).find_all_by_external_uid(uids)
       by_uid = Hash[scores.map { |score| [score.external_uid, score] }]
       scores = uids.map { |uid| by_uid[uid] }
