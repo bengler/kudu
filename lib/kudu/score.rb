@@ -4,7 +4,7 @@ class Score < ActiveRecord::Base
   has_many :acks
 
   validates_presence_of :kind, :external_uid
-  
+
   after_initialize :initialize_histogram
 
   serialize :histogram
@@ -135,7 +135,8 @@ class Score < ActiveRecord::Base
 
   def external_uid=(uid)
     write_attribute(:external_uid, uid)
-    klass, self.path, oid = Pebblebed::Uid.parse external_uid
+    parsed =  Pebbles::Uid.new(uid)
+    genus, self.path, oid = parsed.genus, parsed.path, parsed.oid
   end
 
   private

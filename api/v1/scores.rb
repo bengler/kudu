@@ -40,8 +40,8 @@ class KuduV1 < Sinatra::Base
 
   # Deprecated. Use :rank option to '/scores/:uids/:kind'
   get '/scores/:uid/:kind/rank/:by' do |uid, kind, rank_by|
-    klass, path, oid = Pebblebed::Uid.parse(uid)
-    scores = Score.where(:kind => kind).rank(:by => rank_by, :path => path, :limit => params[:limit], :direction => params[:direction])
+    query =  Pebbles::Uid.query(uid)
+    scores = Score.where(:kind => kind).rank(:by => rank_by, :path => query.path, :limit => params[:limit], :direction => params[:direction])
     pg :scores, :locals => {:scores => scores}
   end
 

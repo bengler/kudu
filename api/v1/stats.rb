@@ -23,8 +23,9 @@ class KuduV1 < Sinatra::Base
   end
 
   get '/acks/:uid/:kind/count' do |uid, kind|
+    query =  Pebbles::Uid.query(uid)
     { :uid => uid,
-      :count => Score.by_path(Pebblebed::Uid.new(uid).path).where(:kind => kind).sum(:total_count)
+      :count => Score.by_path(query.path).where(:kind => kind).sum(:total_count)
     }.to_json
   end
 end
