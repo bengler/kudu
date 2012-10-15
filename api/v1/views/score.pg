@@ -11,8 +11,8 @@ node :score => score do
              :positive,
              :negative,
              :average,
-             :controversiality, 
-             :histogram, 
+             :controversiality,
+             :histogram,
              :created_at
 
   # deprecated

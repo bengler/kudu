@@ -7,18 +7,15 @@ class KuduV1 < Sinatra::Base
 
   # TODO: Implement pagination
   get '/scores/:uids/:kind' do |uid, kind|
-    strategy = Pebblebed::UIDQuery.new(uid)
-    if strategy.list?
-      uids = uid.split(",")
-
+    query =  Pebbles::Uid.query(uid)
+    if query.list?
+      uids = query.terms
       scores = Score.where(:kind => kind).find_all_by_external_uid(uids)
       by_uid = Hash[scores.map { |score| [score.external_uid, score] }]
       scores = uids.map { |uid| by_uid[uid] }
-
       pg :scores, :locals => {:scores => scores}
-    elsif strategy.wildcard?
-      klass, path, oid = Pebblebed::Uid.parse(uid)
-      scores = Score.where(:kind => kind).by_path(path)      
+    elsif query.collection?
+      scores = Score.where(:kind => kind).by_path(query.path)
       scores = scores.rank(:by => params[:rank], :direction => params[:direction]) if params[:rank]
       scores, pagination = limit_offset_collection(scores, :limit => params['limit'], :offset => params['offset'])
       pg :scores, :locals => {:scores => scores, :pagination => pagination}
@@ -49,7 +46,7 @@ class KuduV1 < Sinatra::Base
   end
 
   get '/scores/:path/:kind/sample' do |path, kind|
-    # Todo: actually take kind into consideration 
+    # Todo: actually take kind into consideration
     identity_id = current_identity.id if current_identity
     scores = Score.combine_resultsets(params.merge(:path => path, :identity_id => identity_id)).flatten
     pg :scores, :locals => {:scores => scores}
