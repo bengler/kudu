@@ -1,5 +1,5 @@
 class Score < ActiveRecord::Base
-  include PebblePath
+  include Pebbles::Path
 
   has_many :acks
 

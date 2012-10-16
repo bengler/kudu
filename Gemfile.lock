@@ -63,8 +63,6 @@ GEM
     multi_json (1.3.6)
     nokogiri (1.5.5)
     pathbuilder (0.0.2)
-    pebble_path (0.0.3)
-      pebblebed (>= 0.0.15)
     pebblebed (0.0.22)
       activesupport
       bunny
@@ -76,6 +74,8 @@ GEM
       pathbuilder
       queryparams
       yajl-ruby
+    pebbles-path (0.0.3)
+      pebbles-uid (>= 0.0.6)
     pebbles-uid (0.0.9)
     petroglyph (0.0.3)
       tilt
@@ -128,9 +128,9 @@ DEPENDENCIES
   airbrake (~> 3.1.4)
   bengler_test_helper!
   logger
-  pebble_path
   pebblebed
   pebbles-cors!
+  pebbles-path
   pebbles-uid
   petroglyph
   pg
