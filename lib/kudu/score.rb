@@ -135,8 +135,7 @@ class Score < ActiveRecord::Base
 
   def external_uid=(uid)
     write_attribute(:external_uid, uid)
-    parsed =  Pebbles::Uid.new(uid)
-    genus, self.path, oid = parsed.genus, parsed.path, parsed.oid
+    species, self.path, oid = Pebbles::Uid.parse(uid)
   end
 
   private
