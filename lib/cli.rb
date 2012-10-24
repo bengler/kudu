@@ -9,9 +9,8 @@ module Kudu
     desc "recalculate", "Recalculate all scores from raw ack data"
     def recalculate
       require_relative '../config/environment'
-      LOGGER.info "Recalculating all scores..."
+      ActiveRecord::Base.logger.level = Logger::WARN
       Score.calculate_all
-      LOGGER.info "Recalculations complete."
     end
   end
 end
