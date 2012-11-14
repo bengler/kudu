@@ -12,7 +12,7 @@ class KuduV1 < Sinatra::Base
   # @category Kudu/Scores
   # @path /api/kudu/v1/scores/:uid/:kind
   # @http GET
-  # @example /api/kudu/v1/scores/post.track:apdm.bandwagon.west.firda.*/downloads?rank=positive&direction=desc
+  # @example /api/kudu/v1/scores/post:acme.myapp.stuff.*/downloads?rank=positive&direction=desc
   # @required [String] uid UID denoting a resource, or a wildcard UID indicating a collection of resources.
   # @required [String] kind Action kind to count.
   # @optional [Integer] limit Maximum number of results. Defaults to 20.
@@ -40,8 +40,21 @@ class KuduV1 < Sinatra::Base
     end
   end
 
-  # Create a score (i.e. in order to preserve creation date)
-  # This is idempotent. Subsequent posts to the same url will not have any effect.
+
+
+  # @apidoc
+  # Create a score.
+  #
+  # @description Create a score, i.e. in order to preserve creation date. This is idempotent. Subsequent posts to the same URL will not have any effect.
+  #
+  # @note Kind is typically "votes", "downloads", "likes" etc.
+  # @category Kudu/Scores
+  # @path /scores/:uid/:kind/touch
+  # @http POST
+  # @example /api/kudu/v1/scores/post:acme.myapp.stuff.*/downloads/touch
+  # @required [String] uid UID denoting a resource, or a wildcard UID indicating a collection of resources.
+  # @required [String] kind Action kind to count.
+  # @status 201 JSON
   post '/scores/:uid/:kind/touch' do |uid, kind|
     require_identity
     score = Score.by_uid_and_kind(uid, kind).first
@@ -59,8 +72,23 @@ class KuduV1 < Sinatra::Base
     pg :scores, :locals => {:scores => scores}
   end
 
+  # @apidoc
+  # Get a mix of scores for resources on a path.
+  #
+  # @description Mix is a sample of score fields, e.g. "positive", "controversial" etc
+  # @note Kind isn't taken into consideration. Kind would typically be "votes", "downloads", "likes" etc.
+  # @category Kudu/Scores
+  # @path /api/kudu/v1/scores/:path/:kind/sample
+  # @http GET
+  # @example /api/kudu/v1/scores/acme.myapp.stuff/downloads/sample?limit=10&randomize=true&segments[][field]=controversiality&segments[][percent]=40&segments[][order]=desc&segments[][field]=created_at&segments[][percent]=60&segments[][order]=desc
+  # @required [String] path Path to resources.
+  # @required [String] kind Action kind to count.
+  # @required [String] segments A list of fields to fetch scores from. See example.
+  # @required [Integer] limit Maximum number of results.
+  # @optional [Boolean] shuffle Set to true in order to randomize samples.
+  # @status 200 JSON
   get '/scores/:path/:kind/sample' do |path, kind|
-    # Todo: actually take kind into consideration
+    # TODO: kind should be taken into consideration
     identity_id = current_identity.id if current_identity
     scores = Score.combine_resultsets(params.merge(:path => path, :identity_id => identity_id)).flatten
     pg :scores, :locals => {:scores => scores}
