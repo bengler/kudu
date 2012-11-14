@@ -5,9 +5,23 @@ class KuduV1 < Sinatra::Base
     also_reload 'lib/kudu/score.rb'
   end
 
-  # TODO: Implement pagination
-  get '/scores/:uids/:kind' do |uid, kind|
-    query =  Pebbles::Uid.query(uid)
+  # @apidoc
+  # Get detailed scores for resources with a specific kind.
+  #
+  # @note Kind is typically "votes", "downloads", "likes" etc.
+  # @category Kudu/Scores
+  # @path /api/kudu/v1/scores/:uid/:kind
+  # @http GET
+  # @example /api/kudu/v1/scores/post.track:apdm.bandwagon.west.firda.*/downloads?rank=positive&direction=desc
+  # @required [String] uid UID denoting a resource, or a wildcard UID indicating a collection of resources.
+  # @required [String] kind Action kind to count.
+  # @optional [Integer] limit Maximum number of results. Defaults to 20.
+  # @optional [Integer] offset Index of the first results. Defaults to 0.
+  # @optional [String] rank Field to sort by. Available fields are "total_count", "positive_count", "negative_count", "neutral_count", "positive", "negative", "average", "controversiality", "histogram","positive_score", "negative_score", "average_score".
+  # @optional [String] direction Sort order. Defaults to "desc".
+  # @status 200 JSON
+  get '/scores/:uid/:kind' do |uid, kind|
+    query = Pebbles::Uid.query(uid)
     if query.list?
       uids = query.list
       scores = Score.where(:kind => kind).find_all_by_external_uid(uids)

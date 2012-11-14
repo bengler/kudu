@@ -23,9 +23,10 @@ class KuduV1 < Sinatra::Base
   end
 
   # @apidoc
-  # Get the score count for specified resources.
+  # Get the score count for resources with a specific kind.
   #
-  # @note Kind is typically kudos, downloads, likes.
+  # @description The count is the sum of total_count all scores for a give UID.
+  # @note Kind is typically "votes", "downloads", "likes" etc.
   # @category Kudu/Stats
   # @path /api/kudu/v1/acks/:uid/:kind/count
   # @http GET
