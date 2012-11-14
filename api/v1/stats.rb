@@ -32,7 +32,7 @@ class KuduV1 < Sinatra::Base
   # @http GET
   # @example /api/kudu/v1/acks/post.track:apdm.bandwagon.west.firda.*/downloads/count
   # @required [String] uid UID denoting a resource, or a wildcard UID indicating a collection of resources.
-  # @required [String] kind Action kind to count.
+  # @required [String] kind Kind to count.
   # @status 200 JSON
   get '/acks/:uid/:kind/count' do |uid, kind|
     query =  Pebbles::Uid.query(uid)

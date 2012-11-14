@@ -14,7 +14,7 @@ class KuduV1 < Sinatra::Base
   # @http GET
   # @example /api/kudu/v1/scores/post:acme.myapp.stuff.*/downloads?rank=positive&direction=desc
   # @required [String] uid UID denoting a resource, or a wildcard UID indicating a collection of resources.
-  # @required [String] kind Action kind to count.
+  # @required [String] kind Kind to count.
   # @optional [Integer] limit Maximum number of results. Defaults to 20.
   # @optional [Integer] offset Index of the first results. Defaults to 0.
   # @optional [String] rank Field to sort by. Available fields are "total_count", "positive_count", "negative_count", "neutral_count", "positive", "negative", "average", "controversiality", "histogram","positive_score", "negative_score", "average_score".
@@ -53,7 +53,7 @@ class KuduV1 < Sinatra::Base
   # @http POST
   # @example /api/kudu/v1/scores/post:acme.myapp.stuff.*/downloads/touch
   # @required [String] uid UID denoting a resource, or a wildcard UID indicating a collection of resources.
-  # @required [String] kind Action kind to count.
+  # @required [String] kind Kind to count.
   # @status 201 JSON
   post '/scores/:uid/:kind/touch' do |uid, kind|
     require_identity
@@ -82,7 +82,7 @@ class KuduV1 < Sinatra::Base
   # @http GET
   # @example /api/kudu/v1/scores/acme.myapp.stuff/downloads/sample?limit=10&randomize=true&segments[][field]=controversiality&segments[][percent]=40&segments[][order]=desc&segments[][field]=created_at&segments[][percent]=60&segments[][order]=desc
   # @required [String] path Path to resources.
-  # @required [String] kind Action kind to count.
+  # @required [String] kind Kind to count.
   # @required [String] segments A list of fields to fetch scores from. See example.
   # @required [Integer] limit Maximum number of results.
   # @optional [Boolean] shuffle Set to true in order to randomize samples.
