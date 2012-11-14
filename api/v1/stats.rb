@@ -22,6 +22,17 @@ class KuduV1 < Sinatra::Base
     }.to_json
   end
 
+  # @apidoc
+  # Get the score count for specified resources.
+  #
+  # @note Kind is typically kudos, downloads, likes.
+  # @category Kudu/Stats
+  # @path /api/kudu/v1/acks/:uid/:kind/count
+  # @http GET
+  # @example /api/kudu/v1/acks/post.track:apdm.bandwagon.west.firda.*/downloads/count
+  # @required [String] uid UID denoting a resource, or a wildcard UID indicating a collection of resources.
+  # @required [String] kind Action kind to count.
+  # @status 200 JSON
   get '/acks/:uid/:kind/count' do |uid, kind|
     query =  Pebbles::Uid.query(uid)
     { :uid => uid,
