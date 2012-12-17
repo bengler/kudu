@@ -38,7 +38,7 @@ class KuduV1 < Sinatra::Base
   # @example /api/kudu/v1/acks/post:acme.myapp.some.doc$1/votes
   # @required [String] uid UID denoting a resource.
   # @required [String] kind Kind.
-  # @required [Integer] value The value of the ack.
+  # @required [Integer] ack[value] The value of the ack.
   # @status 201 JSON if created
   # @status 200 JSON if updated
   post '/acks/:uid/:kind' do |uid, kind|
