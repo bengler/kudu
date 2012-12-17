@@ -38,6 +38,7 @@ class KuduV1 < Sinatra::Base
   # @example /api/kudu/v1/acks/post:acme.myapp.some.doc$1/votes
   # @required [String] uid UID denoting a resource.
   # @required [String] kind Kind.
+  # @required [Integer] value The value of the ack.
   # @status 201 JSON if created
   # @status 200 JSON if updated
   post '/acks/:uid/:kind' do |uid, kind|
@@ -87,9 +88,11 @@ class KuduV1 < Sinatra::Base
     require_identity
 
     param_ack = params[:ack]
-    value = param_ack['value']
 
     halt 500, "Missing ack object in post body." if param_ack.nil?
+
+    value = param_ack['value']
+
     halt 500, "Invalid value #{value.inspect}." unless value and Integer(value)
 
     score = Score.by_uid_and_kind(uid, kind).first
