@@ -2,6 +2,8 @@ return {:ack => nil} unless ack
 
 node :ack => ack do
   attributes :id, :value, :kind, :created_at, :updated_at
+  node :created_by =>  ack.identity
+  node :created_by_profile => ack.created_by_profile
   node :external_uid =>  ack.score.external_uid
   # deprecated
   node :score => ack.value

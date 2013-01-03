@@ -40,7 +40,13 @@ class KuduV1 < Sinatra::Base
     end
   end
 
+  # Get all acks for an uid of given kind
+  get '/scores/:uid/:kind/acks' do |uid, kind|
+    acks, pagination = limit_offset_collection(Ack.by_uid_and_kind(uid, kind), :limit => params['limit'], :offset => params['offset'])
+    response.status = 200
 
+    pg :acks, :locals => {:acks => acks, :pagination => pagination}
+  end
 
   # @apidoc
   # Create a score.
