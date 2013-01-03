@@ -4,16 +4,22 @@
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
-SET standard_conforming_strings = off;
+SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-SET escape_string_warning = off;
 
 --
--- Name: plpgsql; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: -
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
-CREATE OR REPLACE PROCEDURAL LANGUAGE plpgsql;
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 SET search_path = public, pg_catalog;
@@ -23,7 +29,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: acks; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: acks; Type: TABLE; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE TABLE acks (
@@ -33,12 +39,15 @@ CREATE TABLE acks (
     value integer,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    ip text
+    ip text,
+    profile text
 );
 
 
+ALTER TABLE public.acks OWNER TO kudu;
+
 --
--- Name: acks_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: acks_id_seq; Type: SEQUENCE; Schema: public; Owner: kudu
 --
 
 CREATE SEQUENCE acks_id_seq
@@ -49,15 +58,17 @@ CREATE SEQUENCE acks_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.acks_id_seq OWNER TO kudu;
+
 --
--- Name: acks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: acks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kudu
 --
 
 ALTER SEQUENCE acks_id_seq OWNED BY acks.id;
 
 
 --
--- Name: scores; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: scores; Type: TABLE; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE TABLE scores (
@@ -87,8 +98,10 @@ CREATE TABLE scores (
 );
 
 
+ALTER TABLE public.scores OWNER TO kudu;
+
 --
--- Name: items_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: items_id_seq; Type: SEQUENCE; Schema: public; Owner: kudu
 --
 
 CREATE SEQUENCE items_id_seq
@@ -99,15 +112,17 @@ CREATE SEQUENCE items_id_seq
     CACHE 1;
 
 
+ALTER TABLE public.items_id_seq OWNER TO kudu;
+
 --
--- Name: items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: items_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kudu
 --
 
 ALTER SEQUENCE items_id_seq OWNED BY scores.id;
 
 
 --
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE TABLE schema_migrations (
@@ -115,22 +130,24 @@ CREATE TABLE schema_migrations (
 );
 
 
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE acks ALTER COLUMN id SET DEFAULT nextval('acks_id_seq'::regclass);
-
+ALTER TABLE public.schema_migrations OWNER TO kudu;
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: kudu
 --
 
-ALTER TABLE scores ALTER COLUMN id SET DEFAULT nextval('items_id_seq'::regclass);
+ALTER TABLE ONLY acks ALTER COLUMN id SET DEFAULT nextval('acks_id_seq'::regclass);
 
 
 --
--- Name: acks_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: id; Type: DEFAULT; Schema: public; Owner: kudu
+--
+
+ALTER TABLE ONLY scores ALTER COLUMN id SET DEFAULT nextval('items_id_seq'::regclass);
+
+
+--
+-- Name: acks_pkey; Type: CONSTRAINT; Schema: public; Owner: kudu; Tablespace: 
 --
 
 ALTER TABLE ONLY acks
@@ -138,7 +155,7 @@ ALTER TABLE ONLY acks
 
 
 --
--- Name: items_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: items_pkey; Type: CONSTRAINT; Schema: public; Owner: kudu; Tablespace: 
 --
 
 ALTER TABLE ONLY scores
@@ -146,84 +163,84 @@ ALTER TABLE ONLY scores
 
 
 --
--- Name: index_acks_on_identity; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_acks_on_identity; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE INDEX index_acks_on_identity ON acks USING btree (identity);
 
 
 --
--- Name: index_acks_on_item_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_acks_on_item_id; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE INDEX index_acks_on_item_id ON acks USING btree (score_id);
 
 
 --
--- Name: index_acks_on_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_acks_on_score; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE INDEX index_acks_on_score ON acks USING btree (value);
 
 
 --
--- Name: index_items_on_controversiality; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_items_on_controversiality; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE INDEX index_items_on_controversiality ON scores USING btree (controversiality);
 
 
 --
--- Name: index_items_on_external_uid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_items_on_external_uid; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE INDEX index_items_on_external_uid ON scores USING btree (external_uid);
 
 
 --
--- Name: index_items_on_negative_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_items_on_negative_score; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE INDEX index_items_on_negative_score ON scores USING btree (negative);
 
 
 --
--- Name: index_items_on_positive_score; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_items_on_positive_score; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE INDEX index_items_on_positive_score ON scores USING btree (positive);
 
 
 --
--- Name: index_scores_on_external_uid_and_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_scores_on_external_uid_and_kind; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE UNIQUE INDEX index_scores_on_external_uid_and_kind ON scores USING btree (external_uid, kind);
 
 
 --
--- Name: index_scores_on_kind; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_scores_on_kind; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE INDEX index_scores_on_kind ON scores USING btree (kind);
 
 
 --
--- Name: index_scores_on_labels; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_scores_on_labels; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE INDEX index_scores_on_labels ON scores USING btree (label_0, label_1, label_2, label_3, label_4, label_5, label_6, label_7, label_8, label_9);
 
 
 --
--- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: kudu; Tablespace: 
 --
 
 CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
 
 
 --
--- Name: acks_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: acks_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: kudu
 --
 
 ALTER TABLE ONLY acks

@@ -110,6 +110,7 @@ class KuduV1 < Sinatra::Base
     ack.ip = ip.split(/,\s*/).uniq.first  # HTTP_X_FORWARDED_FOR may contain multiple comma separated ips
 
     response.status = 201 if ack.new_record?
+    ack.profile = current_profile.unwrap if current_profile
     ack.value = value
     ack.save!
     pg :ack, :locals => {:ack => ack}

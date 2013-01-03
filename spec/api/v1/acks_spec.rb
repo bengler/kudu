@@ -17,7 +17,15 @@ describe 'API v1 acks' do
     Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(stub(:get => alice))
   end
 
-  let(:alice) { DeepStruct.wrap(:identity => {:id => identity, :god => false, :realm => 'safariman'}) }
+  let(:alice) { DeepStruct.wrap(:identity => {:id => identity, :god => false, :realm => 'safariman'},
+                                :profile => {
+                                    :provider => "twitter",
+                                    :nickname => "alice",
+                                    :name => "Alice Cooper",
+                                    :profile_url => "http://twitter.com/RealAliceCooper",
+                                    :image_url => "https://si0.twimg.com/profile_images/1281973459/twitter_profile.jpg",
+                                    :description => "The ONLY Official Alice Cooper Twitter!"
+                                })}
 
   context "with an identity" do
     let(:a_session) { {:session => "1234"} }
@@ -53,6 +61,27 @@ describe 'API v1 acks' do
         ack = Ack.find_by_id(ack_response['id'])
         ack.value.should eq(1)
         ack.ip.should eq('127.0.0.1')
+        Score.find_by_external_uid(external_uid).total_count.should eq(1)
+      end
+
+      it "stores a copy of the identity's checkpoint profile" do
+        post "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 1})
+        last_response.status.should eq 201
+        puts last_response.body
+        ack_response = JSON.parse(last_response.body)["ack"]
+        ack = Ack.find_by_id(ack_response['id'])
+        ack.value.should eq(1)
+        ack.profile.should eq(alice.profile.unwrap)
+        Score.find_by_external_uid(external_uid).total_count.should eq(1)
+      end
+
+      it "stores nothing as profile for users without a profile" do
+        Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(stub(:get => DeepStruct.wrap(:identity => {:id => identity, :god => false, :realm => 'safariman'})))
+        post "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 1})
+        last_response.status.should eq 201
+        ack_response = JSON.parse(last_response.body)["ack"]
+        ack = Ack.find_by_id(ack_response['id'])
+        ack.profile.should eq(nil)
         Score.find_by_external_uid(external_uid).total_count.should eq(1)
       end
     end

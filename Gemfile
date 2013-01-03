@@ -8,7 +8,7 @@ gem 'activerecord', :require => 'active_record'
 gem 'yajl-ruby'
 gem 'pg'
 gem 'logger'
-gem 'pebblebed'
+gem 'pebblebed', '~> 0.0.41'
 gem 'pebbles-cors', :git => "git@github.com:bengler/pebbles-cors"
 gem 'pebbles-path'
 gem 'pebbles-uid'
