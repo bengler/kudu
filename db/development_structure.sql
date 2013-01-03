@@ -40,7 +40,7 @@ CREATE TABLE acks (
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
     ip text,
-    profile text
+    created_by_profile text
 );
 
 

@@ -13,7 +13,7 @@ class Ack < ActiveRecord::Base
   after_save :create_or_update_score
   after_destroy { |ack| ack.score.refresh_from_acks! }
 
-  serialize :profile
+  serialize :created_by_profile
 
   def create_or_update_score
     score.refresh_from_acks!

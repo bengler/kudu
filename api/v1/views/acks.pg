@@ -2,3 +2,9 @@ return [] if acks.nil?
 collection :acks => acks do |ack|
   partial :ack, :ack => ack
 end
+
+if pagination
+  node :pagination => pagination do
+    attributes :limit, :offset, :last_page
+  end
+end

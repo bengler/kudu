@@ -71,7 +71,7 @@ describe 'API v1 acks' do
         ack_response = JSON.parse(last_response.body)["ack"]
         ack = Ack.find_by_id(ack_response['id'])
         ack.value.should eq(1)
-        ack.profile.should eq(alice.profile.unwrap)
+        ack.created_by_profile.should eq(alice.profile.unwrap)
         Score.find_by_external_uid(external_uid).total_count.should eq(1)
       end
 
@@ -81,7 +81,7 @@ describe 'API v1 acks' do
         last_response.status.should eq 201
         ack_response = JSON.parse(last_response.body)["ack"]
         ack = Ack.find_by_id(ack_response['id'])
-        ack.profile.should eq(nil)
+        ack.created_by_profile.should eq(nil)
         Score.find_by_external_uid(external_uid).total_count.should eq(1)
       end
     end

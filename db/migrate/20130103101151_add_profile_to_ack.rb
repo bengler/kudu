@@ -1,9 +1,9 @@
 class AddProfileToAck < ActiveRecord::Migration
   def self.up
-    add_column :acks, :profile, :text
+    add_column :acks, :created_by_profile, :text
   end
 
   def self.down
-    add_column :acks, :profile, :text
+    remove_column :acks, :created_by_profile
   end
 end
