@@ -67,7 +67,6 @@ describe 'API v1 acks' do
       it "stores a copy of the identity's checkpoint profile" do
         post "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 1})
         last_response.status.should eq 201
-        puts last_response.body
         ack_response = JSON.parse(last_response.body)["ack"]
         ack = Ack.find_by_id(ack_response['id'])
         ack.value.should eq(1)
