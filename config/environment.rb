@@ -14,6 +14,10 @@ Dir.glob('./lib/kudu/**/*.rb').each{ |lib| require lib }
 $config = YAML::load(File.open("config/database.yml"))
 environment = ENV['RACK_ENV'] || "development"
 
+unless ENV['RACK_ENV'] == 'test'
+  ActiveRecord::Base.add_observer RiverNotifications.instance
+end
+
 ActiveRecord::Base.establish_connection($config[environment])
 
 Pebblebed.config do

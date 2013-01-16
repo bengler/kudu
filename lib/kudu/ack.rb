@@ -22,4 +22,8 @@ class Ack < ActiveRecord::Base
   def uid
     "ack:#{score.path}$#{id}"
   end
+
+  def attributes_for_export
+    attributes.merge(:acked_uid => score.external_uid, :kind => score.kind)
+  end
 end
