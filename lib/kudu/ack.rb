@@ -18,4 +18,8 @@ class Ack < ActiveRecord::Base
   def create_or_update_score
     score.refresh_from_acks!
   end
+
+  def uid
+    "ack:#{score.path}$#{id}"
+  end
 end

@@ -5,6 +5,13 @@ describe Ack do
   let(:external_uid) {'post:a.b.c$l0ngAndFiNeUId4U'}
   let(:kind) {'kudos'}
 
+  it "has a uid" do
+    score = Score.new(:external_uid => external_uid)
+    ack = Ack.new(:score => score)
+    ack.stub(:id => 1)
+    ack.uid.should eq('ack:a.b.c$1')
+  end
+
   describe "create_or_update_score" do
     it "creates a score if none exists" do
       score = Score.create(:external_uid => external_uid, :kind => kind)
