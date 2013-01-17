@@ -9,6 +9,22 @@ class KuduV1 < Sinatra::Base
     also_reload 'lib/kudu/ack.rb'
   end
 
+  # Get an ack
+
+  # @apidoc
+  # Get a single ack
+  #
+  # @category Kudu/Acks
+  # @path /acks/:uid
+  # @http GET
+  # @example /api/kudu/v1/acks/ack:acme.myapp.some.doc$1
+  # @status 200 JSON
+  get '/acks/:uid' do |uid|
+    id = Pebbles::Uid.oid(uid)
+    ack = Ack.find(id)
+    pg :ack, :locals => {:ack => ack}
+  end
+
   # Get current identity's ack for an uid/kind
 
   # @apidoc
@@ -22,7 +38,7 @@ class KuduV1 < Sinatra::Base
   # @required [String] uid UID denoting a resource.
   # @required [String] kind Kind.
   # @status 200 JSON
-  get '/acks/:uid/:kind' do |uid, kind|
+  get '/acks/:external_uid/:kind' do |uid, kind|
     require_identity
     ack = Ack.by_uid_and_kind(uid, kind).where(:identity => current_identity.id).first
     pg :ack, :locals => {:ack => ack}

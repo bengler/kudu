@@ -26,6 +26,17 @@ describe 'API v1 acks' do
                                     :image_url => "https://si0.twimg.com/profile_images/1281973459/twitter_profile.jpg",
                                     :description => "The ONLY Official Alice Cooper Twitter!"
                                 })}
+  describe 'GET /acks/:uid' do
+    it 'returns an ack' do
+      an_ack
+      get "/acks/#{an_ack.uid}"
+      last_response.status.should eq 200
+      ack_response = JSON.parse(last_response.body)
+      ack_response['ack']['id'].should eq an_ack.id
+      ack_response['ack']['kind'].should eq 'kudos'
+    end
+  end
+
 
   context "with an identity" do
     let(:a_session) { {:session => "1234"} }
