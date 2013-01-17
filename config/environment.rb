@@ -15,6 +15,7 @@ $config = YAML::load(File.open("config/database.yml"))
 environment = ENV['RACK_ENV'] || "development"
 
 unless ENV['RACK_ENV'] == 'test'
+  require './lib/river_notifications'
   ActiveRecord::Base.add_observer RiverNotifications.instance
 end
 

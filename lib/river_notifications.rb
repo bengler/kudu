@@ -1,5 +1,5 @@
 require 'pebblebed'
-require_relative 'ack'
+require_relative 'kudu/ack'
 
 class RiverNotifications < ActiveRecord::Observer
   observe :ack
