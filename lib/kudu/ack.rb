@@ -24,6 +24,7 @@ class Ack < ActiveRecord::Base
   end
 
   def attributes_for_export
-    attributes.merge(:acked_uid => score.external_uid, :kind => score.kind, :paths => [uid])
+    template = "api/v1/views/ack.pg"
+    Petroglyph::Engine.new(File.read(template)).to_hash({:ack => self}, template)
   end
 end
