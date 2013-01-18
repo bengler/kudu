@@ -9,3 +9,5 @@ node :ack => ack do
   # deprecated
   node :score => ack.value
 end
+
+partial :score, :score => ack.score
