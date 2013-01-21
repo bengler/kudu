@@ -41,7 +41,7 @@ class KuduV1 < Sinatra::Base
     id = Pebbles::Uid.oid(uid).to_i
     ack = Ack.find_by_id(id)
 
-    if ack && (current_identity.god? || ack.created_by == current_identity.id)
+    if ack && (current_identity.god? || ack.identity == current_identity.id)
       ack.destroy
     end
     halt 204
