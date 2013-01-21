@@ -17,15 +17,20 @@ describe 'API v1 acks' do
     Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(stub(:get => alice))
   end
 
-  let(:alice) { DeepStruct.wrap(:identity => {:id => identity, :god => false, :realm => 'safariman'},
-                                :profile => {
-                                    :provider => "twitter",
-                                    :nickname => "alice",
-                                    :name => "Alice Cooper",
-                                    :profile_url => "http://twitter.com/RealAliceCooper",
-                                    :image_url => "https://si0.twimg.com/profile_images/1281973459/twitter_profile.jpg",
-                                    :description => "The ONLY Official Alice Cooper Twitter!"
-                                })}
+  let(:alice_profile) do
+    {
+      :provider => "twitter",
+      :nickname => "alice",
+      :name => "Alice Cooper",
+      :profile_url => "http://twitter.com/RealAliceCooper",
+      :image_url => "https://si0.twimg.com/profile_images/1281973459/twitter_profile.jpg",
+      :description => "The ONLY Official Alice Cooper Twitter!"
+    }
+  end
+
+  let(:alice) { DeepStruct.wrap(:identity => {:id => identity, :god => false, :realm => 'safariman'}, :profile => alice_profile)}
+  let(:odin) { DeepStruct.wrap(:identity => {:id => 1, :god => true, :realm => 'safariman'}) }
+
   describe 'GET /acks/:uid' do
     it 'returns an ack' do
       an_ack
@@ -34,6 +39,23 @@ describe 'API v1 acks' do
       ack_response = JSON.parse(last_response.body)
       ack_response['ack']['id'].should eq an_ack.id
       ack_response['ack']['kind'].should eq 'kudos'
+    end
+  end
+
+  describe 'DELETE /acks/:uid' do
+    context 'when god' do
+      it 'deletes an ack' do
+      end
+    end
+
+    context 'when current identity owns the ack' do
+      it 'deletes the ack' do
+      end
+    end
+
+    context 'when not own ack' do
+      it "doesn't allow deletion" do
+      end
     end
   end
 
@@ -115,7 +137,7 @@ describe 'API v1 acks' do
         an_ack
 
         delete "/acks/#{external_uid}/kudos", a_session
-        last_response.status.should eq(200)
+        last_response.status.should eq(204)
 
         Ack.find_by_id(an_ack.id).should be_nil
       end

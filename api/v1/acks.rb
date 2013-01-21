@@ -115,10 +115,9 @@ class KuduV1 < Sinatra::Base
   delete '/acks/:uid/:kind' do |uid, kind|
     require_identity
     ack = Ack.by_uid_and_kind(uid, kind).where(:identity => current_identity.id).first
-    halt 404, "Not found" unless ack
+    ack.destroy if ack
 
-    ack.destroy
-    pg :ack, :locals => {:ack => ack}
+    halt 204
   end
 
 
