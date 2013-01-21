@@ -20,9 +20,30 @@ class KuduV1 < Sinatra::Base
   # @example /api/kudu/v1/acks/ack:acme.myapp.some.doc$1
   # @status 200 JSON
   get '/acks/:uid' do |uid|
+    require_identity
     id = Pebbles::Uid.oid(uid).to_i
     ack = Ack.find(id)
     pg :ack, :locals => {:ack => ack}
+  end
+
+  # Delete an ack
+
+  # @apidoc
+  # Delete a single ack
+  #
+  # @category Kudu/Acks
+  # @path /acks/:uid
+  # @http DELETE
+  # @example /api/kudu/v1/acks/ack:acme.myapp.some.doc$1
+  # @status 200 JSON
+  delete '/acks/:uid' do |uid|
+    id = Pebbles::Uid.oid(uid).to_i
+    ack = Ack.find_by_id(id)
+
+    if ack && (current_identity.god? || ack.created_by == current_identity.id)
+      ack.destroy
+    end
+    halt 204
   end
 
   # Get current identity's ack for an uid/kind
