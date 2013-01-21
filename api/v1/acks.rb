@@ -20,7 +20,6 @@ class KuduV1 < Sinatra::Base
   # @example /api/kudu/v1/acks/ack:acme.myapp.some.doc$1
   # @status 200 JSON
   get '/acks/:uid' do |uid|
-    require_identity
     id = Pebbles::Uid.oid(uid).to_i
     ack = Ack.find(id)
     pg :ack, :locals => {:ack => ack}
@@ -37,6 +36,8 @@ class KuduV1 < Sinatra::Base
   # @example /api/kudu/v1/acks/ack:acme.myapp.some.doc$1
   # @status 200 JSON
   delete '/acks/:uid' do |uid|
+    require_identity
+
     id = Pebbles::Uid.oid(uid).to_i
     ack = Ack.find_by_id(id)
 
