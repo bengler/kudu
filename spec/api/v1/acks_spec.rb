@@ -29,7 +29,6 @@ describe 'API v1 acks' do
   end
 
   let(:alice) { DeepStruct.wrap(:identity => {:id => identity, :god => false, :realm => 'safariman'}, :profile => alice_profile)}
-  let(:odin) { DeepStruct.wrap(:identity => {:id => 1, :god => true, :realm => 'safariman'}) }
 
   describe 'GET /acks/:uid' do
     it 'returns an ack' do
@@ -56,6 +55,18 @@ describe 'API v1 acks' do
     end
   end
 
+  context 'when god' do
+    describe 'GET /acks/:uid/kind' do
+      xit 'returns an ack for an :uid of :kind given by the given identity' do
+        an_ack
+        get "/acks/#{a_score.external_uid}/kudos", :identity => alice.identity.id
+        last_response.status.should eq 200
+        ack_response = JSON.parse(last_response.body)
+        ack_response['ack']['id'].should eq an_ack.id
+        ack_response['ack']['kind'].should eq 'kudos'
+      end
+    end
+  end
 
   context "with an identity" do
     let(:a_session) { {:session => "1234"} }
@@ -68,6 +79,13 @@ describe 'API v1 acks' do
         ack_response = JSON.parse(last_response.body)
         ack_response['ack']['id'].should eq an_ack.id
         ack_response['ack']['kind'].should eq 'kudos'
+      end
+    end
+
+    context "without an identity" do
+      it "is not allowed" do
+        get "/acks/post:a.b.c$1/kudos"
+        last_response.status.should eq 403
       end
     end
 

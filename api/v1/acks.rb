@@ -52,17 +52,24 @@ class KuduV1 < Sinatra::Base
   # @apidoc
   # Get a single ack for a uid, kind and current identity.
   #
-  # @note Will fail without a current identity. Kind is typically "votes", "downloads", "likes" etc.
+  # @note Will fail without an identity (can be passed in as parameter, or using current session). Kind is typically "votes", "downloads", "likes" etc.
   # @category Kudu/Acks
   # @path /acks/:uid/:kind
   # @http GET
   # @example /api/kudu/v1/acks/post:acme.myapp.some.doc$1/votes
   # @required [String] uid UID denoting a resource.
   # @required [String] kind Kind.
+  # @optional [String] identity Checkpoint identity id.
   # @status 200 JSON
   get '/acks/:external_uid/:kind' do |uid, kind|
-    require_identity
-    ack = Ack.by_uid_and_kind(uid, kind).where(:identity => current_identity.id).first
+    if params[:identity]
+      require_god
+    else
+      require_identity
+    end
+
+    id = params[:identity] || current_identity.id
+    ack = Ack.by_uid_and_kind(uid, kind).where(:identity => id).first
     pg :ack, :locals => {:ack => ack}
   end
 
