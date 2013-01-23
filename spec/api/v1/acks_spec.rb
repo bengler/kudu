@@ -44,18 +44,15 @@ describe 'API v1 acks' do
 
   describe 'DELETE /acks/:uid' do
     context 'when god' do
-      it 'deletes an ack' do
-      end
+      it 'deletes an ack'
     end
 
     context 'when current identity owns the ack' do
-      it 'deletes the ack' do
-      end
+      it 'deletes the ack'
     end
 
     context 'when not own ack' do
-      it "doesn't allow deletion" do
-      end
+      it "doesn't allow deletion"
     end
   end
 
