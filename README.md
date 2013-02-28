@@ -1,7 +1,8 @@
 # Kudu
 
-Feedback service.
+[![Build Status](https://semaphoreapp.com/api/v1/projects/d21e84e6494549ffd9478e24639fad6df38e544b/28269/badge.png)](https://semaphoreapp.com/projects/1575/branches/28269)
 
+Feedback service.
 
 ## Ack
 
