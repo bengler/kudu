@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 gem 'sinatra'
 gem 'sinatra-contrib'
@@ -12,11 +12,9 @@ gem 'pebblebed', '~> 0.0.41'
 gem 'pebbles-cors', :git => "git@github.com:bengler/pebbles-cors"
 gem 'pebbles-path'
 gem 'pebbles-uid'
-gem 'unicorn', '~> 4.1.1'
 gem 'petroglyph'
-gem 'bengler_test_helper',  :git => "git://github.com/bengler/bengler_test_helper.git"
+gem 'bengler_test_helper', :git => "git://github.com/bengler/bengler_test_helper.git", :require => false
 gem 'thor', :require => false
-gem 'airbrake', '~> 3.1.4', :require => false
 
 # Because of a bug in rack-protection (https://github.com/rkh/rack-protection/commit/a91810fa) that affects
 # cors-requests we'll need to get rack-protection from github
@@ -28,4 +26,9 @@ group :development, :test do
   gem 'simplecov'
   gem 'rspec', '~> 2.8'
   gem 'rack-test'
+end
+
+group :production do
+  gem 'airbrake', '~> 3.1.4', :require => false
+  gem 'unicorn', '~> 4.1.1'
 end
