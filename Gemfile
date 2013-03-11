@@ -13,7 +13,6 @@ gem 'pebbles-cors', :git => "git@github.com:bengler/pebbles-cors"
 gem 'pebbles-path'
 gem 'pebbles-uid'
 gem 'petroglyph'
-gem 'bengler_test_helper', :git => "git://github.com/bengler/bengler_test_helper.git", :require => false
 gem 'thor', :require => false
 
 # Because of a bug in rack-protection (https://github.com/rkh/rack-protection/commit/a91810fa) that affects
@@ -22,6 +21,7 @@ gem 'thor', :require => false
 gem 'rack-protection', :git => 'git://github.com/rkh/rack-protection.git'
 
 group :development, :test do
+  gem 'bengler_test_helper', :git => "git://github.com/bengler/bengler_test_helper.git", :require => false
   gem 'rake'
   gem 'simplecov'
   gem 'rspec', '~> 2.8'
