@@ -17,17 +17,18 @@ class Score < ActiveRecord::Base
   }
   scope :rank, lambda { |options|
     scope = scoped
-    field = "total_count"
+    fields = ["total_count"]
 
     if options[:by] == 'average'
-      field = "((scores.positive - scores.negative)/(scores.total_count*1.0))"
+      fields = ["((scores.positive - scores.negative)/(scores.total_count*1.0))", "total_count"]
       scope = scope.where("scores.total_count > 10")
     elsif columns.map(&:name).include?(options[:by].to_s)
-      field =  options[:by]
+      fields =  [options[:by]]
     end
     direction = (options[:direction] || 'desc').to_s.downcase
     direction = 'desc' unless ['asc', 'desc'].include?(direction)
-    scope.order("#{field} #{direction}").limit(options[:limit] || 10)
+    ordering = fields.map{ |field|"#{field} #{direction}"}.join(',')
+    scope.order(ordering).limit(options[:limit] || 10)
   }
 
   class << self
