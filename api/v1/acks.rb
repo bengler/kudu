@@ -41,9 +41,12 @@ class KuduV1 < Sinatra::Base
     id = Pebbles::Uid.oid(uid).to_i
     ack = Ack.find_by_id(id)
 
-    if ack && (current_identity.god? || ack.identity == current_identity.id)
+    if ack
+      default = (ack.identity == current_identity.id)
+      require_action_allowed(:delete, ack.uid, :default => default)
       ack.destroy
     end
+
     halt 204
   end
 
@@ -122,7 +125,11 @@ class KuduV1 < Sinatra::Base
   delete '/acks/:uid/:kind' do |uid, kind|
     require_identity
     ack = Ack.by_uid_and_kind(uid, kind).where(:identity => current_identity.id).first
-    ack.destroy if ack
+
+    if ack
+      require_action_allowed(:delete, ack.uid, :default => true)
+      ack.destroy
+    end
 
     halt 204
   end
@@ -148,6 +155,9 @@ class KuduV1 < Sinatra::Base
     ack ||= Ack.new(:score_id => score.id, :identity => current_identity.id) unless options[:only_updates]
 
     halt 404, "Ack for \"#{uid}\" with kind \"#{kind}\" by identity ##{current_identity.id} not found." unless ack
+
+    action = (ack.new_record? ? :create : :update)
+    require_action_allowed(action, ack.uid, :default => true)
 
     ip = request.env['HTTP_X_FORWARDED_FOR'] || request.ip
     ip = ip.sub("::ffff:", "") # strip away ipv6 compatible formatting
