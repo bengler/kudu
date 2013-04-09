@@ -7,14 +7,33 @@ describe 'API v1 acks' do
     KuduV1
   end
 
-  let(:identity) { 1337 }
+  let(:id) { 1337 }
 
   let(:external_uid) { 'post:realm.some.fine.realm$l0ngAndFiNeUId4U' }
   let(:a_score) { Score.create!(:external_uid => external_uid, :kind => 'kudos') }
-  let(:an_ack) { Ack.create!(:score => a_score, :identity => identity, :value => 1) }
+  let(:an_ack) { Ack.create!(:score => a_score, :identity => id, :value => 1) }
+
+  let(:checkpoint) {
+    # A richer mock-checkpoint that can handle different requests differently
+    class Mockpoint
+      def initialize(context)
+        @context = context
+      end
+      def get(url, *args)
+        case url
+        when /^\/identities\/me/
+          @context.identity
+        when /^\/callbacks\/allowed/
+          DeepStruct.wrap(@context.callback_response)
+        end
+      end
+    end
+    Mockpoint.new(self)
+  }
 
   before :each do
-    Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(stub(:get => alice))
+    # Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(stub(:get => alice))
+    Pebblebed::Connector.any_instance.stub(:checkpoint).and_return checkpoint
   end
 
   let(:alice_profile) do
@@ -28,7 +47,16 @@ describe 'API v1 acks' do
     }
   end
 
-  let(:alice) { DeepStruct.wrap(:identity => {:id => identity, :god => false, :realm => 'safariman'}, :profile => alice_profile)}
+  let(:god) {
+    DeepStruct.wrap(:identity => {:id => 0, :god => true, :realm => 'realm'})
+  }
+  let(:alice) {
+    DeepStruct.wrap(:identity => {:id => id, :god => false, :realm => 'safariman'},
+      :profile => alice_profile)
+  }
+  let(:vincent) {
+    DeepStruct.wrap(:identity => {:id => id + 1, :god => false, :realm => 'safariman'})
+  }
 
   describe 'GET /acks/:uid' do
     it 'returns an ack' do
@@ -41,17 +69,58 @@ describe 'API v1 acks' do
     end
   end
 
+  # FIXME: Most of these examples are testing functionality of
+  # Pebblebed::Sinatra.require_action_allowed. They should probably
+  # be replaced by checking that said method is called with the
+  # correct parameters.
   describe 'DELETE /acks/:uid' do
+    let(:a_session) { {:session => "1234"} }
+
     context 'when god' do
-      it 'deletes an ack'
+      let(:callback_response) { {'allowed' => false, 'reason' => 'No way!' } }
+      let(:identity) { god }
+      it 'allows ack to be deleted even when callbacks dictate it should be denied' do
+        delete "/acks/#{an_ack.uid}", a_session
+        last_response.status.should eq 204
+      end
     end
 
-    context 'when current identity owns the ack' do
-      it 'deletes the ack'
+    context 'when callbacks dictate action should be allowed' do
+      let(:callback_response) { {'allowed' => true } }
+      let(:identity) { vincent }
+      it "allows deletion even for non-owner" do
+        delete "/acks/#{an_ack.uid}", a_session
+        last_response.status.should eq 204
+      end
     end
 
-    context 'when not own ack' do
-      it "doesn't allow deletion"
+    context 'when callbacks dictate action should be denied' do
+      let(:reason_for_denial) { 'Just forget it, pal!' }
+      let(:callback_response) { {'allowed' => false, 'reason' => reason_for_denial } }
+      let(:identity) { alice }
+      it 'denies deletion even for owner, and returns the reason' do
+        delete "/acks/#{an_ack.uid}", a_session
+        last_response.status.should eq 403
+        last_response.body.should include reason_for_denial
+      end
+    end
+
+    context 'when callbacks dictate we use our own judgement' do
+      let(:callback_response) { {'allowed' => 'default' } }
+      context 'when current identity owns the ack' do
+        let(:identity) { alice }
+        it 'allows deletion' do
+          delete "/acks/#{an_ack.uid}", a_session
+          last_response.status.should eq 204
+        end
+      end
+      context 'when current identity does not own the ack' do
+        let(:identity) { vincent }
+        it "denies deletion" do
+          delete "/acks/#{an_ack.uid}", a_session
+          last_response.status.should eq 403
+        end
+      end
     end
   end
 
@@ -70,6 +139,7 @@ describe 'API v1 acks' do
 
   context "with an identity" do
     let(:a_session) { {:session => "1234"} }
+    let(:identity) { alice }
 
     describe 'GET /acks/:uid/kind' do
       it 'returns an ack for an :uid of :kind given by current identity' do
@@ -90,9 +160,13 @@ describe 'API v1 acks' do
     end
 
     describe 'PUT /acks/:uid/:kind' do
+      let(:identity) { alice }
+      let(:callback_response) { {'allowed' => 'default' } }
+
       it 'updates an existing score and recalculates it' do
         an_ack
         put "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 0})
+        # puts last_response.body
         last_response.status.should eq 200
         ack_response = JSON.parse(last_response.body)["ack"]
         Ack.find_by_id(ack_response['id']).value.should eq(0)
@@ -100,9 +174,18 @@ describe 'API v1 acks' do
         score.total_count.should eq(1)
         score.positive.should eq(0)
       end
+
+      it 'asks checkpoint for permission' do
+        app.any_instance.should_receive(:require_action_allowed).
+          with(:update, an_ack.uid, {:default => true})
+        put "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 0})
+      end
     end
 
     describe 'POST /acks/:uid/:kind' do
+      let(:identity) { alice }
+      let(:callback_response) { {'allowed' => 'default' } }
+
       it 'creates an ack and a score' do
         post "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => "+1"})
         last_response.status.should eq 201
@@ -123,18 +206,29 @@ describe 'API v1 acks' do
         Score.find_by_external_uid(external_uid).total_count.should eq(1)
       end
 
-      it "stores nothing as profile for users without a profile" do
-        Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(stub(:get => DeepStruct.wrap(:identity => {:id => identity, :god => false, :realm => 'safariman'})))
+      it 'asks checkpoint for permission' do
+        app.any_instance.should_receive(:require_action_allowed).
+          with(:update, an_ack.uid, {:default => true})
         post "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 1})
-        last_response.status.should eq 201
-        ack_response = JSON.parse(last_response.body)["ack"]
-        ack = Ack.find_by_id(ack_response['id'])
-        ack.created_by_profile.should eq(nil)
-        Score.find_by_external_uid(external_uid).total_count.should eq(1)
+      end
+
+      context 'when called by user with no profile' do
+        let(:identity) { vincent }
+        it "stores nothing as profile" do
+          post "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 1})
+          last_response.status.should eq 201
+          ack_response = JSON.parse(last_response.body)["ack"]
+          ack = Ack.find_by_id(ack_response['id'])
+          ack.created_by_profile.should eq(nil)
+          Score.find_by_external_uid(external_uid).total_count.should eq(1)
+        end
       end
     end
 
     describe 'PUT /acks/:uid/:kind' do
+      let(:identity) { alice }
+      let(:callback_response) { {'allowed' => 'default' } }
+
       it 'updates an existing score and recalculates it' do
         an_ack
         put "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 0})
@@ -148,6 +242,8 @@ describe 'API v1 acks' do
     end
 
     describe 'DELETE /acks/:uid/:kind' do
+      let(:identity) { alice }
+      let(:callback_response) { {'allowed' => 'default' } }
       it 'deletes an ack' do
         an_ack
 
@@ -155,6 +251,12 @@ describe 'API v1 acks' do
         last_response.status.should eq(204)
 
         Ack.find_by_id(an_ack.id).should be_nil
+      end
+
+      it 'asks checkpoint for permission' do
+        app.any_instance.should_receive(:require_action_allowed).
+          with(:delete, an_ack.uid, {:default => true})
+        delete "/acks/#{external_uid}/kudos", a_session
       end
     end
   end
