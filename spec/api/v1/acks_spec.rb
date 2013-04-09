@@ -69,6 +69,10 @@ describe 'API v1 acks' do
     end
   end
 
+  # FIXME: Most of these examples are testing functionality of
+  # Pebblebed::Sinatra.require_action_allowed. They should probably
+  # be replaced by checking that said method is called with the
+  # correct parameters.
   describe 'DELETE /acks/:uid' do
     let(:a_session) { {:session => "1234"} }
 
