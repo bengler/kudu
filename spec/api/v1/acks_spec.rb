@@ -158,6 +158,7 @@ describe 'API v1 acks' do
     describe 'PUT /acks/:uid/:kind' do
       let(:identity) { alice }
       let(:callback_response) { {'allowed' => 'default' } }
+
       it 'updates an existing score and recalculates it' do
         an_ack
         put "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 0})
@@ -168,6 +169,12 @@ describe 'API v1 acks' do
         score = Score.find_by_external_uid(external_uid)
         score.total_count.should eq(1)
         score.positive.should eq(0)
+      end
+
+      it 'asks checkpoint for permission' do
+        app.any_instance.should_receive(:require_action_allowed).
+          with(:update, an_ack.uid, {:default => true})
+        put "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 0})
       end
     end
 
@@ -195,6 +202,12 @@ describe 'API v1 acks' do
         Score.find_by_external_uid(external_uid).total_count.should eq(1)
       end
 
+      it 'asks checkpoint for permission' do
+        app.any_instance.should_receive(:require_action_allowed).
+          with(:update, an_ack.uid, {:default => true})
+        post "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 1})
+      end
+
       context 'when called by user with no profile' do
         let(:identity) { vincent }
         it "stores nothing as profile" do
@@ -211,6 +224,7 @@ describe 'API v1 acks' do
     describe 'PUT /acks/:uid/:kind' do
       let(:identity) { alice }
       let(:callback_response) { {'allowed' => 'default' } }
+
       it 'updates an existing score and recalculates it' do
         an_ack
         put "/acks/#{external_uid}/kudos", a_session.merge(:ack => {:value => 0})
@@ -233,6 +247,12 @@ describe 'API v1 acks' do
         last_response.status.should eq(204)
 
         Ack.find_by_id(an_ack.id).should be_nil
+      end
+
+      it 'asks checkpoint for permission' do
+        app.any_instance.should_receive(:require_action_allowed).
+          with(:delete, an_ack.uid, {:default => true})
+        delete "/acks/#{external_uid}/kudos", a_session
       end
     end
   end
