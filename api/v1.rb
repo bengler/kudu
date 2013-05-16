@@ -13,6 +13,9 @@ class KuduV1 < Sinatra::Base
   register Sinatra::Pebblebed
 
   before do
+    response.headers['Cache-Control'] = 'public, max-age=300'
+    headers 'Pragma' => 'no-cache'
+    headers 'Expires' => '-1'
     cache_control :private, :no_cache, :no_store, :must_revalidate
   end
 
