@@ -49,7 +49,7 @@ GEM
     backports (3.3.0)
     builder (3.0.4)
     bunny (0.8.0)
-    curb (0.8.3)
+    curb (0.8.4)
     dalli (2.6.3)
     deepstruct (0.0.5)
     diff-lcs (1.2.4)
@@ -59,10 +59,10 @@ GEM
     json (1.8.0)
     kgio (2.8.0)
     logger (1.2.8)
-    multi_json (1.7.3)
+    multi_json (1.7.4)
     nokogiri (1.5.9)
     pathbuilder (0.0.2)
-    pebblebed (0.0.54)
+    pebblebed (0.0.55)
       activesupport
       bunny
       curb (>= 0.7.14)
@@ -128,7 +128,7 @@ DEPENDENCIES
   airbrake (~> 3.1.4)
   bengler_test_helper!
   logger
-  pebblebed (~> 0.0.48)
+  pebblebed (~> 0.0.55)
   pebbles-cors!
   pebbles-path
   pebbles-uid

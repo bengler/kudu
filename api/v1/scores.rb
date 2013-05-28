@@ -45,7 +45,20 @@ class KuduV1 < Sinatra::Base
     acks, pagination = limit_offset_collection(Ack.by_uid_and_kind(uid, kind), :limit => params['limit'], :offset => params['offset'])
     response.status = 200
 
+    unless has_access_to_path?(Pebbles::Uid.new(uid).path)
+      acks.each do |ack|
+        ack.ip = '[protected]'
+      end
+    end
     pg :acks, :locals => {:acks => acks, :pagination => pagination}
+  end
+
+  # Delete an ack by id
+  delete '/scores/:uid/:kind/acks/:id' do |uid, kind, id|
+    require_action_allowed(:delete, uid)
+    ack = Ack.find(id)
+    ack.delete
+    pg :ack, :locals => {:ack => ack}
   end
 
   # @apidoc
