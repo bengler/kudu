@@ -74,6 +74,88 @@ describe 'API v1 scores' do
     end
   end
 
+  describe "GET /scores/:uid/:kind/acks" do
+    let (:an_uid) { 'post:earth.some.path$1' }
+
+    it 'returns a paginated list of acks for a given uid' do
+      score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
+      Ack.create!(:score => score, :identity => 1, :value => 1)
+      Ack.create!(:score => score, :identity => 2, :value => 1)
+
+      get "/scores/#{an_uid}/kudos/acks", :session => 1234
+
+      last_response.status.should eq 200
+      JSON.parse(last_response.body)['acks'].length.should eq(2)
+    end
+
+    context "Session belongs to a regular user" do
+      it "doesn't expose the ip of the ack" do
+        score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
+        Ack.create!(:score => score, :identity => 1, :value => 1)
+        Ack.create!(:score => score, :identity => 2, :value => 1)
+  
+        get "/scores/#{an_uid}/kudos/acks", :session => 1234
+  
+        JSON.parse(last_response.body)['acks'].collect {|a| a['ack']['ip']}.uniq.should eq(['[protected]'])
+      end
+    end
+
+    context "User has a god role in requested realm" do
+      let(:the_identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => true, :realm => 'earth'}) }
+      it "exposes the ip of the ack" do
+        score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
+        Ack.create!(:score => score, :identity => 1, :value => 1, :ip => '127.0.0.1')
+        Ack.create!(:score => score, :identity => 2, :value => 1, :ip => '10.0.0.1')
+  
+        get "/scores/#{an_uid}/kudos/acks", :session => 1234
+  
+        JSON.parse(last_response.body)['acks'].collect {|a| a['ack']['ip']}.should eq(['127.0.0.1', '10.0.0.1'])
+      end
+    end
+
+    context "User has a god role. but not in requested realm" do
+      let(:the_identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => true, :realm => 'moon'})}
+      it "exposes the ip of the ack for gods" do
+        score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
+        Ack.create!(:score => score, :identity => 1, :value => 1, :ip => '127.0.0.1')
+        Ack.create!(:score => score, :identity => 2, :value => 1, :ip => '10.0.0.1')
+
+        get "/scores/#{an_uid}/kudos/acks", :session => 1234
+  
+        JSON.parse(last_response.body)['acks'].collect {|a| a['ack']['ip']}.uniq.should eq(['[protected]'])
+      end
+    end
+  end
+
+  describe "DELETE /scores/:uid/:kind/acks/:id" do
+    let (:an_uid) { 'post:earth.some.path$1' }
+
+    context "Regular user" do
+      let(:the_identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => false, :realm => 'moon'})}
+      it 'denies regular users access to delete an ack' do
+        score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
+        ack = Ack.create!(:score => score, :identity => 1, :value => 1)
+  
+        delete "/scores/#{an_uid}/kudos/acks/#{ack.id}", :session => 1234
+  
+        last_response.status.should eq 403
+      end
+    end
+
+    context "User is god of the realm" do
+      let(:the_identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => true, :realm => 'earth'})}
+      it 'allows gods of the domain to delete an ack' do
+
+        score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
+        ack = Ack.create!(:score => score, :identity => 1, :value => 1)
+  
+        delete "/scores/#{an_uid}/kudos/acks/#{ack.id}", :session => 1234
+  
+        last_response.status.should eq 200
+      end
+    end
+  end
+
   describe "GET /scores/:path/:kind/rank/:by" do
 
     it "fetches the top 10 by default" do
