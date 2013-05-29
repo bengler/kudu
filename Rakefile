@@ -1,8 +1,5 @@
 $:.unshift(File.dirname(__FILE__))
 
-require "bundler"
-Bundler.require
-
 require 'sinatra/activerecord/rake'
 require 'bengler_test_helper/tasks' if ['development', 'test'].include?(ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development')
 
