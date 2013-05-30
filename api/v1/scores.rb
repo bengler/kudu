@@ -57,7 +57,7 @@ class KuduV1 < Sinatra::Base
   delete '/scores/:uid/:kind/acks/:id' do |uid, kind, id|
     require_action_allowed(:delete, uid)
     ack = Ack.find(id)
-    ack.delete
+    ack.destroy
     pg :ack, :locals => {:ack => ack}
   end
 
