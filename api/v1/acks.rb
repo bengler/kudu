@@ -65,6 +65,7 @@ class KuduV1 < Sinatra::Base
   # @optional [String] identity Checkpoint identity id.
   # @status 200 JSON
   get '/acks/:external_uid/:kind' do |uid, kind|
+    LOGGER.info("#{request.host}: HTTP_X_FORWARDED_FOR: #{request.env['HTTP_X_FORWARDED_FOR']}")
     if params[:identity]
       require_god
     else
@@ -90,6 +91,7 @@ class KuduV1 < Sinatra::Base
   # @status 201 JSON if created
   # @status 200 JSON if updated
   post '/acks/:uid/:kind' do |uid, kind|
+    
     save_ack(uid, kind)
   end
 
