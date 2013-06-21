@@ -20,7 +20,9 @@ class Ack < ActiveRecord::Base
   end
 
   def uid
-    "ack:#{score.path}$#{id}"
+    klass = "ack"
+    klass += ".#{score.kind}" if score.kind
+    "#{klass}:#{score.path}$#{id}"
   end
 
   def attributes_for_export
