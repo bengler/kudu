@@ -20,9 +20,9 @@ GIT
 
 GIT
   remote: git@github.com:bengler/pebbles-cors
-  revision: 28d4873ec93e3a16563e4614b70aa023852bae03
+  revision: f54656f482b1229bfe11da4c7e0f97421d92c2ab
   specs:
-    pebbles-cors (0.0.2)
+    pebbles-cors (0.1.0)
       dalli
       pebblebed
       rack
@@ -50,7 +50,7 @@ GEM
     builder (3.0.4)
     bunny (0.8.0)
     curb (0.8.4)
-    dalli (2.6.3)
+    dalli (2.6.4)
     deepstruct (0.0.5)
     diff-lcs (1.2.4)
     eventmachine (1.0.3)
