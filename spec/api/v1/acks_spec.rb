@@ -66,6 +66,7 @@ describe 'API v1 acks' do
       ack_response = JSON.parse(last_response.body)
       ack_response['ack']['id'].should eq an_ack.id
       ack_response['ack']['kind'].should eq 'kudos'
+      ack_response['ack']['uid'].should eq an_ack.uid
     end
   end
 

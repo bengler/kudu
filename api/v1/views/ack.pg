@@ -1,7 +1,7 @@
 return {:ack => nil} unless ack
 
 node :ack => ack do
-  attributes :id, :value, :created_at, :updated_at, :ip
+  attributes :id, :uid, :value, :created_at, :updated_at, :ip
   node :kind => ack.score.kind
   node :created_by =>  ack.identity
   node :created_by_profile => ack.created_by_profile
