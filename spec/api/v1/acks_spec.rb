@@ -59,6 +59,7 @@ describe 'API v1 acks' do
   }
 
   describe 'GET /acks/:uid' do
+
     it 'returns an ack' do
       an_ack
       get "/acks/#{an_ack.uid}"
@@ -68,6 +69,12 @@ describe 'API v1 acks' do
       ack_response['ack']['kind'].should eq 'kudos'
       ack_response['ack']['uid'].should eq an_ack.uid
     end
+
+    it 'returns 404 if not found' do
+      get "/acks/post:realm.some.non.existing.post$1"
+      last_response.status.should eq 404
+    end
+
   end
 
   # FIXME: Most of these examples are testing functionality of
