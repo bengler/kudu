@@ -135,6 +135,7 @@ describe Score do
     params = {
       :limit => 4,
       "shuffle" => true,
+      "random_seed" => 4, # pass seed in order to get same test result every time
       :include_own => false,
       :segments => [
         {
@@ -153,8 +154,6 @@ describe Score do
     }
 
     results = []
-    # Every time you run combine_resultsets it should give you a new combination
-    # ... thus: doing it five times, should be five different sets. Most of the time.
     5.times do
       results << Score.combine_resultsets(params).map(&:external_uid)
     end
