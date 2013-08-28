@@ -12,6 +12,10 @@ class KuduV1 < Sinatra::Base
 
   register Sinatra::Pebblebed
 
+  error ActiveRecord::RecordNotFound do
+    halt 404, "Record not found"
+  end
+
   before do
     response.headers['Cache-Control'] = 'public, max-age=300'
 

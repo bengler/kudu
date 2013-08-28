@@ -38,9 +38,10 @@ class Score < ActiveRecord::Base
       end
     end
 
-    def pick(already_picked, resultset, number, random)
+    def pick(already_picked, resultset, number, random, seed = nil)
       picked = []
       until resultset.empty? || picked.size == number
+        srand seed if seed
         pos = random ? rand(resultset.length) : 0
         score = resultset.delete_at(pos)
         picked << score unless already_picked.include?(score.id)
@@ -69,7 +70,7 @@ class Score < ActiveRecord::Base
       sampled = segments.map do |segment|
 
         results = Score.by_field(segment.query_parameters)
-        sampled = Score.pick(picked, results, segment.share_of_results, segment.randomize)
+        sampled = Score.pick(picked, results, segment.share_of_results, segment.randomize, params[:random_seed])
 
         picked |= sampled.map(&:id)
         remaining.concat results
