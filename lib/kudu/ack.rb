@@ -10,8 +10,9 @@ class Ack < ActiveRecord::Base
     joins(:score).where(:scores => {:external_uid => uid, :kind => kind})
   }
 
-  after_save :create_or_update_score
-  after_destroy { |ack| ack.score.refresh_from_acks! }
+  after_update  :create_or_update_score, prepend: true
+  after_create  :create_or_update_score, prepend: true
+  after_destroy :create_or_update_score, prepend: true
 
   serialize :created_by_profile
 
