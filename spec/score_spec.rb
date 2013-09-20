@@ -156,6 +156,21 @@ describe Score do
         Score.new(:positive_count => 30, :negative_count => 30).controversiality.should eq(30)
       end
     end
+
+    describe "scope" do
+
+      it 'filters by klass' do
+        Score.create!(:external_uid => "post.topic:some.path$1", :kind => 'kudos')
+        Score.create!(:external_uid => "post.comment:some.other.path$1", :kind => 'kudos')
+        Score.by_klass('post.topic').count.should eq 1
+        Score.by_klass('*.topic').count.should eq 1
+        Score.by_klass('post.*').count.should eq 2
+        Score.by_klass('*.*').count.should eq 2
+        Score.by_klass('post.nada').count.should eq 0
+      end
+
+    end
+
   end
 
 end

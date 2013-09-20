@@ -30,6 +30,7 @@ class KuduV1 < Sinatra::Base
       pg :scores, :locals => {:scores => scores}
     elsif query.collection?
       scores = Score.where(:kind => kind).by_path(query.path)
+      scores = scores.by_klass(query.species)
       scores = scores.rank(:by => params[:rank], :direction => params[:direction]) if params[:rank]
       scores, pagination = limit_offset_collection(scores, :limit => params['limit'], :offset => params['offset'])
       pg :scores, :locals => {:scores => scores, :pagination => pagination}
