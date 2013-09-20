@@ -24,6 +24,14 @@ describe 'API v1 scores' do
       score["external_uid"].should eq(uid)
     end
 
+    it 'respects species for a collection query' do
+      Score.create!(:external_uid => 'post.comment:some.path$1', :kind => 'kudos')
+      Score.create!(:external_uid => 'post.topic:some.path$1', :kind => 'kudos')
+      get "/scores/post.comment:some.*/kudos"
+      scores = JSON.parse(last_response.body)["scores"]
+      scores.size.should eq(1)
+    end
+
     it 'gets scores for a collection of uids using wildcard path' do
       uids = %w(post:realm.some.path$1 post:realm.some.otherpath$2 post:otherrealm.some.path$3)
       Score.create!(:external_uid => uids[0], :kind => 'kudos')
