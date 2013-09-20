@@ -12,6 +12,9 @@ class Score < ActiveRecord::Base
   scope :for_path, lambda { |path| by_path(path) }
   scope :order_by, lambda { |field, direction| order("#{field} #{direction} NULLS LAST") }
   scope :by_uid_and_kind, lambda { |uid, kind| where(:external_uid => uid, :kind => kind) }
+  scope :by_klass, lambda { |klass|
+    where("scores.external_uid like ?", "#{klass.gsub('*','%')}:%")
+  }
   scope :exclude_votes_by, lambda { |identity|
     joins("LEFT OUTER JOIN acks on acks.score_id = scores.id and acks.identity=#{identity}").where("acks.id IS NULL")
   }
