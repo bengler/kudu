@@ -14,6 +14,8 @@ Dir.glob('./lib/kudu/**/*.rb').each{ |lib| require lib }
 $config = YAML::load(File.open("config/database.yml"))
 environment = ENV['RACK_ENV'] || "development"
 
+$memcached = Dalli::Client.new unless ENV['RACK_ENV'] == 'test'
+
 unless ENV['RACK_ENV'] == 'test'
   require './lib/river_notifications'
   ActiveRecord::Base.add_observer RiverNotifications.instance

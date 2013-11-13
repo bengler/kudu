@@ -129,6 +129,7 @@ DEPENDENCIES
   activerecord
   airbrake (~> 3.1.4)
   bengler_test_helper!
+  dalli
   logger
   pebblebed (~> 0.0.55)
   pebbles-cors!

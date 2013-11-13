@@ -12,6 +12,7 @@ gem 'pebblebed', '~> 0.0.55'
 gem 'pebbles-cors', :git => "git@github.com:bengler/pebbles-cors"
 gem 'pebbles-path'
 gem 'pebbles-uid'
+gem 'dalli'
 gem 'petroglyph'
 gem 'thor', :require => false
 
