@@ -13,9 +13,9 @@ GIT
 
 GIT
   remote: git://github.com/rkh/rack-protection.git
-  revision: 7a5e6d7e3c5fd6cc2a88cb7dc88cfad02f93652f
+  revision: eddcc6dae781e995a0c594eeafe0d111fe68ac62
   specs:
-    rack-protection (1.5.0)
+    rack-protection (1.5.2)
       rack
 
 GIT
