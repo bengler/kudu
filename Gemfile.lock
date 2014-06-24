@@ -59,7 +59,7 @@ GEM
     futurevalue (0.0.2)
     i18n (0.6.4)
     json (1.8.0)
-    kgio (2.8.0)
+    kgio (2.9.2)
     logger (1.2.8)
     mini_portile (0.6.0)
     multi_json (1.7.7)
@@ -86,7 +86,7 @@ GEM
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
-    raindrops (0.11.0)
+    raindrops (0.13.0)
     rake (10.0.4)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
@@ -117,10 +117,10 @@ GEM
     thor (0.18.1)
     tilt (1.4.1)
     tzinfo (0.3.37)
-    unicorn (4.1.1)
-      kgio (~> 2.4)
+    unicorn (4.8.3)
+      kgio (~> 2.6)
       rack
-      raindrops (~> 0.6)
+      raindrops (~> 0.7)
     yajl-ruby (1.1.0)
 
 PLATFORMS
@@ -148,5 +148,5 @@ DEPENDENCIES
   sinatra-activerecord
   sinatra-contrib
   thor
-  unicorn (~> 4.1.1)
+  unicorn
   yajl-ruby
