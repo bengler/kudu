@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spec/utils/mockpoint'
 
 describe 'API v1 acks' do
   include Rack::Test::Methods
@@ -14,25 +15,10 @@ describe 'API v1 acks' do
   let(:an_ack) { Ack.create!(:score => a_score, :identity => id, :value => 1) }
 
   let(:checkpoint) {
-    # A richer mock-checkpoint that can handle different requests differently
-    class Mockpoint
-      def initialize(context)
-        @context = context
-      end
-      def get(url, *args)
-        case url
-        when /^\/identities\/me/
-          @context.identity
-        when /^\/callbacks\/allowed/
-          DeepStruct.wrap(@context.callback_response)
-        end
-      end
-    end
     Mockpoint.new(self)
   }
 
   before :each do
-    # Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(stub(:get => alice))
     Pebblebed::Connector.any_instance.stub(:checkpoint).and_return checkpoint
   end
 

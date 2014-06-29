@@ -1,5 +1,6 @@
 require "./spec/spec_helper"
 require "active_support/time"
+require 'spec/utils/mockpoint'
 
 describe 'API v1 scores' do
   include Rack::Test::Methods
@@ -8,11 +9,16 @@ describe 'API v1 scores' do
     KuduV1
   end
 
+  let(:checkpoint) {
+    Mockpoint.new(self)
+  }
+
   before :each do
-    Pebblebed::Connector.any_instance.stub(:checkpoint).and_return(stub(:get => the_identity))
+    Pebblebed::Connector.any_instance.stub(:checkpoint).and_return checkpoint
   end
 
-  let(:the_identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => false, :realm => 'safariman'}) }
+  let(:identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => false, :realm => 'safariman'}) }
+  let(:callback_response) { {'allowed' => 'default' } }
 
   describe "GET /scores/:uid(s)/:kind" do
 
@@ -84,6 +90,7 @@ describe 'API v1 scores' do
 
   describe "GET /scores/:uid/:kind/acks" do
     let (:an_uid) { 'post:earth.some.path$1' }
+    let(:access_to_response) { {:access => {:granted => true }} }
 
     it 'returns a paginated list of acks for a given uid' do
       score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
@@ -97,6 +104,8 @@ describe 'API v1 scores' do
     end
 
     context "Session belongs to a regular user" do
+      let(:access_to_response) { {:access => {:granted => false }} }
+
       it "doesn't expose the ip of the ack" do
         score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
         Ack.create!(:score => score, :identity => 1, :value => 1)
@@ -109,7 +118,7 @@ describe 'API v1 scores' do
     end
 
     context "User has a god role in requested realm" do
-      let(:the_identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => true, :realm => 'earth'}) }
+      let(:identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => true, :realm => 'earth'}) }
       it "exposes the ip of the ack" do
         score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
         Ack.create!(:score => score, :identity => 1, :value => 1, :ip => '127.0.0.1')
@@ -122,7 +131,8 @@ describe 'API v1 scores' do
     end
 
     context "User has a god role. but not in requested realm" do
-      let(:the_identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => true, :realm => 'moon'})}
+      let(:identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => true, :realm => 'moon'})}
+      let(:access_to_response) { {:access => {:granted => false }} }
       it "exposes the ip of the ack for gods" do
         score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
         Ack.create!(:score => score, :identity => 1, :value => 1, :ip => '127.0.0.1')
@@ -139,7 +149,8 @@ describe 'API v1 scores' do
     let (:an_uid) { 'post:earth.some.path$1' }
 
     context "Regular user" do
-      let(:the_identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => false, :realm => 'moon'})}
+      let(:identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => false, :realm => 'moon'})}
+
       it 'denies regular users access to delete an ack' do
         score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
         ack = Ack.create!(:score => score, :identity => 1, :value => 1)
@@ -151,7 +162,7 @@ describe 'API v1 scores' do
     end
 
     context "User is god of the realm" do
-      let(:the_identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => true, :realm => 'earth'})}
+      let(:identity) { DeepStruct.wrap(:identity => {:id => 1337, :god => true, :realm => 'earth'})}
       it 'allows gods of the domain to delete an ack' do
 
         score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
