@@ -13,7 +13,8 @@ node :score => score do
              :average,
              :controversiality,
              :histogram,
-             :created_at
+             :created_at,
+             :updated_at
 
   # deprecated
   node :positive_score => score.positive
