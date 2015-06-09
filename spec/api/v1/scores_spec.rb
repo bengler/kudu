@@ -60,12 +60,26 @@ describe 'API v1 scores' do
       Score.create!(:external_uid => uids[2], :kind => 'kudos')
 
       get "/scores/#{uids[1]},#{uids[0]}/kudos"
-      
+
       scores = JSON.parse(last_response.body)["scores"]
       scores.size.should eq(2)
       scores.first["score"]["external_uid"].should eq(uids[1])
       scores.last["score"]["external_uid"].should eq(uids[0])
     end
+
+    it 'gets scores of acks updated after a date' do
+
+      uids = %w(post:realm.some.path$1 post:realm.some.path$2 post:realm.some.path$3)
+      Score.create!(external_uid: uids[0], kind: 'kudos', created_at: '2014-01-01', updated_at: '2014-01-01')
+      Score.create!(external_uid: uids[1], kind: 'kudos', created_at: Time.now)
+
+      get "/scores/#{uids[1]},#{uids[0]}/kudos", {updated_after: '2015-01-01'}
+
+      scores = JSON.parse(last_response.body)["scores"].compact
+      scores.size.should eq(1)
+      scores.first["score"]["external_uid"].should eq(uids[1])
+    end
+
   end
 
   describe "POST /scores/:uid/:kind/touch" do
@@ -110,9 +124,9 @@ describe 'API v1 scores' do
         score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
         Ack.create!(:score => score, :identity => 1, :value => 1)
         Ack.create!(:score => score, :identity => 2, :value => 1)
-  
+
         get "/scores/#{an_uid}/kudos/acks", :session => 1234
-  
+
         JSON.parse(last_response.body)['acks'].collect {|a| a['ack']['ip']}.uniq.should eq(['[protected]'])
       end
     end
@@ -123,9 +137,9 @@ describe 'API v1 scores' do
         score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
         Ack.create!(:score => score, :identity => 1, :value => 1, :ip => '127.0.0.1')
         Ack.create!(:score => score, :identity => 2, :value => 1, :ip => '10.0.0.1')
-  
+
         get "/scores/#{an_uid}/kudos/acks", :session => 1234
-  
+
         JSON.parse(last_response.body)['acks'].collect {|a| a['ack']['ip']}.should eq(['127.0.0.1', '10.0.0.1'])
       end
     end
@@ -139,7 +153,7 @@ describe 'API v1 scores' do
         Ack.create!(:score => score, :identity => 2, :value => 1, :ip => '10.0.0.1')
 
         get "/scores/#{an_uid}/kudos/acks", :session => 1234
-  
+
         JSON.parse(last_response.body)['acks'].collect {|a| a['ack']['ip']}.uniq.should eq(['[protected]'])
       end
     end
@@ -154,9 +168,9 @@ describe 'API v1 scores' do
       it 'denies regular users access to delete an ack' do
         score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
         ack = Ack.create!(:score => score, :identity => 1, :value => 1)
-  
+
         delete "/scores/#{an_uid}/kudos/acks/#{ack.id}", :session => 1234
-  
+
         last_response.status.should eq 403
       end
     end
@@ -167,9 +181,9 @@ describe 'API v1 scores' do
 
         score = Score.create!(:external_uid => an_uid, :kind => 'kudos')
         ack = Ack.create!(:score => score, :identity => 1, :value => 1)
-  
+
         delete "/scores/#{an_uid}/kudos/acks/#{ack.id}", :session => 1234
-  
+
         last_response.status.should eq 200
       end
     end
