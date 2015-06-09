@@ -10,6 +10,7 @@ class Score < ActiveRecord::Base
   serialize :histogram
 
   scope :for_path, lambda { |path| by_path(path) }
+  scope :updated_after, lambda { |time| where('updated_at > ?', time) }
   scope :order_by, lambda { |field, direction| order("#{field} #{direction} NULLS LAST") }
   scope :by_uid_and_kind, lambda { |uid, kind| where(:external_uid => uid, :kind => kind) }
   scope :by_klass, lambda { |klass|
