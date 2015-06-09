@@ -18,24 +18,34 @@ class KuduV1 < Sinatra::Base
   # @optional [Integer] limit Maximum number of results. Defaults to 20.
   # @optional [Integer] offset Index of the first results. Defaults to 0.
   # @optional [String] rank Field to sort by. Available fields are "total_count", "positive_count", "negative_count", "neutral_count", "positive", "negative", "average", "controversiality", "histogram","positive_score", "negative_score", "average_score".
+  # @optional [String] updated_after Date or time for last time the score updated. E.g. 2014-12-24.
   # @optional [String] direction Sort order. Defaults to "desc".
   # @status 200 JSON
   get '/scores/:uid/:kind' do |uid, kind|
     query = Pebbles::Uid.query(uid)
+    updated_after = params[:updated_after]
+    puts "updated_after: #{updated_after.inspect}"
     if query.list?
       uids = query.list
-      scores = Score.where(:kind => kind).find_all_by_external_uid(uids)
+      scores = Score.where(:kind => kind)
+      scores = scores.updated_after(updated_after) if updated_after
+      scores = scores.find_all_by_external_uid(uids)
       by_uid = Hash[scores.map { |score| [score.external_uid, score] }]
       scores = uids.map { |uid| by_uid[uid] }
       pg :scores, :locals => {:scores => scores}
     elsif query.collection?
       scores = Score.where(:kind => kind).by_path(query.path)
       scores = scores.by_klass(query.species)
+      scores = scores.updated_after(updated_after) if updated_after
       scores = scores.rank(:by => params[:rank], :direction => params[:direction]) if params[:rank]
       scores, pagination = limit_offset_collection(scores, :limit => params['limit'], :offset => params['offset'])
       pg :scores, :locals => {:scores => scores, :pagination => pagination}
     else
-      score = Score.by_uid_and_kind(uid, kind).first
+      if updated_after
+        score = Score.updated_after(updated_after).by_uid_and_kind(uid, kind).first
+      else
+        score = Score.by_uid_and_kind(uid, kind).first
+      end
       score ||= Score.new
       pg :score, :locals => {:score => score}
     end
