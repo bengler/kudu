@@ -24,7 +24,6 @@ class KuduV1 < Sinatra::Base
   get '/scores/:uid/:kind' do |uid, kind|
     query = Pebbles::Uid.query(uid)
     updated_after = params[:updated_after]
-    puts "updated_after: #{updated_after.inspect}"
     if query.list?
       uids = query.list
       scores = Score.where(:kind => kind)
