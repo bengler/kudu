@@ -4,7 +4,7 @@ gem 'sinatra', '~> 1.4.2'
 gem 'sinatra-contrib', '~> 1.4.0'
 gem 'sinatra-activerecord', '~> 1.2.2'
 gem 'rack-contrib', :git => 'https://github.com/rack/rack-contrib'
-gem 'activerecord', '~> 3.2.13', :require => 'active_record'
+gem 'activerecord', '~> 3.2.22', :require => 'active_record'
 gem 'yajl-ruby', '~> 1.2.1'
 gem 'pg', '~> 0.15.1'
 gem 'curb', '~> 0.8.8'
@@ -16,7 +16,7 @@ gem 'pebbles-path', '~> 0.0.3'
 gem 'pebbles-uid', '~> 0.0.22'
 gem 'dalli', '~> 2.6.4'
 gem 'petroglyph', '~> 0.0.3'
-gem 'thor', :require => false
+gem 'thor', '~> 0.18.1', :require => false
 
 gem 'rack-protection', '~> 1.5.3'
 
