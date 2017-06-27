@@ -70,7 +70,7 @@ GEM
       queryparams
       yajl-ruby
     pebbles-path (0.0.3)
-      pebbles-uid (>= 0.0.22)
+      pebbles-uid (>= 0.0.6)
     pebbles-uid (0.0.22)
     petroglyph (0.0.6)
       tilt
@@ -147,3 +147,6 @@ DEPENDENCIES
   thor (~> 0.18.1)
   unicorn (~> 4.8.3)
   yajl-ruby (~> 1.2.1)
+
+BUNDLED WITH
+   1.15.1
