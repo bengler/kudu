@@ -13,6 +13,6 @@ use Rack::CommonLogger
 map "/api/kudu/v1" do
   use Rack::PostBodyContentTypeParser
   use Rack::MethodOverride
-  use Pebbles::Cors  
+  use Pebbles::Cors
   run KuduV1
 end

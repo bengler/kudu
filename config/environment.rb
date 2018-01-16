@@ -24,5 +24,7 @@ end
 ActiveRecord::Base.establish_connection($config[environment])
 
 Pebblebed.config do
+  host ENV['RACK_ENV'] == 'production' ? 'kudu.o5.no' : nil
+  scheme ENV['RACK_ENV'] == 'production' ? 'http' : nil
   service 'checkpoint'
 end
