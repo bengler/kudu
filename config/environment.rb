@@ -12,7 +12,6 @@ Dir.glob('./lib/kudu/**/*.rb').each{ |lib| require lib }
 $config = YAML::load(File.open("config/database.yml"))
 ENV['RACK_ENV'] ||= "development"
 environment = ENV['RACK_ENV']
-
 $memcached = Dalli::Client.new unless environment == 'test'
 
 unless environment == 'test'
@@ -20,6 +19,8 @@ unless environment == 'test'
   ActiveRecord::Base.add_observer RiverNotifications.instance
 end
 
+puts("---> environment is #{environment} --- dbconfig is #{$config[environment]}")
+LOGGER.warn("---> environment is #{environment} --- dbconfig is #{$config[environment]}")
 ActiveRecord::Base.establish_connection($config[environment])
 
 Pebblebed.config do
