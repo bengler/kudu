@@ -24,8 +24,8 @@ GEM
   remote: https://rubygems.org/
   specs:
     absolute_time (1.0.0)
-    activemodel (3.2.22)
-      activesupport (= 3.2.22)
+    activemodel (3.2.22.5)
+      activesupport (= 3.2.22.5)
       builder (~> 3.0.0)
     activerecord (3.2.22.5)
       activemodel (= 3.2.22.5)
@@ -45,6 +45,7 @@ GEM
     builder (3.0.4)
     bunny (2.9.1)
       amq-protocol (~> 2.3.0)
+    concurrent-ruby (1.0.5)
     curb (0.8.8)
     dalli (2.6.4)
     deepstruct (0.0.7)
@@ -56,7 +57,7 @@ GEM
     kgio (2.9.2)
     logger (1.2.8)
     mini_portile2 (2.3.0)
-    multi_json (1.11.2)
+    multi_json (1.13.1)
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
     pathbuilder (0.0.2)
@@ -124,7 +125,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord (~> 3.2)
+  activerecord (~> 3.2.22.5)
   airbrake (~> 3.1.4)
   bengler_test_helper!
   curb (~> 0.8.8)
