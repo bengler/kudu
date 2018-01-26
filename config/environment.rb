@@ -21,8 +21,6 @@ unless environment == 'test'
   ActiveRecord::Base.add_observer RiverNotifications.instance
 end
 
-puts("---> environment is #{environment} --- dbconfig is #{$config[environment]}")
-LOGGER.warn("---> environment is #{environment} --- dbconfig is #{$config[environment]}")
 ActiveRecord::Base.establish_connection($config[environment])
 
 Pebblebed.config do
