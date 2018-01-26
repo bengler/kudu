@@ -4,7 +4,6 @@ source 'https://rubygems.org'
 gem 'sinatra', '= 1.4.6', require: 'sinatra/base'
 gem 'sinatra-contrib', '= 1.4.6'
 gem 'sinatra-activerecord', '= 2.0.9'
-gem 'rack-contrib', :git => 'https://github.com/rack/rack-contrib'
 gem 'activerecord', '~> 3.2.22.5', :require => 'active_record'
 gem 'yajl-ruby', '~> 1.2.1'
 gem 'pg', '= 0.18.3'
@@ -18,8 +17,9 @@ gem 'pebbles-uid', '~> 0.0.22'
 gem 'dalli', '~> 2.6.4'
 gem 'petroglyph', '~> 0.0.7'
 gem 'thor', '~> 0.18.1', :require => false
-
-gem 'rack-protection', '~> 1.5.3'
+gem 'rack', '~> 1.5.2'
+gem 'rack-protection', '~> 1.5.2'
+gem 'rack-contrib', '~> 1.5.0'
 
 group :development, :test do
   gem 'bengler_test_helper', :git => "https://github.com/bengler/bengler_test_helper", :require => false
