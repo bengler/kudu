@@ -1,9 +1,9 @@
 source 'https://rubygems.org'
 
 
-gem 'sinatra', '= 1.4.6', require: 'sinatra/base'
-gem 'sinatra-contrib', '= 1.4.6'
-gem 'sinatra-activerecord', '= 2.0.9'
+gem 'sinatra', '~> 1.4.6', require: 'sinatra/base'
+gem 'sinatra-contrib', '~> 1.4.6'
+gem 'sinatra-activerecord', '~> 2.0.9'
 gem 'activerecord', '= 3.2.22', :require => 'active_record'
 gem 'yajl-ruby', '~> 1.2.1'
 gem 'pg', '= 0.18.3'
