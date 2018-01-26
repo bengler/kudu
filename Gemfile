@@ -17,8 +17,8 @@ gem 'pebbles-uid', '~> 0.0.22'
 gem 'dalli', '~> 2.6.4'
 gem 'petroglyph', '~> 0.0.7'
 gem 'thor', '~> 0.18.1', :require => false
-gem 'rack', '~> 1.5.2'
-gem 'rack-protection', '~> 1.5.2'
+gem 'rack', '~> 1.5.5'
+gem 'rack-protection', '~> 1.5.3'
 gem 'rack-contrib', '~> 1.5.0'
 
 group :development, :test do
