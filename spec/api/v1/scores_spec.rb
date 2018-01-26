@@ -69,11 +69,12 @@ describe 'API v1 scores' do
 
     it 'gets scores of acks updated after a date' do
 
-      uids = %w(post:realm.some.path$1 post:realm.some.path$2 post:realm.some.path$3)
+      uids = ['post:realm.some.path$1', 'post:realm.some.path$2']
       Score.create!(external_uid: uids[0], kind: 'kudos', created_at: '2014-01-01', updated_at: '2014-01-01')
       Score.create!(external_uid: uids[1], kind: 'kudos', created_at: Time.now)
 
-      get "/scores/#{uids[1]},#{uids[0]}/kudos", {updated_after: '2015-01-01'}
+      url = "/scores/#{uids[1]},#{uids[0]}/kudos"
+      get url, {updated_after: '2015-01-01'}
 
       scores = JSON.parse(last_response.body)["scores"].compact
       scores.size.should eq(1)

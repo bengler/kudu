@@ -30,7 +30,7 @@ class KuduV1 < Sinatra::Base
       scores = scores.updated_after(updated_after) if updated_after
       scores = scores.find_all_by_external_uid(uids)
       by_uid = Hash[scores.map { |score| [score.external_uid, score] }]
-      scores = uids.map { |uid| by_uid[uid] }
+      scores = uids.map { |uid| by_uid[uid] }.compact
       pg :scores, :locals => {:scores => scores}
     elsif query.collection?
       scores = Score.where(:kind => kind).by_path(query.path)
