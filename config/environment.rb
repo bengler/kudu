@@ -1,9 +1,11 @@
 require File.expand_path('config/site.rb') if File.exists?('config/site.rb')
 
-require "bundler"
+require 'bundler'
+require 'sinatra'
 Bundler.require
 
 LOGGER ||= Logger.new '/dev/null'
+set :root, File.dirname(File.dirname(__FILE__))
 
 $:.unshift('./lib')
 

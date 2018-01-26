@@ -1,5 +1,6 @@
 $:.unshift(File.dirname(__FILE__))
 
+require 'sinatra'
 require 'config/environment'
 require 'api/v1'
 require 'config/logging'
