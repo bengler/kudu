@@ -1,5 +1,16 @@
 $:.unshift(File.dirname(__FILE__))
 
+# Hack Begin to preserve tasks in the Rake namespace
+self.instance_eval do
+  alias :namespace_pre_sinatra :namespace if self.respond_to?(:namespace, true)
+end
+require 'sinatra/namespace'
+self.instance_eval do
+  alias :namespace :namespace_pre_sinatra if self.respond_to?(:namespace_pre_sinatra, true)
+end
+# Hack End
+
+require 'config/environment'
 require 'sinatra/activerecord/rake'
 require 'bengler_test_helper/tasks' if ['development', 'test'].include?(ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development')
 
