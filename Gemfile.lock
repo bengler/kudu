@@ -1,14 +1,14 @@
 GIT
   remote: https://github.com/bengler/bengler_test_helper
-  revision: c8a33fbb5a2b285741399c1683af35b5aa650455
+  revision: c8100bc387c8be09aaa7f5973ffa628b277c9965
   specs:
-    bengler_test_helper (0.0.6)
+    bengler_test_helper (0.0.8)
 
 GIT
   remote: https://github.com/bengler/pebbles-cors
-  revision: 869d6b6540577b8f598dac9263b82c783513243c
+  revision: 9bf8ca58e2a7138da0e602f1d57c33202367f854
   specs:
-    pebbles-cors (0.2.2)
+    pebbles-cors (0.2.5)
       dalli
       pebblebed
       rack
@@ -28,13 +28,12 @@ GEM
     activesupport (3.2.22)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
-    airbrake (3.1.12)
-      activesupport
+    airbrake (3.1.17)
       builder
-      json
+      multi_json
     amq-protocol (2.3.0)
     arel (3.0.3)
-    backports (3.11.0)
+    backports (3.11.1)
     builder (3.0.4)
     bunny (2.9.1)
       amq-protocol (~> 2.3.0)
@@ -42,19 +41,19 @@ GEM
     curb (0.8.8)
     dalli (2.6.4)
     deepstruct (0.0.7)
-    diff-lcs (1.2.4)
+    diff-lcs (1.3)
     futurevalue (0.0.2)
     i18n (0.9.3)
       concurrent-ruby (~> 1.0)
-    json (1.8.3)
-    kgio (2.9.2)
+    json (1.8.6)
+    kgio (2.11.2)
     logger (1.2.8)
     mini_portile2 (2.3.0)
     multi_json (1.13.1)
-    nokogiri (1.8.1)
+    nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     pathbuilder (0.0.2)
-    pebblebed (0.3.25)
+    pebblebed (0.3.26)
       absolute_time
       activesupport
       bunny
@@ -77,18 +76,18 @@ GEM
       rack (~> 1.4)
     rack-protection (1.5.3)
       rack
-    rack-test (0.6.2)
+    rack-test (0.6.3)
       rack (>= 1.0)
-    raindrops (0.13.0)
+    raindrops (0.19.0)
     rake (10.4.2)
-    rspec (2.13.0)
-      rspec-core (~> 2.13.0)
-      rspec-expectations (~> 2.13.0)
-      rspec-mocks (~> 2.13.0)
-    rspec-core (2.13.1)
-    rspec-expectations (2.13.0)
+    rspec (2.99.0)
+      rspec-core (~> 2.99.0)
+      rspec-expectations (~> 2.99.0)
+      rspec-mocks (~> 2.99.0)
+    rspec-core (2.99.2)
+    rspec-expectations (2.99.2)
       diff-lcs (>= 1.1.3, < 2.0)
-    rspec-mocks (2.13.1)
+    rspec-mocks (2.99.4)
     simplecov (0.7.1)
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
@@ -97,10 +96,10 @@ GEM
       rack (~> 1.5)
       rack-protection (~> 1.4)
       tilt (>= 1.3, < 3)
-    sinatra-activerecord (2.0.9)
+    sinatra-activerecord (2.0.13)
       activerecord (>= 3.2)
-      sinatra (~> 1.0)
-    sinatra-contrib (1.4.6)
+      sinatra (>= 1.0)
+    sinatra-contrib (1.4.7)
       backports (>= 2.0)
       multi_json
       rack-protection
@@ -127,7 +126,7 @@ DEPENDENCIES
   dalli (~> 2.6.4)
   json (~> 1.8.3)
   logger (~> 1.2.3)
-  pebblebed (~> 0.3.25)
+  pebblebed (~> 0.3.26)
   pebbles-cors!
   pebbles-path (~> 0.0.3)
   pebbles-uid (~> 0.0.22)
