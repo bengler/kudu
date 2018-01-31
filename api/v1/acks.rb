@@ -65,8 +65,7 @@ class KuduV1 < Sinatra::Base
   # @optional [String] identity Checkpoint identity id.
   # @status 200 JSON
   get '/acks/:external_uid/:kind' do |uid, kind|
-    LOGGER.info('------------------------------------')
-    LOGGER.info("Params: #{params.inspect}\ncurrent_identity_data: #{current_identity_data.inspect}\ncurrent_session: #{current_session}\nPebbles: #{pebbles.inspect}")
+    LOGGER.info("------------------------------------\nParams: #{params.inspect}\ncurrent_identity_data: #{current_identity_data.inspect}\ncurrent_session: #{current_session}\nPebbles: #{pebbles.inspect}\n------------------------------------\n")
     if params[:identity]
       require_god
     else

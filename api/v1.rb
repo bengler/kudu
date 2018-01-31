@@ -17,6 +17,8 @@ class KuduV1 < Sinatra::Base
   end
 
   before do
+    LOGGER.info("====BEFORE====\nParams: #{params.inspect}\n====BEFORE====\n")
+
     response.headers['Cache-Control'] = 'public, max-age=300'
 
     # If this service, for some reason lives behind a proxy that rewrites the Cache-Control headers into
