@@ -119,10 +119,16 @@ describe 'API v1 acks' do
   end
 
   context 'when god' do
-    describe 'GET /acks/:uid/kind' do
-      xit 'returns an ack for an :uid of :kind given by the given identity' do
+    describe 'GET /acks/:uid/:kind' do
+      let(:identity) { god }
+
+      it 'returns an ack for a :uid of :kind given by the supplied identity' do
         an_ack
-        get "/acks/#{a_score.external_uid}/kudos", :identity => alice.identity.id
+        options = {
+          :session => "1234",
+          :identity=> alice.identity.id
+        }
+        get "/acks/#{a_score.external_uid}/kudos", options
         last_response.status.should eq 200
         ack_response = JSON.parse(last_response.body)
         ack_response['ack']['id'].should eq an_ack.id
