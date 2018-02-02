@@ -10,7 +10,7 @@ gem 'pg', '= 0.18.3'
 gem 'curb', '~> 0.8.8'
 gem 'json', '~> 1.8.3'
 gem 'logger', '~> 1.2.3'
-gem 'pebblebed', '~> 0.3.26'
+gem 'pebblebed', :git => 'https://github.com/bengler/pebblebed.git', :branch => 'no-identity-caching'
 gem 'pebbles-cors', :git => "https://github.com/bengler/pebbles-cors"
 gem 'pebbles-path', '~> 0.0.3'
 gem 'pebbles-uid', '~> 0.0.22'
