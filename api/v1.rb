@@ -24,7 +24,7 @@ class KuduV1 < Sinatra::Base
     # caching in IE (see http://support.microsoft.com/kb/234067)
     headers 'Pragma' => 'no-cache'
     headers 'Expires' => '-1'
-
+    LOGGER.info("=======<#{request.fullpath}>=======<#{current_session}>=======")
     cache_control :private, :no_cache, :no_store, :must_revalidate
   end
 
