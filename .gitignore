@@ -9,3 +9,5 @@ coverage/
 /config/site.rb
 config/database.yml
 *.pgdump
+spec/fixtures/*
+spec/api/v1/acks_integration_spec.rb
