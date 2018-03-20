@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: https://github.com/bengler/pebblebed
-  revision: 50a392223b2653ecb433cbd542e5554a999ebeb8
+  revision: e5ff787deecdac53bb19ff942a3a693fd024ea01
   branch: no-identity-caching
   specs:
     pebblebed (0.3.26)
