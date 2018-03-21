@@ -16,6 +16,20 @@ class KuduV1 < Sinatra::Base
     halt 404, "Record not found"
   end
 
+  helpers do
+
+    def airbrake_this(errorMessage)
+      puts errorMessage
+      if LOGGER.respond_to?:exception
+        error = StandardError.new(errorMessage)
+        LOGGER.exception(error)
+      else
+        LOGGER.error(errorMessage)
+      end
+    end
+
+  end
+
   before do
     response.headers['Cache-Control'] = 'public, max-age=300'
 
@@ -24,7 +38,12 @@ class KuduV1 < Sinatra::Base
     # caching in IE (see http://support.microsoft.com/kb/234067)
     headers 'Pragma' => 'no-cache'
     headers 'Expires' => '-1'
-    LOGGER.info("=======<#{request.fullpath}>=======<#{current_session}>=======")
+    incoming_session = request.fullpath.split('session=')[1]
+    reported_session = current_session
+    if incoming_session && reported_session && (incoming_session != reported_session)
+      airbrake_this("Request and session differ: #{incoming_session} versus #{reported_session}")
+    end
+    LOGGER.info("|===<#{request.fullpath}>===<#{current_session}>===|")
     cache_control :private, :no_cache, :no_store, :must_revalidate
   end
 
