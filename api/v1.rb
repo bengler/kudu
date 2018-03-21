@@ -6,9 +6,13 @@ require 'sinatra/reloader'
 
 Dir.glob("#{File.dirname(__FILE__)}/v1/**/*.rb").each{ |file| require file }
 
+
 class KuduV1 < Sinatra::Base
   set :root, "#{File.dirname(__FILE__)}/v1"
   set :protection, :except => :http_origin
+
+  error_counter = 0
+  non_error_counter = 0
 
   register Sinatra::Pebblebed
 
@@ -40,10 +44,14 @@ class KuduV1 < Sinatra::Base
     headers 'Expires' => '-1'
     incoming_session = request.fullpath.split('session=')[1]
     reported_session = current_session
-    if incoming_session && reported_session && (incoming_session != reported_session)
-      airbrake_this("Request and session differ: #{incoming_session} versus #{reported_session}")
+    if true
+    #if incoming_session && reported_session && (incoming_session != reported_session)
+      error_counter += 1
+      airbrake_this("[#{error_counter}/#{error_counter+non_error_counter}] Request and session differ: #{reported_session} versus #{incoming_session}")
+    else
+      non_error_counter += 1
+      LOGGER.info("|===<#{request.fullpath}>===<#{current_session}>===|")
     end
-    LOGGER.info("|===<#{request.fullpath}>===<#{current_session}>===|")
     cache_control :private, :no_cache, :no_store, :must_revalidate
   end
 
