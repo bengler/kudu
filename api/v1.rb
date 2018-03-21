@@ -44,8 +44,7 @@ class KuduV1 < Sinatra::Base
     headers 'Expires' => '-1'
     incoming_session = request.fullpath.split('session=')[1]
     reported_session = current_session
-    if true
-    #if incoming_session && reported_session && (incoming_session != reported_session)
+    if incoming_session && reported_session && (incoming_session != reported_session)
       error_counter += 1
       airbrake_this("[#{error_counter}/#{error_counter+non_error_counter}] Request and session differ: #{reported_session} versus #{incoming_session}")
     else
