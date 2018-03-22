@@ -34,7 +34,7 @@ GIT
   remote: https://github.com/thomax/rack-contrib
   revision: 42a7fc5d540907eb689f31578ed95c6caf970746
   specs:
-    rack-contrib (2.0.1.8.g42a7fc5)
+    rack-contrib
       rack (~> 2.0)
 
 GEM
