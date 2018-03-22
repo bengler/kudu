@@ -5,6 +5,23 @@ GIT
     bengler_test_helper (0.0.8)
 
 GIT
+  remote: https://github.com/bengler/pebblebed
+  revision: 622320f9cb889ec8235af17eb7eb43a9a066ae80
+  branch: http-use-excon
+  specs:
+    pebblebed (0.4.0)
+      absolute_time
+      activesupport
+      bunny
+      deepstruct (>= 0.0.4)
+      excon (>= 0.52.0)
+      futurevalue
+      nokogiri
+      pathbuilder
+      queryparams
+      yajl-ruby
+
+GIT
   remote: https://github.com/bengler/pebbles-cors
   revision: 9bf8ca58e2a7138da0e602f1d57c33202367f854
   specs:
@@ -35,35 +52,26 @@ GEM
     arel (3.0.3)
     backports (3.11.1)
     builder (3.0.4)
-    bunny (2.9.1)
+    bunny (2.9.2)
       amq-protocol (~> 2.3.0)
     concurrent-ruby (1.0.5)
     curb (0.8.8)
     dalli (2.6.4)
     deepstruct (0.0.7)
     diff-lcs (1.3)
+    excon (0.61.0)
     futurevalue (0.0.2)
-    i18n (0.9.3)
+    i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     json (1.8.6)
     kgio (2.11.2)
     logger (1.2.8)
     mini_portile2 (2.3.0)
     multi_json (1.13.1)
+    mustermann (1.0.2)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     pathbuilder (0.0.2)
-    pebblebed (0.3.26)
-      absolute_time
-      activesupport
-      bunny
-      curb (>= 0.8.8)
-      deepstruct (>= 0.0.4)
-      futurevalue
-      nokogiri
-      pathbuilder
-      queryparams
-      yajl-ruby
     pebbles-path (0.0.3)
       pebbles-uid (>= 0.0.6)
     pebbles-uid (0.0.22)
@@ -71,10 +79,10 @@ GEM
       tilt
     pg (0.18.3)
     queryparams (0.0.3)
-    rack (1.5.5)
-    rack-contrib (1.5.0)
-      rack (~> 1.4)
-    rack-protection (1.5.3)
+    rack (2.0.4)
+    rack-contrib (2.0.1)
+      rack (~> 2.0)
+    rack-protection (2.0.1)
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -92,19 +100,20 @@ GEM
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
     simplecov-html (0.7.1)
-    sinatra (1.4.8)
-      rack (~> 1.5)
-      rack-protection (~> 1.4)
-      tilt (>= 1.3, < 3)
+    sinatra (2.0.1)
+      mustermann (~> 1.0)
+      rack (~> 2.0)
+      rack-protection (= 2.0.1)
+      tilt (~> 2.0)
     sinatra-activerecord (2.0.13)
       activerecord (>= 3.2)
       sinatra (>= 1.0)
-    sinatra-contrib (1.4.7)
+    sinatra-contrib (2.0.1)
       backports (>= 2.0)
       multi_json
-      rack-protection
-      rack-test
-      sinatra (~> 1.4.0)
+      mustermann (~> 1.0)
+      rack-protection (= 2.0.1)
+      sinatra (= 2.0.1)
       tilt (>= 1.3, < 3)
     thor (0.18.1)
     tilt (2.0.8)
@@ -126,25 +135,25 @@ DEPENDENCIES
   dalli (~> 2.6.4)
   json (~> 1.8.3)
   logger (~> 1.2.3)
-  pebblebed (~> 0.3.26)
+  pebblebed!
   pebbles-cors!
   pebbles-path (~> 0.0.3)
   pebbles-uid (~> 0.0.22)
   petroglyph (~> 0.0.7)
   pg (= 0.18.3)
-  rack (~> 1.5.5)
-  rack-contrib (~> 1.5.0)
-  rack-protection (~> 1.5.3)
+  rack (~> 2.0.4)
+  rack-contrib (~> 2.0.1)
+  rack-protection (~> 2.0.1)
   rack-test (~> 0.6.2)
   rake (= 10.4.2)
   rspec (~> 2.8)
   simplecov (~> 0.7.1)
-  sinatra (~> 1.4.6)
-  sinatra-activerecord (~> 2.0.9)
-  sinatra-contrib (~> 1.4.6)
+  sinatra (~> 2.0.1)
+  sinatra-activerecord (~> 2.0.13)
+  sinatra-contrib (~> 2.0.1)
   thor (~> 0.18.1)
   unicorn (~> 4.8.3)
   yajl-ruby (~> 1.2.1)
 
 BUNDLED WITH
-   1.15.1
+   1.16.1
