@@ -28,14 +28,16 @@ module Rack
       @app = app
     end
 
-    def log_params(current_env, index)
+    def log_params(current_env, index, body = nil)
       tmpReq = Rack::Request.new(current_env)
-      LOGGER.info "ParserSpy-#{index} #{tmpReq.params.inspect}"
+      LOGGER.info "ParserSpy-#{index} env.POST_BODY #{body.inspect}" if body
+      LOGGER.info "ParserSpy-#{index} FORM_HASH #{current_env[FORM_HASH].inspect}"
+      LOGGER.info "ParserSpy-#{index} params #{tmpReq.params.inspect}"
     end
 
     def call(env)
       if Rack::Request.new(env).media_type == APPLICATION_JSON && (body = env[POST_BODY].read).length != 0
-        log_params(env, 1)
+        log_params(env, 1, body)
         env[POST_BODY].rewind # somebody might try to read this stream
         log_params(env, 2)
         env.update(FORM_HASH => JSON.parse(body, :create_additions => false), FORM_INPUT => env[POST_BODY])
