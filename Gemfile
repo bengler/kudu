@@ -19,7 +19,7 @@ gem 'petroglyph', '~> 0.0.7'
 gem 'thor', '~> 0.18.1', :require => false
 gem 'rack', '~> 2.0.4'
 gem 'rack-protection', '~> 2.0.1'
-gem 'rack-contrib', '~> 2.0.1'
+gem 'rack-contrib', :git => "https://github.com/thomax/rack-contrib"
 
 group :development, :test do
   gem 'bengler_test_helper', :git => "https://github.com/bengler/bengler_test_helper", :require => false

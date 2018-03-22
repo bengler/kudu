@@ -30,6 +30,13 @@ GIT
       pebblebed
       rack
 
+GIT
+  remote: https://github.com/thomax/rack-contrib
+  revision: f89fc965628296e1dc40132e02406913dfab3b3e
+  specs:
+    rack-contrib (2.0.1.7.gf89fc96)
+      rack (~> 2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -79,8 +86,6 @@ GEM
     pg (0.18.3)
     queryparams (0.0.3)
     rack (2.0.4)
-    rack-contrib (2.0.1)
-      rack (~> 2.0)
     rack-protection (2.0.1)
       rack
     rack-test (0.6.3)
@@ -141,7 +146,7 @@ DEPENDENCIES
   petroglyph (~> 0.0.7)
   pg (= 0.18.3)
   rack (~> 2.0.4)
-  rack-contrib (~> 2.0.1)
+  rack-contrib!
   rack-protection (~> 2.0.1)
   rack-test (~> 0.6.2)
   rake (= 10.4.2)
