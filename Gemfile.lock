@@ -28,6 +28,8 @@ GEM
     activesupport (3.2.22)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
+    addressable (2.5.2)
+      public_suffix (>= 2.0.2, < 4.0)
     airbrake (3.1.17)
       builder
       multi_json
@@ -55,9 +57,10 @@ GEM
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     pathbuilder (0.0.2)
-    pebblebed (0.4.0)
+    pebblebed (0.4.3)
       absolute_time
       activesupport
+      addressable
       bunny
       deepstruct (>= 0.0.4)
       excon (>= 0.52.0)
@@ -72,6 +75,7 @@ GEM
     petroglyph (0.0.7)
       tilt
     pg (0.18.3)
+    public_suffix (3.0.2)
     queryparams (0.0.3)
     rack (2.0.4)
     rack-contrib (2.0.1)
@@ -129,7 +133,7 @@ DEPENDENCIES
   dalli (~> 2.6.4)
   json (~> 1.8.3)
   logger (~> 1.2.3)
-  pebblebed (~> 0.4.0)
+  pebblebed (~> 0.4.3)
   pebbles-cors!
   pebbles-path (~> 0.0.3)
   pebbles-uid (~> 0.0.22)
