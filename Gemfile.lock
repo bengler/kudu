@@ -5,23 +5,6 @@ GIT
     bengler_test_helper (0.0.8)
 
 GIT
-  remote: https://github.com/bengler/pebblebed
-  revision: a075744acc607fc17e85edd254002e62a18cb0f7
-  specs:
-    pebblebed (0.4.3)
-      absolute_time
-      activesupport
-      addressable
-      bunny
-      deepstruct (>= 0.0.4)
-      excon (>= 0.52.0)
-      futurevalue
-      nokogiri
-      pathbuilder
-      queryparams
-      yajl-ruby
-
-GIT
   remote: https://github.com/bengler/pebbles-cors
   revision: 9bf8ca58e2a7138da0e602f1d57c33202367f854
   specs:
@@ -74,6 +57,18 @@ GEM
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     pathbuilder (0.0.2)
+    pebblebed (0.4.4)
+      absolute_time
+      activesupport
+      addressable
+      bunny
+      deepstruct (>= 0.0.4)
+      excon (>= 0.52.0)
+      futurevalue
+      nokogiri
+      pathbuilder
+      queryparams
+      yajl-ruby
     pebbles-path (0.0.3)
       pebbles-uid (>= 0.0.6)
     pebbles-uid (0.0.22)
@@ -138,7 +133,7 @@ DEPENDENCIES
   dalli (~> 2.6.4)
   json (~> 1.8.3)
   logger (~> 1.2.3)
-  pebblebed!
+  pebblebed (~> 0.4.4)
   pebbles-cors!
   pebbles-path (~> 0.0.3)
   pebbles-uid (~> 0.0.22)
